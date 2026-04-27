@@ -16,27 +16,32 @@ status: mature
 
 ## 🧠 Topics (큰 주제 영역)
 
-- [[llm-multi-agent-frameworks]] — LLM 기반 멀티에이전트 프레임워크 비교 hub (소스 2, updated 2026-04-28)
+- [[llm-multi-agent-frameworks]] — LLM 기반 멀티에이전트 프레임워크 비교 hub (소스 3, updated 2026-04-28)
 
 ---
 
 ## 💡 Concepts (개념·패턴·알고리즘)
 
-- [[sop-for-llm-agents]] — 인간 조직의 SOP를 프롬프트 시퀀스로 인코딩하는 패턴, 강한/약한 두 변형 (소스 2, updated 2026-04-28)
+- [[dynamic-agent-recruitment]] — runtime에 LLM이 task goal 보고 역할을 동적 생성하는 패턴, SOP의 정반대 축 (소스 1, 2026-04-28)
+- [[sop-for-llm-agents]] — 인간 조직의 SOP를 프롬프트 시퀀스로 인코딩하는 패턴, 강한/약한 두 변형 (소스 3, updated 2026-04-28)
 
 ---
 
 ## 👤 Entities (사람·조직·제품·도구·모델)
 
-- [[chatdev]] — 워터폴을 chat chain으로 재구성한 LLM 멀티에이전트 SW 개발 프레임워크 (소스 1, 2026-04-28)
-- [[metagpt]] — SOP 기반 LLM 멀티에이전트 협업 프레임워크 (소스 2, updated 2026-04-28)
+- [[agentverse]] — 4-stage MDP 루프 + dynamic recruitment + horizontal/vertical 토폴로지 멀티에이전트 프레임워크 (소스 1, updated 2026-04-28)
+- [[chatdev]] — 워터폴을 chat chain으로 재구성한 LLM 멀티에이전트 SW 개발 프레임워크 (소스 2, updated 2026-04-28)
+- [[metagpt]] — SOP 기반 LLM 멀티에이전트 협업 프레임워크 (소스 3, updated 2026-04-28)
+- [[react]] — thought + action 인터리브 single-agent prompting paradigm. 멀티에이전트 framework들의 계보적 선조이자 baseline (소스 2, 2026-04-28)
 
 ---
 
 ## 📄 Sources (원본 소스 1:1 요약)
 
+- [[2210.03629-react]] — ReAct: Synergizing Reasoning and Acting in Language Models (Yao et al., ICLR 2023)
 - [[2307.07924-chatdev]] — ChatDev: Communicative Agents for Software Development (Qian et al., 2024)
 - [[2308.00352-metagpt]] — MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework (Hong et al., ICLR 2024)
+- [[2308.10848-agentverse]] — AgentVerse: Facilitating Multi-Agent Collaboration and Exploring Emergent Behaviors (Chen et al., 2023)
 
 ---
 

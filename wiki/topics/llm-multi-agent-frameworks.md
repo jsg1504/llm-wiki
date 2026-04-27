@@ -3,7 +3,7 @@ title: LLM Multi-Agent Frameworks
 type: topic
 created: 2026-04-28
 updated: 2026-04-28
-sources: [2308.00352-metagpt, 2307.07924-chatdev]
+sources: [2308.00352-metagpt, 2307.07924-chatdev, 2308.10848-agentverse, 2210.03629-react]
 tags: [multi-agent, llm, framework, agentic]
 status: draft
 ---
@@ -25,6 +25,8 @@ status: draft
 | **에이전트 수** | 단일 에이전트 + tools ↔ 다수 역할 분담 |
 | **검증** | 없음 ↔ self-reflection ↔ executable feedback |
 | **통신 토폴로지** | one-to-one dialogue ↔ shared message pool + pub/sub |
+| **역할 분담 시점** | 디자인-시점 정적 (SOP 기반) ↔ runtime 동적 ([[dynamic-agent-recruitment]]) |
+| **의사결정 토폴로지** | horizontal (민주적 ensemble) ↔ vertical (solver+reviewers) |
 
 ## 주요 프레임워크 (현재 위키 기준)
 
@@ -39,6 +41,15 @@ status: draft
 - 자체 SRDD 벤치(1,200 task)에서 ChatDev > MetaGPT > GPT-Engineer 주장. ⚠️ MetaGPT 논문은 정반대 주장 — [[contradictions]].
 - 자세한 내용: [[2307.07924-chatdev]].
 
+### [[agentverse]] (Chen et al., 2023)
+- 4-stage MDP 루프(Expert Recruitment → Collaborative Decision-Making → Action Execution → Evaluation). 역할 분담을 디자인 시점이 아닌 **runtime에 동적 생성** ([[dynamic-agent-recruitment]]).
+- horizontal(민주적 ensemble; 컨설팅·tool-use)과 vertical(solver+reviewers; 코딩·수학) 의사결정 구조를 명시적으로 분리. AgentVerse 안에서 [[chatdev]]·[[metagpt]]는 본질적으로 vertical 변형.
+- 평가 영역: FED, Commongen, MGSM, Logic Grid, Humaneval(GPT-4 89.0 pass@1), 10-task tool use(9/10 vs ReAct 3/10), Minecraft. SoftwareDev/SRDD는 미평가.
+- Minecraft에서 volunteer / conformity / **destructive** 같은 emergent social behaviors 보고. 안전성 우려 제기.
+- ⚠️ **Multi-agent gain은 base LLM에 종속**: GPT-4는 Group > Solo 일관, GPT-3.5는 MGSM·Commongen에서 Group < Solo. ~10% MGSM 오답이 'erroneous feedback에 의한 sway'.
+- [[chatdev]]와 같은 OpenBMB/Tsinghua 그룹 (Chen Qian 등 공저).
+- 자세한 내용: [[2308.10848-agentverse]].
+
 ### AutoGPT (Torantulino et al., 2023) — *stub*
 - 단일 에이전트가 reasoning loop으로 태스크 분해/실행. 멀티에이전트라기보다 "자율 에이전트"의 원형.
 - 자체 ingest 대기 중.
@@ -47,9 +58,15 @@ status: draft
 - 정확히는 프레임워크라기보다 **에이전트 빌딩 블록 라이브러리**. 다른 멀티에이전트 시스템의 기반으로 자주 쓰임.
 - 자체 ingest 대기 중.
 
-### AgentVerse (Chen et al., 2023) — *stub*
-- 역할 기반 멀티에이전트 환경. MetaGPT와 비교될 때 PRD/기술 설계 생성 같은 소프트웨어 엔지니어링 specific 기능은 없음 (MetaGPT Table 2).
-- 자체 ingest 대기 중.
+## Single-agent precursor / baseline
+
+### [[react]] (Yao et al., ICLR 2023)
+- **Single-agent paradigm.** 멀티에이전트 framework가 아니지만 여기 포함하는 이유: 이 토픽의 모든 멀티에이전트 framework들이 ReAct(2022-10 v1, ICLR 2023 v3)의 'thought + action 인터리브' 패턴을 building block으로 가정하거나 baseline으로 비교하기 때문.
+- 핵심 idea: action space 확장 `̂A = A ∪ L` (`L` = language space, free-form thought). thought는 환경 영향 없이 context만 갱신. 1-6 in-context examples만으로 prompting (no training).
+- 결과: HotpotQA EM에서 CoT 단독(29.4) > ReAct 단독(27.4)이지만 결합(ReAct→CoT-SC) 35.1로 best. Fever에선 ReAct(60.9) > CoT(56.3). Decision-making(ALFWorld 71% SR, WebShop 40.0% SR)에서 prompting만으로 RL/IL trained baseline을 +34%/+10% 압도.
+- Hallucination vs reasoning error trade-off: ReAct hallucination **0%** (CoT 56%), 그러나 reasoning error 47% (CoT 16%) — external grounding이 fact fabrication을 잡지만 'thought-action 반복 루프 탈출 실패' 새 실패 모드.
+- ⚠️ [[agentverse]] §3.3 자체 10-task tool-use 벤치에서 ReAct 3/10 vs AgentVerse 9/10 보고 — **자체-벤치 selection caveat 적용**. ReAct paradigm의 일반적 한계라기보다 task suite design + prompt budget 한계 가능성. C-001과 같은 패턴.
+- 자세한 내용: [[2210.03629-react]].
 
 ## 비교 표 (MetaGPT 논문 Table 2 발췌)
 
@@ -63,7 +80,7 @@ status: draft
 | 역할 기반 태스크 관리 | ❌ | ❌ | ❌ | ✅ | ✅ |
 | 코드 리뷰 | ❌ | ❌ | ✅ | ✅ | ✅ |
 
-> 출처: [[2308.00352-metagpt]] Table 2. **편향 주의**: MetaGPT 저자들이 자기 프레임워크의 강점에 맞춰 axis를 골랐을 가능성이 있다. 다른 ingest로 검증 필요.
+> 출처: [[2308.00352-metagpt]] Table 2. **편향 주의 강화 (2026-04-28 AgentVerse ingest 후)**: 이 표는 MetaGPT 강점 axis에 맞춰져 있을 뿐 아니라, AgentVerse 같은 일반 프레임워크가 'SW 개발 specific 산출물을 명시 모듈로 갖지 않는다'는 점을 단순 ❌로 처리해 비교 자체가 불공정해 보일 수 있다. AgentVerse는 dynamic recruitment + horizontal/vertical 토폴로지로 *어떤 task에서도* 역할을 만들어내므로, 이 axis들은 'AgentVerse가 못한다'기보다 'AgentVerse는 task-specific 기능을 디자인 시점에 hard-code하지 않는다'에 가깝다.
 
 ## ⚠️ Cross-evaluation 모순 (MetaGPT ↔ ChatDev)
 
@@ -81,15 +98,22 @@ status: draft
 - 자유 대화 기반(ChatDev) vs 구조화 문서(MetaGPT)의 우열은 정말 일반적인가? Software engineering처럼 SOP가 잘 정립된 도메인 밖에서도 그러한가?
 - Token cost ↔ 품질 trade-off에서 SOP의 비용은 어디까지 정당화되는가?
 - "에이전트 수 = 4"가 ablation에서 sweet spot으로 보이는데 (Table 3), 이게 LLM의 어떤 한계와 관련 있는가?
+- **(AgentVerse 후 추가)** 정적 SOP vs [[dynamic-agent-recruitment]] 직접 ablation은 어떤 결과를 낼까? AgentVerse §3는 '에이전트 수' ablation만 한다.
+- **(AgentVerse 후 추가)** 멀티에이전트는 base LLM이 약할수록 오히려 해로워지는가? GPT-3.5의 'erroneous feedback에 의한 sway' (~10% MGSM 오답)는 일반화되는 현상인가?
 
 ## Related
 
 - [[sop-for-llm-agents]] — 이 토픽의 핵심 design pattern (강한/약한 두 변형).
+- [[dynamic-agent-recruitment]] — SOP의 정반대 디자인 축. AgentVerse가 명시화.
+- [[react]] — single-agent precursor. 멀티에이전트 framework들의 building block / baseline.
 - [[metagpt]] — 강한 SOP의 대표 구현.
 - [[chatdev]] — 약한 SOP / chat-chain 변형.
+- [[agentverse]] — dynamic recruitment + horizontal/vertical 토폴로지.
 - [[contradictions]] — MetaGPT ↔ ChatDev cross-evaluation 모순.
 
 ## Sources
 
 - [[2308.00352-metagpt|MetaGPT (Hong et al., ICLR 2024)]]
 - [[2307.07924-chatdev|ChatDev (Qian et al., 2024)]]
+- [[2308.10848-agentverse|AgentVerse (Chen et al., 2023)]]
+- [[2210.03629-react|ReAct (Yao et al., ICLR 2023)]]

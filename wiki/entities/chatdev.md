@@ -3,7 +3,7 @@ title: ChatDev
 type: entity
 created: 2026-04-28
 updated: 2026-04-28
-sources: [2307.07924-chatdev]
+sources: [2307.07924-chatdev, 2308.10848-agentverse]
 tags: [framework, multi-agent, code-generation, chat-chain]
 status: draft
 ---
@@ -76,7 +76,9 @@ ablation: CDH 제거 시 4개 metric 모두 하락. coding hallucination 감소�
 ## Related
 
 - [[metagpt]] — 동시대 경쟁 프레임워크. 디자인 철학 정반대 (구조화 문서 vs dialogue).
+- [[agentverse]] — 같은 OpenBMB/Tsinghua 그룹의 cousin (Chen Qian, Yusheng Su, Cheng Yang, Zhiyuan Liu, Maosong Sun 등 공저). ChatDev가 정적 5역할 chat chain이라면 AgentVerse는 dynamic recruitment + horizontal/vertical 선택. 같은 그룹임에도 SRDD에서 cross-comparison은 부재.
 - [[sop-for-llm-agents]] — ChatDev의 chat chain은 SOP의 약한 형태(dialogue-based) 변형.
+- [[dynamic-agent-recruitment]] — ChatDev의 정적 역할 분담의 정반대 축.
 - [[llm-multi-agent-frameworks]] — 비교 hub.
 - [[contradictions]] — MetaGPT와의 cross-evaluation 모순.
 

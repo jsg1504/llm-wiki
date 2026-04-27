@@ -3,7 +3,7 @@ title: SOP for LLM Agents
 type: concept
 created: 2026-04-28
 updated: 2026-04-28
-sources: [2308.00352-metagpt, 2307.07924-chatdev]
+sources: [2308.00352-metagpt, 2307.07924-chatdev, 2308.10848-agentverse]
 tags: [multi-agent, prompt-engineering, sop, workflow]
 status: draft
 ---
@@ -57,13 +57,20 @@ ChatDev은 자기 시스템을 "communicative agents"로 부르고 SOP라는 단
 - [[metagpt]] — 강한 SOP. 5개 역할(PM/Architect/PM/Engineer/QA)과 구조화된 산출물을 명시적으로 인코딩.
 - [[chatdev]] — 약한 SOP. 동일한 워터폴 phase 구조이지만 핸드오버가 dialogue 기반.
 
+## 정반대 축 — Dynamic Recruitment
+
+이 패턴이 푸는 문제(자유 대화의 모호함, cascading hallucination)를 정반대 방향으로 푸는 흐름이 있다: 디자인 시점에 역할을 *고정하는 대신*, runtime에 LLM이 task goal을 보고 그 자리에서 역할을 생성하는 방식. [[agentverse]]가 이를 4-stage MDP 루프로 명시화. 자세히는 [[dynamic-agent-recruitment]] 참고. 두 패턴은 모티베이션은 같지만 design 축이 정반대 — SOP는 **모호함을 절차로 고정**, dynamic recruitment는 **모호함을 task-dependent하게 수용**.
+
 ## Related
 
 - [[metagpt]] — 강한 SOP의 대표 구현.
 - [[chatdev]] — 약한 SOP / dialogue-기반 변형.
-- [[llm-multi-agent-frameworks]] — SOP 기반 vs free-form 비교 hub.
+- [[dynamic-agent-recruitment]] — 이 패턴의 정반대 축.
+- [[agentverse]] — dynamic recruitment의 대표 구현.
+- [[llm-multi-agent-frameworks]] — SOP 기반 vs free-form vs dynamic 비교 hub.
 
 ## Sources
 
 - [[2308.00352-metagpt|MetaGPT (Hong et al., ICLR 2024)]] — SOP-for-agents의 motivation, 강한 SOP 구현, ablation.
 - [[2307.07924-chatdev|ChatDev (Qian et al., 2024)]] — 약한 SOP / chat-chain 변형의 사례.
+- [[2308.10848-agentverse|AgentVerse (Chen et al., 2023)]] — 정반대 축(dynamic recruitment)의 1차 출처.

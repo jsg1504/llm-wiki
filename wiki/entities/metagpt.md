@@ -3,7 +3,7 @@ title: MetaGPT
 type: entity
 created: 2026-04-28
 updated: 2026-04-28
-sources: [2308.00352-metagpt, 2307.07924-chatdev]
+sources: [2308.00352-metagpt, 2307.07924-chatdev, 2308.10848-agentverse]
 tags: [framework, multi-agent, code-generation, sop]
 status: draft
 ---
@@ -64,7 +64,9 @@ ChatDev는 §2 Related Work에서 MetaGPT를 "**static** instructions predefined
 ## Related
 
 - [[chatdev]] — 동시대 cousin·경쟁. 디자인 철학 정반대.
+- [[agentverse]] — 또 다른 동시대 비교 entity. MetaGPT의 정적 5역할 SOP와 정면으로 다른 dynamic recruitment + horizontal/vertical 선택 디자인.
 - [[sop-for-llm-agents]] — MetaGPT가 가장 명시적으로 구현한 패턴.
+- [[dynamic-agent-recruitment]] — MetaGPT 디자인의 정반대 축.
 - [[llm-multi-agent-frameworks]] — 동시대 멀티에이전트 프레임워크 비교 hub.
 - [[2308.00352-metagpt]] — 1차 출처 논문.
 - [[contradictions]] — ChatDev 논문과의 cross-evaluation 모순.

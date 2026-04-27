@@ -47,6 +47,8 @@ status: mature
 
 **위키 포지션**: 둘 다 "자기 self-reported 벤치에서 우월"하다고만 적고, 두 프레임워크의 실제 우열은 미확정으로 둔다. 직접 비교가 필요한 결정에서는 third-party 벤치(예: MetaGPT 논문이 보고한 HumanEval/MBPP — 이건 ChatDev 논문에서 반박되지 않음)를 우선 신뢰.
 
+**메타 정황 (2026-04-28 [[2308.10848-agentverse]] ingest 후 추가)**: AgentVerse 저자 그룹은 [[chatdev]] 저자 그룹과 상당 부분 겹친다 (Chen Qian, Yusheng Su, Cheng Yang, Zhiyuan Liu, Maosong Sun 등 공저, 같은 OpenBMB 우산). 그럼에도 AgentVerse는 SoftwareDev/SRDD에서 ChatDev/MetaGPT와의 직접 비교를 하지 않는다. 새 데이터를 더하지 않으므로 이 모순을 해소하지는 않지만, 같은 그룹에서 만든 시스템들임에도 자체 벤치 cross-comparison이 통합되지 않은 정황은 자체 벤치 비교의 신뢰도에 대한 위키의 회의적 입장을 약하게 강화한다.
+
 ## 다음 등록 시 양식
 
 ```markdown
