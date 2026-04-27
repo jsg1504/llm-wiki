@@ -16,25 +16,27 @@ status: mature
 
 ## 🧠 Topics (큰 주제 영역)
 
-*아직 토픽 페이지가 없습니다. 첫 ingest를 거치면 추가됩니다.*
+- [[llm-multi-agent-frameworks]] — LLM 기반 멀티에이전트 프레임워크 비교 hub (소스 2, updated 2026-04-28)
 
 ---
 
 ## 💡 Concepts (개념·패턴·알고리즘)
 
-*아직 concept 페이지가 없습니다.*
+- [[sop-for-llm-agents]] — 인간 조직의 SOP를 프롬프트 시퀀스로 인코딩하는 패턴, 강한/약한 두 변형 (소스 2, updated 2026-04-28)
 
 ---
 
 ## 👤 Entities (사람·조직·제품·도구·모델)
 
-*아직 entity 페이지가 없습니다.*
+- [[chatdev]] — 워터폴을 chat chain으로 재구성한 LLM 멀티에이전트 SW 개발 프레임워크 (소스 1, 2026-04-28)
+- [[metagpt]] — SOP 기반 LLM 멀티에이전트 협업 프레임워크 (소스 2, updated 2026-04-28)
 
 ---
 
 ## 📄 Sources (원본 소스 1:1 요약)
 
-*아직 source 페이지가 없습니다.*
+- [[2307.07924-chatdev]] — ChatDev: Communicative Agents for Software Development (Qian et al., 2024)
+- [[2308.00352-metagpt]] — MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework (Hong et al., ICLR 2024)
 
 ---
 
@@ -48,6 +50,7 @@ status: mature
 
 - [[log]] — 시간순 활동 기록
 - [[glossary]] — 이 위키 안에서 자주 쓰는 용어 정의
+- [[contradictions]] — 1차 출처 간 모순 레지스트리 (open: 1)
 - [[index]] — (이 페이지)
 
 ---
