@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Obsidian
+.obsidian/workspace*
+.obsidian/cache
+
+# Hook 백업
+.claude/hooks/*.bak
+
+# Claude Code 로컬 설정 (개인 settings.json은 별도)
+.claude/settings.local.json
