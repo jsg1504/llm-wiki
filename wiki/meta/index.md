@@ -2,7 +2,7 @@
 title: Wiki Index
 type: meta
 created: 2026-04-28
-updated: 2026-04-28
+updated: 2026-09-11
 status: mature
 ---
 
@@ -16,25 +16,26 @@ status: mature
 
 ## 🧠 Topics (큰 주제 영역)
 
-*아직 토픽 페이지가 없습니다. 첫 ingest를 거치면 추가됩니다.*
+- [[ai-native-sdlc]] — SDLC 6단계를 선형 핸드오프에서 커밋된 아티팩트가 다음 단계를 트리거하는 루프로 재설계한 것 (소스 1개, 2026-09-11)
 
 ---
 
 ## 💡 Concepts (개념·패턴·알고리즘)
 
-*아직 concept 페이지가 없습니다.*
+- [[agentic-governance]] — 에이전트가 코드를 쓸 때의 통제 계층(skill/hook/managed settings)과 production gate 경계 (소스 1개, 2026-09-11)
+- [[artifact-chain]] — 각 단계가 커밋된 파일로 끝나고 다음 단계가 그것을 읽는 패턴. 커밋 체인이 곧 audit trail (소스 1개, 2026-09-11)
 
 ---
 
 ## 👤 Entities (사람·조직·제품·도구·모델)
 
-*아직 entity 페이지가 없습니다.*
+- [[claude-code]] — Anthropic의 에이전틱 코딩 도구. plan/auto mode, CLAUDE.md, skills, hooks, subagents, worktrees (소스 1개, 2026-09-11)
 
 ---
 
 ## 📄 Sources (원본 소스 1:1 요약)
 
-*아직 source 페이지가 없습니다.*
+- [[2026-08-21-the-ai-native-sdlc-playbook]] — *The AI-Native SDLC playbook*, Louis Claxton (Anthropic / Claude Blog, 2026-08-21). 규제 엔터프라이즈 대상 SDLC 6단계 재설계 플레이북 (2026-09-11)
 
 ---
 
