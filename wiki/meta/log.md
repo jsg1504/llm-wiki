@@ -60,3 +60,14 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - notes: 총 8페이지 수정 + 1페이지 신설. 검증: 깨진 링크 0, frontmatter 10/11 필수 필드 통과, 고아 0.
 - next: lint 액션 #5(2026-08-20-a-harness-for-every-task-dynamic-workflows ingest), #7(`MCP` 페이지), #8(비-Anthropic 소스 확보) 미수행.
 
+
+## [2026-09-12 01:10] ingest | A harness for every task: dynamic workflows in Claude Code
+- source: [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20)
+- created: [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] (source), [[dynamic-workflows]] (concept), [[agent-orchestration-patterns]] (concept)
+- updated: [[multi-agent-systems]], [[ai-native-sdlc]], [[subagent]], [[claude-code]], [[agent-evaluation]], [[orchestrator-worker]], [[agentic-governance]], [[anthropic]], [[index]]
+- contradictions: **[[multi-agent-systems]]의 "코딩은 멀티에이전트에 맞는가"가 부분 판정됨.** 하나의 질문이 아니라 두 개였다. ① 적합성 — 가능해졌으나 2025-06의 판단이 **반증이 아니라 우회**됐다: dynamic workflow는 조정을 LLM이 아니라 결정론적 JS 프로그램에 맡기므로 *"LLM agents are not yet great at coordinating"*을 건드리지 않는다. ② 경제성 — **모순 없음**, 세 소스 일치(새 소스도 "most traditional coding tasks do not need a panel of 5 reviewers"). [[multi-agent-systems]]에 2축 구조로 재작성하고 원문 주장은 한 줄도 삭제하지 않음. [[ai-native-sdlc]]·[[subagent]]의 마커도 동기화.
+- notes: 사용자 승인으로 새 페이지 2개안(A). takeaway 7개 중 #4를 #1에 흡수, #7(quarantine)은 [[agentic-governance]] 한 절로 강등, **새 #8을 최상위로 승격** — 조정 주체가 에이전트가 아니라 결정론적 코드라는 구조적 사실. 소스가 강조하지 않았으나 위키의 열린 모순을 푸는 열쇠였다. 근거: *"the deterministic loop holds the bracket and only the running order stays in context."*
+- discovery: [[subagent]]의 병렬성 **세** 층위 표가 **네** 층위로 확장됐다. "조정 상태가 어디에 사는가"(부모 컨텍스트 / 사람의 머리 / 에이전트 간 합의 / 프로그램 변수)로 보면 네 층위가 한 축에 정렬된다.
+- caveat: **이 소스에는 정량 데이터가 전혀 없다.** [[2025-06-13-multi-agent-research-system]]의 BrowseComp 분산 분석·90.2% 같은 수치와 달리 성능 비교·토큰 실측·성공률이 없고, Bun 재작성도 외부 X 스레드 링크로만 언급된다. 저자들도 "best practices are still developing"이라고 명시. 경험 보고와 측정의 차이를 [[dynamic-workflows]]와 source 페이지에 배너로 박아두었다.
+- open: ① *LLM이 LLM에게 실시간 위임*하는 구조의 데이터는 세 소스 어디에도 여전히 없다. ② 결정론적 조정 vs LLM 조정은 개선인가 트레이드오프인가. ③ [[agent-evaluation]]의 "단일 호출·단일 루브릭 절대 점수" vs 이 소스의 "pairwise가 더 신뢰도 높다" — 용도 구분으로 읽히나 어느 쪽도 측정되지 않았다.
+- gaps: 소스 3/3이 Anthropic. 미통합 raw 1건(2025-07-25 GEPA 논문, raw/papers/). lint 액션 #7(`MCP` 페이지)·#8(비-Anthropic 소스) 미수행.

@@ -2,8 +2,8 @@
 title: AI-Native SDLC
 type: topic
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
+updated: 2026-09-12
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [sdlc, agentic-coding, enterprise-ai, governance, ai-native]
 status: draft
 ---
@@ -158,9 +158,14 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 
 ## Contradiction: 코딩은 멀티에이전트에 맞는가
 
-> ⚠️ **Contradiction (2026-09-12, 미판정):** 이 토픽은 Stage 3에서 **worktree 병렬 세션 2~3개**를 권장하고 Stage 5에서 **계층화된 에이전트 리뷰 pass**를 정식 단계로 둔다. 그러나 [[2025-06-13-multi-agent-research-system]](2025-06)은 코딩을 멀티에이전트 **부적합** 사례로 명시한다 — *"most coding tasks involve fewer truly parallelizable tasks than research, and LLM agents are not yet great at coordinating and delegating to other agents in real time."*
+> ⚠️ **Contradiction (2026-09-12) → 부분 판정 (2026-09-12).** 이 토픽은 Stage 3에서 **worktree 병렬 세션 2~3개**를 권장하고 Stage 5에서 **계층화된 에이전트 리뷰 pass**를 정식 단계로 둔다. 그러나 [[2025-06-13-multi-agent-research-system]](2025-06)은 코딩을 멀티에이전트 **부적합** 사례로 명시한다 — *"most coding tasks involve fewer truly parallelizable tasks than research, and LLM agents are not yet great at coordinating and delegating to other agents in real time."*
 >
-> 양쪽 주장을 모두 보존한다. 논의와 해소 가설은 [[multi-agent-systems]]의 Contradiction 절에 모아두었고, 병렬성 세 층위(subagent / 병렬 세션 / 에이전트 간 실시간 위임)의 구분은 [[subagent]]에 있다. **판정은 3번째 소스를 기다린다.**
+> **3번째 소스가 도착했다.** [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]가 코딩 태스크에서 에이전트가 에이전트를 조정하는 실증(Bun의 Zig→Rust 재작성)을 제시하면서, 이 모순이 **두 개의 질문**이었음이 드러났다:
+>
+> - **할 수 있는가 (적합성)** — 가능해졌다. 단 2025-06의 판단이 반증된 게 아니라 **우회됐다**: 조정을 LLM이 아니라 결정론적 프로그램이 한다. → [[dynamic-workflows]]
+> - **할 가치가 있는가 (경제성)** — **모순 없음.** 세 소스가 일치한다. 새 소스도 *"most traditional coding tasks do not need a panel of 5 reviewers"*라고 쓴다. **이 토픽이 권하는 "병렬 세션 2~3개"와 "리뷰 천장은 사람"이라는 절제는 그대로 유효하다.**
+>
+> 양쪽 주장을 모두 보존한다. 전체 논의는 [[multi-agent-systems]]의 Contradiction 절, 조정 주체 네 층위의 구분은 [[subagent]].
 
 ## Related
 
@@ -168,9 +173,11 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - [[agentic-governance]] — Deploy·Build 단계 통제의 일반화. skill/hook/settings 계층과 production gate
 - [[claude-code]] — 이 플레이북이 각 단계에 배치하는 도구
 - [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성. 아래 Contradiction의 상대편
+- [[dynamic-workflows]] — 마이그레이션·리팩터와 리뷰 pass를 워크플로로 돌리는 접근. Stage 3·5의 확장 경로
 - [[agent-evaluation]] — Stage 4 연속 eval의 일반 원리
 - [[subagent]] — Stage 3의 subagent·병렬 세션이 속한 개념
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Contradiction 절에서 인용. 코딩 태스크의 에이전트 조정 실증과 경제성 재확인.

@@ -2,8 +2,8 @@
 title: Orchestrator-Worker 패턴
 type: concept
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook]
+updated: 2026-09-12
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [multi-agent, architecture, orchestration, context-window, agent-design]
 status: draft
 ---
@@ -91,6 +91,21 @@ lead가 subagent에게 주는 태스크 기술이 부실하면 **중복 수행·
 - **창발적 행동.** lead 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다. 개별 에이전트 행동이 아니라 **상호작용 패턴**을 이해해야 한다.
 - **컨텍스트 공유가 필요한 도메인엔 부적합.** 에이전트 간 의존성이 크면 이 패턴의 전제(독립 탐색)가 무너진다.
 
+### 조정을 누가 들고 있는가 — LLM 주도 조정의 대안
+
+이 패턴에서 **조정 상태는 lead agent의 context window에 산다.** 계획, 누가 무엇을 맡았는지, 무엇이 돌아왔는지가 전부 LLM의 컨텍스트에 있다. 위의 "상태를 다루는 법"이 Memory·요약·핸드오프를 동원하는 이유가 이것이다 — 조정 상태가 컨텍스트 한계와 compaction의 lossy함에 노출되어 있다.
+
+[[dynamic-workflows]]는 같은 fan-out 구조를 쓰되 **조정 상태를 프로그램 변수로 옮긴다** ([[2026-08-20-a-harness-for-every-task-dynamic-workflows]]). 이 패턴의 일반화된 형태가 [[agent-orchestration-patterns]]의 **fan-out-and-synthesize**이고, 차이는 barrier를 누가 들고 있는가다 — 여기서는 lead의 컨텍스트, 저기서는 코드.
+
+| | 이 패턴 | dynamic workflow |
+|---|---|---|
+| 조정 주체 | lead agent (LLM) | 결정론적 프로그램 |
+| 조정 상태의 거처 | lead의 context window (+ Memory) | 프로그램 변수 |
+| 실행 중 전략 변경 | **가능** — 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄운다 | **제한적** — 정지 조건을 미리 표현할 수 있어야 한다 (loop-until-done 패턴) |
+| 취약점 | 컨텍스트 포화, goal drift, self-preferential bias | 잘못 설계된 harness가 잘못을 병렬로 확대 |
+
+**트레이드오프이지 개선이 아니다.** LLM 주도 조정은 유연하고 프로그램 주도 조정은 견고하다. 위의 "알려진 한계" 중 **동기 실행 병목**은 양쪽에 공통이다 — fan-out의 종합 단계도 barrier여서 가장 느린 하나가 전체를 막는다.
+
 ### 상태를 다루는 법
 
 lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** context window가 200,000 토큰을 넘으면 잘려나가므로, 잘린 뒤에도 계획만은 되읽을 수 있어야 하기 때문이다. 같은 발상의 확장이 **긴 대화 관리 패턴**이다 — 완료된 단계를 요약해 외부 메모리에 넣고, context 한계에 다가가면 깨끗한 context의 새 subagent로 핸드오프한다.
@@ -111,8 +126,11 @@ lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** cont
 - [[subagent]] — 이 패턴의 worker 단위. 리서치형과 코딩형의 용어 정렬.
 - [[claude-code]] — 이 패턴의 코딩 도구 구현(subagent 정의 파일, verifier/researcher).
 - [[artifact-chain]] — "파일을 인터페이스로" 처방의 세션 간 판본.
+- [[dynamic-workflows]] — 같은 구조를 조정 주체만 바꿔 구현한 대안.
+- [[agent-orchestration-patterns]] — 이 패턴이 한 항목으로 들어가는 상위 카탈로그.
 - [[anthropic]] — 이 패턴을 프로덕션에서 운영하며 기록을 공개한 주체.
 
 ## Sources
 
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 조정 주체를 프로그램으로 옮긴 대안 구조. "조정을 누가 들고 있는가" 절.
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). 이 페이지 전체의 출처.

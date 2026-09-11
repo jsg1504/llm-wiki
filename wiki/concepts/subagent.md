@@ -3,14 +3,14 @@ title: Subagent
 type: concept
 created: 2026-09-12
 updated: 2026-09-12
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
 
 # Subagent
 
-> 부모 에이전트가 호출하는, **자기 컨텍스트 윈도와 제한된 도구를 가진 하위 에이전트.** 공통 효용은 하나다 — 부모의 컨텍스트를 채우지 않고 일을 대신 해서 **결과만 압축해 올린다.** 이 위키의 두 소스가 서로 다른 도메인(리서치 / 코딩)에서 같은 장치를 다르게 쓰므로, 이 페이지는 그 용어를 정렬한다.
+> 부모 에이전트가 호출하는, **자기 컨텍스트 윈도와 제한된 도구를 가진 하위 에이전트.** 공통 효용은 하나다 — 부모의 컨텍스트를 채우지 않고 일을 대신 해서 **결과만 압축해 올린다.** 이 위키의 소스들이 서로 다른 도메인(리서치 / 코딩)에서, 그리고 서로 다른 **조정 주체** 아래서 같은 장치를 쓰므로, 이 페이지는 그 용어를 정렬한다.
 
 ## Overview
 
@@ -59,21 +59,38 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 
 ## 인접 개념과의 구분 (혼동 주의)
 
-세 가지가 자주 뒤섞여 쓰인다. 이 위키에서는 다음과 같이 구분한다:
+네 가지가 자주 뒤섞여 쓰인다. 이 위키에서는 다음과 같이 구분한다:
 
 | | 무엇인가 | 조정 주체 | 서로를 아는가 |
 |---|---|---|---|
 | **subagent** | 한 세션/한 lead 안에서 도는 하위 에이전트 | 부모 에이전트 | 아니오 (부모를 통해서만) |
 | **병렬 세션 (worktree)** | 각자의 git worktree에서 도는 **완전한 독립 인스턴스** | **사람** | 아니오 — *"공유하는 것은 그것들을 조종하는 엔지니어뿐"* |
 | **에이전트 간 실시간 위임** | 에이전트가 다른 에이전트에게 동적으로 조율·위임 | 에이전트 | 예 (이론상) |
+| **dynamic workflow** | 에이전트가 **쓴 결정론적 프로그램**이 subagent를 spawn·조율 | **프로그램 (코드)** | 아니오 — 프로그램이 결과를 모은다 |
 
 세 번째는 **아직 잘 안 된다고 보고된 것**이다 — *"LLM agents are not yet great at coordinating and delegating to other agents in real time"* (2025-06). 병렬 세션은 이것이 **아니다.** 세션들은 서로를 모르고 사람이 조종하며, 천장도 *"한 사람이 제대로 리뷰할 수 있는 스트림 수"*로 사람에게 묶여 있다.
 
-> ⚠️ **미판정 (2026-09-12):** 이 구분이 [[multi-agent-systems]]에 기록된 모순(코딩 도메인에서 멀티에이전트가 적합한가)을 해소하는지 여부는 **아직 결론 내리지 않았다.** 위 세 행이 서로 다른 대상이라는 것은 두 소스의 서술에서 확인되지만, "그렇다면 두 소스는 애초에 충돌하지 않는다"는 판정은 3번째 소스를 기다린다. 논의는 [[multi-agent-systems]]의 Contradiction 절에 모아둔다.
+**네 번째는 세 번째처럼 보이지만 아니다.** [[dynamic-workflows]]에서 조정을 하는 것은 에이전트가 아니라 **에이전트가 작성한 결정론적 JavaScript 프로그램**이다. 조정 상태(누가 무엇을 했고 다음은 무엇인가)가 어떤 LLM의 context window에도 살지 않고 프로그램 변수에 산다 — *"the deterministic loop holds the bracket and only the running order stays in context"* ([[2026-08-20-a-harness-for-every-task-dynamic-workflows]]). LLM이 판단하는 것은 *harness를 한 번 쓰는 일*뿐이고, 실행 중의 조율은 코드가 한다.
+
+**조정 상태가 어디 사는가**로 보면 네 층위가 한 줄로 정렬된다:
+
+| | 조정 상태의 거처 | 조정 능력의 한계 |
+|---|---|---|
+| subagent (orchestrator-worker) | 부모 LLM의 context window | 부모의 컨텍스트가 차면 열화. compaction이 lossy |
+| 병렬 세션 | 사람의 머리 | *"한 사람이 제대로 리뷰할 수 있는 스트림 수"* |
+| 에이전트 간 실시간 위임 | 에이전트들 사이 (합의) | *"not yet great"* — 보고된 미성숙 |
+| dynamic workflow | **프로그램 변수 (컨텍스트 밖)** | 정지 조건을 **미리 표현할 수 있어야** 한다 |
+
+> ✅ **판정 (2026-09-12):** [[multi-agent-systems]]의 모순은 **두 축으로 나뉘어 부분 판정됐다.**
+>
+> - **적합성 축** — 코딩에서 에이전트를 여럿 조정하는 것은 **가능해졌다.** 단 2025-06의 판단이 **반증된 것이 아니라 우회됐다** — 네 번째 층위는 LLM의 조정 능력에 의존하지 않는다. 세 번째 층위(LLM이 LLM에게 실시간 위임)에 대한 데이터는 세 소스 어디에도 **여전히 없다.**
+> - **경제성 축** — **모순 없음.** 세 소스가 일치한다.
+>
+> 전체 논의와 근거는 [[multi-agent-systems]]의 Contradiction 절.
 
 ## 알려진 한계
 
-- **subagent끼리 협력할 수 없다.** 반환은 부모에게만 간다. 리서치 시스템은 현재 lead가 subagent 묶음을 **동기적으로** 기다리므로, 느린 하나가 전체를 막고 lead가 진행 중인 subagent를 조종할 수도 없다.
+- **subagent끼리 협력할 수 없다.** 네 층위 전부에서 그렇다 — 반환은 부모(또는 프로그램)에게만 간다. [[agent-orchestration-patterns]]의 여섯 패턴 중 에이전트가 서로 직접 주고받는 것은 하나도 없다. 리서치 시스템은 현재 lead가 subagent 묶음을 **동기적으로** 기다리므로, 느린 하나가 전체를 막고 lead가 진행 중인 subagent를 조종할 수도 없다.
 - **개수를 스스로 정하지 못한다.** 초기 시스템은 단순한 쿼리에 subagent 50개를 띄웠다. 노력 배분 규칙을 프롬프트에 명시해야 한다.
 - **창발적 행동.** 부모 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다.
 
@@ -84,8 +101,11 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[claude-code]] — 코딩형 subagent와 병렬 세션(worktree)의 실제 구현
 - [[agent-evaluation]] — verifier subagent가 "오염되지 않은 판정"으로 쓰이는 맥락
 - [[artifact-chain]] — 파일을 인터페이스로 삼는 같은 처방의 다른 층위
+- [[dynamic-workflows]] — 조정을 컨텍스트 밖 코드로 옮긴 네 번째 층위
+- [[agent-orchestration-patterns]] — subagent를 엮는 여섯 가지 제어 구조
 
 ## Sources
 
 - [[2025-06-13-multi-agent-research-system]] — 리서치형 subagent, 위임 사양, game of telephone, 동기 실행 한계
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — 코딩형 subagent 정의 방식, verifier/researcher/simplifier, 병렬 세션과의 구분
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 결정론적 프로그램이 조정하는 네 번째 층위, 모순 판정의 근거

@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook]
+updated: 2026-09-12
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -42,6 +42,22 @@ status: draft
 
 출력은 **0.0~1.0 점수 + pass/fail 등급**. 정답이 분명한 케이스("R&D 예산 상위 3개 제약사를 정확히 나열했는가")에서 특히 잘 작동한다.
 
+> ⚠️ **다른 소스는 다르게 권한다.** [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 정성적 판정에서 ***"comparative judgment is more reliable than absolute scoring"***이라며 **pairwise 비교 토너먼트**를 권한다 — 1000+ 항목을 심각도순으로 정렬할 때 절대 점수 대신 각 비교를 자기 에이전트로 띄우는 식이다. 위의 *"단일 호출·단일 루브릭 + 0.0~1.0 점수"*와 방법이 충돌한다.
+>
+> 다만 **대상이 다르다.** 위쪽은 *하나의 산출물을 채점*하는 상황이고(정답이 분명한 케이스에서 특히 잘 작동한다고 명시), 아래쪽은 *다수를 서로 견주어 순위를 매기는* 상황이다. 실질 모순이라기보다 용도 구분으로 읽히지만, **어느 쪽도 상대를 측정해 비교하지는 않았다.** 새 소스는 이 명제에 근거를 대지 않는다. → [[agent-orchestration-patterns]]의 tournament 패턴
+
+### 2b. 판정자는 산출물을 만든 에이전트와 분리되어야 한다
+
+같은 컨텍스트가 만들고 채점하면 **self-preferential bias**가 걸린다 — *"Claude's tendency to prefer its own results or findings, **especially when asked to verify or judge them against a rubric**"* ([[2026-08-20-a-harness-for-every-task-dynamic-workflows]]). 루브릭을 주는 것이 편향을 막아주지 않고, 오히려 편향이 가장 잘 나타나는 상황이라는 점이 요지다.
+
+처방은 구조적이다:
+
+- **adversarial verification** — 산출물마다 별도 에이전트가 루브릭에 비추어 적대적으로 검증한다. [[claude-code]]의 verifier subagent가 *"신선한 컨텍스트 윈도로 한 번"* 도는 것을 모든 산출물로 체계화한 형태.
+- **skeptic 페르소나** — 검증자를 촘촘히 걸면 false positive가 늘어난다. 규칙·판정 자체가 타당한지 되묻는 에이전트를 두어 과잉 지적을 억제한다.
+- **disjoint 증거원** — 근본원인 조사에서 로그·파일·데이터 담당 에이전트를 나눠 가설이 서로 오염되지 않게 한다.
+
+**eval 자체를 워크플로로 돌릴 수도 있다** — worktree에서 에이전트를 띄워 산출물을 만들고, 비교 에이전트가 루브릭으로 채점한다. 예: 내가 만든 skill을 특정 기준으로 평가·개선. → [[dynamic-workflows]]
+
 ### 3. 사람 평가가 자동화의 사각지대를 잡는다
 
 사람이 직접 써보면 eval이 놓치는 것들이 나온다 — 특이한 쿼리에서의 환각, 시스템 실패, 그리고 **미묘한 출처 선택 편향**. 실제로 Research 초기 에이전트가 권위 있지만 검색 순위가 낮은 학술 PDF·개인 블로그 대신 **SEO 최적화된 콘텐츠팜**을 일관되게 고르는 것을 사람 테스터가 발견했다. 프롬프트에 source quality 휴리스틱을 추가해 해결했다.
@@ -64,6 +80,7 @@ status: draft
 
 ## Related
 
+- [[agent-orchestration-patterns]] — adversarial verification·tournament가 제어 구조로 구현된 형태
 - [[orchestrator-worker]] — 평가를 어렵게 만드는 그 구조. 경로 비결정성의 출처다.
 - [[multi-agent-systems]] — 창발적 행동 때문에 "개별 에이전트가 아니라 상호작용을 평가해야 한다"는 논점이 여기서 나온다.
 - [[ai-native-sdlc]] — eval을 SDLC의 CI 게이트로 배치하는 관점.
@@ -73,5 +90,6 @@ status: draft
 
 ## Sources
 
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — self-preferential bias, adversarial verification, skeptic 페르소나, pairwise 판정
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). "Effective evaluation of agents" 절과 부록. 이 페이지의 1~5절.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog (2026-08-21). 6절(eval을 CI에 넣기)만 이 소스에서 왔다.

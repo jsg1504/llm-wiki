@@ -2,8 +2,8 @@
 title: 멀티에이전트 시스템
 type: topic
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook]
+updated: 2026-09-12
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [multi-agent, agentic-workflows, token-economics, architecture]
 status: draft
 ---
@@ -65,6 +65,16 @@ status: draft
 
 조정 복잡도가 빠르게 커지므로 프롬프트가 행동 교정의 주 레버가 된다. 초기 실패들은 전형적이다 — 간단한 쿼리에 subagent 50개 생성, 존재하지 않는 출처를 끝없이 검색, 과도한 업데이트로 서로 주의 분산. 교훈은 프롬프트를 **엄격한 지시문이 아니라 분업·문제해결 방식·노력 예산을 정의하는 협업 프레임워크**로 쓰라는 것이다. 구체적 지침은 [[orchestrator-worker]] 참조.
 
+### 단일 에이전트가 길어질 때 무너지는 방식
+
+멀티에이전트를 쓰는 이유는 처리량만이 아니다. 한 context window에서 오래 일할수록 나타나는 **세 가지 실패 모드**가 있고, 이것이 구조를 나누는 독립적인 근거가 된다 ([[2026-08-20-a-harness-for-every-task-dynamic-workflows]]):
+
+- **Agentic laziness** — 복잡한 다부분 태스크를 끝내기 전에 멈추고 부분 진척으로 완료를 선언한다 (보안 리뷰 50개 항목 중 35개).
+- **Self-preferential bias** — 자기 결과를 편애한다. **특히 루브릭에 비추어 스스로 검증·판정하라고 했을 때.** 이것이 검증자를 분리해야 하는 이유다 → [[agent-evaluation]]
+- **Goal drift** — 여러 턴에 걸쳐 원 목표 충실도가 점진적으로 상실된다. **특히 compaction 이후** — 요약이 lossy해서 엣지케이스 요건이나 *"don't do X"* 제약이 유실된다.
+
+이 프레이밍은 앞 절의 토큰 논변과 다른 층위다. 토큰이 *"왜 여럿이 더 잘하는가"*를 설명한다면, 이쪽은 *"왜 하나가 오래 하면 못하는가"*를 설명한다. 둘 다 참일 수 있고, 실제로 같은 처방(독립 context window로 나누기)으로 수렴한다. 구조로 막는 방법은 [[dynamic-workflows]]와 [[agent-orchestration-patterns]].
+
 ### 창발적 행동을 전제로 설계한다
 
 멀티에이전트 시스템에는 프로그래밍하지 않은 행동이 나타난다. lead agent 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다. 따라서 **개별 에이전트의 행동이 아니라 상호작용 패턴을 이해해야** 하고, 이것이 [[agent-evaluation]]에서 "경로 대신 결과를 본다"는 원칙으로 이어진다.
@@ -82,31 +92,62 @@ status: draft
 
 ## Contradiction: 코딩은 멀티에이전트에 맞는가
 
-> ⚠️ **Contradiction (2026-09-11):** 두 소스가 코딩 도메인에서의 멀티에이전트 적합성에 대해 반대 방향을 가리킨다.
->
-> - [[2025-06-13-multi-agent-research-system]] (2025-06): 코딩을 **부적합 사례로 명시**한다. *"most coding tasks involve fewer truly parallelizable tasks than research, and LLM agents are not yet great at coordinating and delegating to other agents in real time."*
-> - [[2026-08-21-the-ai-native-sdlc-playbook]] / [[ai-native-sdlc]] (2026-08): worktree로 격리한 **병렬 세션 2~3개**를 권장하고, 계층화된 **에이전트 리뷰 pass**를 SDLC의 정식 단계로 배치한다.
->
-> **해소 가설 두 가지 (미검증):**
-> 1. **오케스트레이터가 다르다.** 전자가 부정한 것은 *에이전트가 에이전트에게 실시간으로 위임하는* 구조이고, 후자가 권하는 병렬은 *사람이 오케스트레이션하고 각 스트림이 독립 worktree에서 도는* 구조다. 후자 스스로 *"the practical ceiling is how many streams one person can review properly"*라고 천장을 사람의 리뷰 능력에 둔다. 그렇다면 둘은 서로 다른 것을 말하고 있으며 모순이 아니다.
-> 2. **시점 차이.** 14개월 간격이고, 전자가 *"not yet"*, *"today"*로 시점을 한정했다. 모델의 조정 능력이 그사이 향상됐다면 전자의 판단이 갱신된 것일 수 있다.
->
-> **2026-09-12 lint에서 추가된 증거 (가설 ① 관련):** [[claude-code]]가 병렬 세션을 *"각자의 git worktree에서 별도 작업을 하는 완전한 Claude Code 인스턴스. **서로를 모르며, 공유하는 것은 그것들을 조종하는 엔지니어뿐**"*으로, subagent를 *"**단일 세션 안에서** 도는 스코프된 헬퍼"*로 정의한다. 즉 SDLC 플레이북이 권하는 병렬은 **에이전트 간 실시간 위임이 아니다.** 병렬성 세 층위의 구분은 [[subagent]]에 정리했다.
->
-> **판정 상태: 미판정.** 위 증거는 가설 ①과 일관되지만 "따라서 두 소스는 애초에 충돌하지 않는다"는 결론은 내리지 않는다. 가설 ②(14개월 시차로 *"not yet"*이 완화됐는가)는 여전히 미검증이고, 두 소스 모두 **에이전트가 에이전트에게 위임하는 코딩**에 대한 데이터를 주지 않는다.
->
-> **필요한 추가 조사:** 두 소스 이후에 나온, 코딩 태스크에서 에이전트 간 위임을 실제로 측정한 자료.
+> ⚠️ **Contradiction (2026-09-11) → 부분 판정 (2026-09-12).** 세 번째 소스([[2026-08-20-a-harness-for-every-task-dynamic-workflows]])가 들어오면서 이 모순이 **하나의 질문이 아니라 두 개**였음이 드러났다. 아래에 원래 주장을 그대로 보존하고, 두 축으로 나눠 판정한다.
+
+### 원래 기록된 대립 (2026-09-11, 원문 보존)
+
+- [[2025-06-13-multi-agent-research-system]] (2025-06): 코딩을 **부적합 사례로 명시**한다. *"most coding tasks involve fewer truly parallelizable tasks than research, and LLM agents are not yet great at coordinating and delegating to other agents in real time."*
+- [[2026-08-21-the-ai-native-sdlc-playbook]] / [[ai-native-sdlc]] (2026-08): worktree로 격리한 **병렬 세션 2~3개**를 권장하고, 계층화된 **에이전트 리뷰 pass**를 SDLC의 정식 단계로 배치한다.
+
+**당시 세운 해소 가설 두 가지:**
+1. **오케스트레이터가 다르다.** 전자가 부정한 것은 *에이전트가 에이전트에게 실시간으로 위임하는* 구조이고, 후자가 권하는 병렬은 *사람이 오케스트레이션하고 각 스트림이 독립 worktree에서 도는* 구조다. 후자 스스로 *"the practical ceiling is how many streams one person can review properly"*라고 천장을 사람의 리뷰 능력에 둔다.
+2. **시점 차이.** 14개월 간격이고, 전자가 *"not yet"*, *"today"*로 시점을 한정했다.
+
+**2026-09-12 lint에서 추가된 증거 (가설 ① 관련):** [[claude-code]]가 병렬 세션을 *"각자의 git worktree에서 별도 작업을 하는 완전한 Claude Code 인스턴스. **서로를 모르며, 공유하는 것은 그것들을 조종하는 엔지니어뿐**"*으로, subagent를 *"**단일 세션 안에서** 도는 스코프된 헬퍼"*로 정의한다. 병렬성 세 층위의 구분은 [[subagent]]에 정리했다.
+
+### 축 1 — **할 수 있는가 (적합성): 판정됨.** 뒤집힌 게 아니라 우회됐다
+
+세 번째 소스가 **코딩 태스크에서 에이전트가 에이전트를 조정하는 실제 사례**를 제시한다. Bun이 Zig에서 Rust로 재작성된 것이 dynamic workflow를 통해서였고, 방법은 수정 단위마다 worktree에서 subagent를 띄우고 별도 에이전트가 적대적으로 리뷰한 뒤 머지하는 것이다. 가설 ②(14개월 시차)가 지지되는 것처럼 보인다.
+
+**그러나 더 정확한 판정은 "우회"다.** 2025-06이 부정한 것은 *"LLM agents are not yet great at **coordinating and delegating** to other agents in real time"* — 즉 **LLM이 조정을 잘 못한다**는 것이다. [[dynamic-workflows]]는 그 능력이 좋아졌다고 주장하지 않는다. 대신 **조정을 LLM에게서 빼앗아 결정론적 JavaScript 프로그램에 맡긴다.**
+
+> *"Each comparison is its own agent, so **the deterministic loop holds the bracket** and only the running order stays in context."*
+
+따라서 두 소스는 서로 다른 것을 말하고 있으며, **2025-06의 판단은 여전히 반증되지 않았다.** 반증되려면 *LLM이 실시간으로 다른 LLM에게 위임하는* 구조의 데이터가 필요한데, 세 소스 중 어느 것도 그것을 주지 않는다. 조정 주체의 네 번째 범주가 생긴 것이고, 구분표는 [[subagent]]에 있다.
+
+**가설 ①도 폐기되지 않는다.** SDLC 플레이북의 병렬 세션은 여전히 사람이 조종하는 구조이고, dynamic workflow는 그것과도 다른 세 번째 것이다. 세 소스가 각각 **다른 조정 주체**를 말하고 있었던 셈이다.
+
+### 축 2 — **할 가치가 있는가 (경제성): 모순 없음.** 세 소스가 일치한다
+
+이 축에서는 애초에 대립이 없었고, 세 번째 소스가 그것을 분명히 한다.
+
+| 소스 | 경제성 판단 |
+|---|---|
+| [[2025-06-13-multi-agent-research-system]] (2025-06) | 멀티에이전트는 챗 대비 **~15x 토큰**. 가치 높은 태스크에만 |
+| [[2026-08-21-the-ai-native-sdlc-playbook]] (2026-08) | 병렬 세션 **2~3개**가 출발점. 천장은 *"한 사람이 제대로 리뷰할 수 있는 스트림 수"* |
+| [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] (2026-08) | *"may end up using significantly more tokens"* / ***"most traditional coding tasks do not need a panel of 5 reviewers"*** / *"parallelism and specialization have to **earn their coordination cost**"* |
+
+세 번째 소스는 **기능을 소개하는 글이면서도 경제성 제약을 스스로 강화한다.** 즉 *"이제 코딩에서도 에이전트를 여럿 굴릴 수 있다"*는 것과 *"대부분의 코딩 작업에서 그래야 한다"*는 전혀 다른 명제이며, 세 소스 모두 후자를 부정한다.
+
+### 남는 것
+
+- **미해결:** *LLM이 다른 LLM에게 실시간 위임하는* 구조가 지금은 잘 되는가? 세 소스 모두 데이터 없음. 필요한 자료는 결정론적 harness **없이** 에이전트 간 위임을 측정한 것.
+- **미해결:** 결정론적 조정이 LLM 조정보다 항상 나은가, 아니면 유연성을 잃는 트레이드오프인가? [[dynamic-workflows]]의 한계 절에 기록.
+- **편향 주의:** 세 소스 모두 Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
 
 ## Related
 
 - [[orchestrator-worker]] — 이 주제의 대표 아키텍처. 구조와 위임 방법.
 - [[agent-evaluation]] — 비결정적 멀티에이전트를 어떻게 검증하는가.
-- [[subagent]] — 이 시스템들의 기본 단위. 병렬성 세 층위의 구분.
+- [[subagent]] — 이 시스템들의 기본 단위. 조정 주체에 따른 병렬성 층위 구분.
 - [[ai-native-sdlc]] — 코딩 도메인에서 에이전트를 병렬로 굴리는 반대편 주제. 위 Contradiction 절의 상대편이다.
 - [[claude-code]] — 사람이 오케스트레이션하는 병렬 세션(worktree)을 실제로 제공하는 도구.
-- [[anthropic]] — 이 위키에 들어온 멀티에이전트 자료 대부분의 출처.
+- [[dynamic-workflows]] — 조정을 LLM이 아니라 결정론적 코드에 맡기는 접근. 위 Contradiction 축 1의 판정 근거.
+- [[agent-orchestration-patterns]] — 여러 에이전트를 엮는 여섯 가지 제어 구조 카탈로그.
+- [[anthropic]] — 이 위키에 들어온 멀티에이전트 자료 **전부**의 출처. 외부 관점 부재는 이 페이지의 판정을 읽을 때의 주의 사항이다.
 
 ## Sources
 
 - [[2025-06-13-multi-agent-research-system]] — 이 페이지의 주 출처. 아키텍처·경제성·프로덕션 전반.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Contradiction 절에서만 인용. 코딩 도메인의 병렬 세션 권장.
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 세 실패 모드, 조정 주체의 네 번째 범주, 경제성 재확인. Contradiction 축 1·2 판정의 근거.

@@ -2,8 +2,8 @@
 title: Claude Code
 type: entity
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
+updated: 2026-09-12
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -12,7 +12,7 @@ status: draft
 
 > Anthropic의 에이전틱 코딩 도구. 이 페이지는 [[ai-native-sdlc]] 플레이북이 SDLC 각 단계에 배치하는 기능들 — plan mode, auto mode, `CLAUDE.md`, skills, hooks, subagents, worktrees, permissions/sandbox, 비대화형 실행 — 을 **통제와 워크플로우 관점에서** 정리한다.
 
-> ℹ️ **범위 주의:** 이 페이지의 기능 서술은 주로 [[2026-08-21-the-ai-native-sdlc-playbook]]에 기반하며, 그 출처가 SDLC 맥락에서 언급한 기능만 다룬다. 도구의 전체 기능 목록이 아니다. 병렬성 절의 일반 원리는 [[2025-06-13-multi-agent-research-system]]을 함께 인용한다.
+> ℹ️ **범위 주의:** 이 페이지의 기능 서술은 주로 [[2026-08-21-the-ai-native-sdlc-playbook]]에 기반하며, 그 출처가 SDLC 맥락에서 언급한 기능만 다룬다. 도구의 전체 기능 목록이 아니다. 병렬성 절의 일반 원리는 [[2025-06-13-multi-agent-research-system]]을, Dynamic workflows 절은 [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]를 인용한다.
 
 ## Overview
 
@@ -109,6 +109,20 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 
 **verifier subagent vs 피드백 루프:** 피드백 루프는 작업 내내 필요한 만큼 반복된다. verifier subagent는 세션이 작업이 끝났다고 믿을 때 **신선한 컨텍스트 윈도로 한 번** 도는 최종 확인이다. 요점은 **판정이 코드를 만든 가정에 오염되지 않는다는 것.** 이것은 [[agent-evaluation]]의 "경로가 아니라 결과를 본다" 원칙을 도구 차원에서 구현한 것이다.
 
+### Dynamic workflows
+
+Claude가 **태스크별 harness를 JavaScript로 즉석에서 작성·실행**하는 기능. 앞의 subagent가 "세션 안에서 부르는 헬퍼"라면, 워크플로는 **그 헬퍼들을 무엇을 어떤 순서로 몇 개 띄울지를 담은 프로그램**이다. 개념과 경제성은 [[dynamic-workflows]], 제어 구조는 [[agent-orchestration-patterns]].
+
+- **트리거:** 그냥 워크플로를 만들어 달라고 하거나, 트리거 단어 **`ultracode`**를 쓴다.
+- **저장:** 워크플로 메뉴에서 **`s`**. `~/.claude/workflows`에 체크인하거나 skill에 담아 배포한다. skill로 배포할 때는 스크립트가 아니라 **템플릿으로 취급하라고 프롬프트**하는 편이 유연하다.
+- **모델·격리를 워크플로가 정한다.** 에이전트마다 어떤 모델을 쓸지, subagent를 각자의 worktree에서 돌릴지 결정할 수 있다.
+- **중단 복구:** 사용자 개입이나 터미널 종료로 중단되어도 세션 재개 시 이어 간다.
+- **`/deep-research`** skill이 dynamic workflow로 구현되어 있다 — 웹 검색 fan-out → 소스 fetch → 주장을 적대적으로 검증 → 인용된 리포트 종합.
+- **`/loop`·`/goal`과의 조합:** 반복 가능한 워크플로(triage, research, verification)는 `/loop`로 정기 실행하고 `/goal`로 하드한 완료 요건을 건다.
+- **토큰 예산:** *"use 10k tokens"*처럼 프롬프트에 쓰면 상한이 걸린다. 저자들이 명시적으로 권하는 통제 수단이다.
+
+> **다른 병렬 장치와의 관계:** 병렬 세션은 **사람이**, orchestrator-worker는 **lead agent가**, dynamic workflow는 **프로그램이** 조정한다. 셋은 대체재가 아니라 조정 주체가 다른 층위다 → [[subagent]]
+
 ## 통제 표면
 
 ### Hooks
@@ -160,12 +174,15 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **병렬 세션은 작업 수를, subagent는 집중을 늘린다.** 천장은 사람의 리뷰 능력.
 - **skill은 advisory, hook은 deterministic.** 둘은 대체재가 아니라 계층이다.
 - **비대화형 실행이 루프를 닫는 열쇠다** — stateless하게 시작하고 끝나므로 사람이 호출 경로에 없어도 된다.
+- **dynamic workflow는 조정 로직을 컨텍스트 밖 코드로 옮긴다.** 병렬 세션(사람이 조정)·subagent(lead가 조정)와 구분되는 세 번째 조정 주체다.
 
 ## Related
 
 - [[ai-native-sdlc]] — 이 기능들이 SDLC 6단계에 배치되는 방식
 - [[agentic-governance]] — skill/hook/settings 계층과 production gate의 일반 원리
 - [[artifact-chain]] — `CLAUDE.md`·`plan.md` 등이 만드는 아티팩트 체인
+- [[dynamic-workflows]] — Dynamic workflows 기능의 개념·실패 모드·경제성
+- [[agent-orchestration-patterns]] — 워크플로가 조합하는 여섯 가지 제어 구조
 - [[subagent]] — 이 페이지의 subagent·병렬 세션이 속한 일반 개념
 - [[orchestrator-worker]] — subagent를 쓰는 아키텍처의 일반 원리
 - [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성과 적합 조건
@@ -174,3 +191,4 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Dynamic workflows 절의 출처

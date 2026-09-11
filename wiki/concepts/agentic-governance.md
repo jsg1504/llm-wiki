@@ -2,8 +2,8 @@
 title: Agentic Governance
 type: concept
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook]
+updated: 2026-09-12
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [governance, enterprise-ai, agentic-coding, security, compliance, ai-native]
 status: draft
 ---
@@ -108,6 +108,20 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 즉 에이전트의 산출량이 아무리 늘어도 **승인의 병목은 의도적으로 사람에 남긴다.** 이것이 "속도를 위해 통제를 포기하지 않는다"는 문서 전체의 입장이다.
 
+## Quarantine: 권한을 에이전트 단위로 쪼갠다
+
+앞의 세 계층(skill / hook / managed settings)이 **한 에이전트가 무엇을 할 수 있는가**를 통제한다면, 여러 에이전트를 돌릴 때는 **어떤 에이전트가 무엇을 할 수 있는가**라는 축이 하나 더 생긴다.
+
+[[2026-08-20-a-harness-for-every-task-dynamic-workflows]]가 대규모 triage 워크플로에서 권하는 **quarantine 패턴**:
+
+> 신뢰할 수 없는 공개 콘텐츠를 읽는 에이전트가 **고권한 행동을 하지 못하게 막고**, 행동은 그 정보를 넘겨받은 별도 에이전트가 한다.
+
+읽기와 행동을 다른 에이전트에 둔다는 것이 전부다. 효과는 **prompt injection을 아키텍처 층위에서 무력화**하는 것 — 주입된 지시를 읽은 에이전트에게는 실행할 권한이 없고, 권한을 가진 에이전트는 주입된 텍스트를 보지 않는다.
+
+이것은 위 **separation of duties** 절의 원리를 **에이전트 사이로** 확장한 것이다. 사람과 에이전트의 역할을 나누는 것과 같은 발상이며, 통제 수단도 이미 있는 것들이다 — subagent 정의의 `tools` 제한([[subagent]]), `permissions.deny`, sandbox. 새로운 것은 **그 제한을 워크플로 설계 시점에 역할별로 배치한다**는 점이다.
+
+> ⚠️ 소스가 이 패턴을 한 문단으로만 언급하며, 구현 예시나 실패 사례는 제시하지 않는다. 원리는 분명하지만 이 위키에는 아직 **검증된 레시피가 없다.**
+
 ## 인간 주의의 재배치
 
 통제를 옮기는 것의 목적은 사람을 빼는 것이 아니라 **사람의 주의를 값어치 있는 곳에 놓는 것**이다.
@@ -146,6 +160,8 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 ## Key Points
 
+- **여러 에이전트를 돌리면 통제 축이 하나 늘어난다** — 무엇을 할 수 있는가에 더해 **누가** 할 수 있는가. quarantine 패턴이 그 최소 형태다.
+
 - **통제는 계층이다.** skill(advisory) < hook(deterministic) < managed settings(강제). 판단 기준은 "이 정책이 예외 없이 성립해야 하는가".
 - **각 계층은 이전 계층이 남긴 구멍을 닫는다.** permission → sandbox → credentials. 통제 하나가 완결적이라 가정하지 않는다.
 - **hook의 세 동작이 단계에 대응한다.** build는 allow/block, deploy는 ask. 승인 프롬프트를 build에 두면 병렬 세션 전체의 critical path에 사람이 올라간다.
@@ -163,10 +179,14 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 ## Related
 
+- [[dynamic-workflows]] — quarantine이 등장하는 맥락. 여러 에이전트를 돌릴 때의 통제
+- [[agent-orchestration-patterns]] — 역할별 에이전트 배치의 제어 구조
+
 - [[ai-native-sdlc]] — 이 통제들이 배치되는 6단계 프로세스
 - [[artifact-chain]] — 승인 게이트가 걸리는 대상이자 audit trail의 기반
 - [[claude-code]] — skill·hook·permission·sandbox·managed settings의 구현
 
 ## Sources
 
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — quarantine 패턴 (Quarantine 절)
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)

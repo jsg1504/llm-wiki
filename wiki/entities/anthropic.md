@@ -2,8 +2,8 @@
 title: Anthropic
 type: entity
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook]
+updated: 2026-09-12
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
 tags: [organization, ai-lab, claude, anthropic]
 status: stub
 ---
@@ -14,7 +14,7 @@ status: stub
 
 ## Overview
 
-이 페이지는 Anthropic이라는 조직 전반을 다루지 않는다. **이 위키의 소스들이 드러내는 만큼만** 기록한다. 현재까지는 두 편의 실무 문서를 통해 두 가지 얼굴이 나타난다:
+이 페이지는 Anthropic이라는 조직 전반을 다루지 않는다. **이 위키의 소스들이 드러내는 만큼만** 기록한다. 현재까지는 세 편의 실무 문서를 통해 두 가지 얼굴이 나타난다 — 자기 시스템을 만든 기록([[2025-06-13-multi-agent-research-system]], [[2026-08-20-a-harness-for-every-task-dynamic-workflows]])과 고객에게 방법을 파는 문서([[2026-08-21-the-ai-native-sdlc-playbook]]):
 
 - **엔지니어링 조직으로서** — 자사 프로덕션 시스템(Research 기능)을 만들며 깨진 것들을 공개한다 ([[2025-06-13-multi-agent-research-system]]).
 - **엔터프라이즈 조력자로서** — Applied AI 팀이 고객사와 일하며 얻은 패턴을 플레이북으로 낸다 ([[2026-08-21-the-ai-native-sdlc-playbook]]).
@@ -32,13 +32,13 @@ status: stub
 
 ### 문서 작성 방식의 특징
 
-두 소스에서 공통으로 보이는 패턴:
+세 소스에서 공통으로 보이는 패턴:
 
 - **실패 사례를 구체적으로 공개한다.** subagent 50개를 띄운 초기 에이전트, 중복 검색을 한 3개 중 2개, SEO 콘텐츠팜 편향 등.
 - **자사 제품에 불리한 한계도 명시한다.** 멀티에이전트의 15배 토큰 비용, 코딩 도메인 부적합 판정.
 - **단, 핵심 수치는 내부 eval이고 루브릭은 비공개다.** 90.2% 같은 숫자는 외부 재현이 불가능하다.
 
-> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. 멀티에이전트·에이전틱 코딩에 대한 **외부 관점(비판, 독립 벤치마크, 경쟁 아키텍처)** 이 현재 위키에 없다.
+> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. 멀티에이전트·에이전틱 코딩에 대한 **외부 관점(비판, 독립 벤치마크, 경쟁 아키텍처)** 이 현재 위키에 없다. **소스 3개 중 3개가 Anthropic이며**, [[multi-agent-systems]]의 모순 판정도 전부 이 출처들에 기대고 있다. 게다가 [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 정량 데이터를 제시하지 않는 경험 보고다.
 
 ## Related
 
@@ -47,11 +47,13 @@ status: stub
 - [[agent-evaluation]] — Anthropic이 공개한 평가 실무.
 - [[claude-code]] — Anthropic의 에이전틱 코딩 도구.
 - [[ai-native-sdlc]] — Applied AI 팀이 낸 엔터프라이즈 SDLC 플레이북의 주제 페이지.
-- [[artifact-chain]] — 두 소스가 각자 도달한 "파일을 인터페이스로" 패턴.
+- [[artifact-chain]] — 여러 소스가 각자 도달한 "파일을 인터페이스로" 패턴.
+- [[dynamic-workflows]] — 세 번째 소스가 소개하는, harness 제작을 모델에게 넘기는 접근.
 - [[agentic-governance]] — Claude Code의 통제 표면을 조직 정책으로 쓰는 방식.
-- [[subagent]] — 두 소스가 같은 단어로 다른 것을 가리키는 지점.
+- [[subagent]] — 소스들이 같은 단어로 다른 것을 가리키는 지점.
 
 ## Sources
 
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering 블로그 (2025-06-13).
+- [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Claude Blog, Claude Code 팀 기술 스태프 (2026-08-20).
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog, Applied AI 팀 (2026-08-21).
