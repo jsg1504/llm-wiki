@@ -3,7 +3,7 @@ title: Claude Code
 type: entity
 created: 2026-09-11
 updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -12,7 +12,7 @@ status: draft
 
 > Anthropic의 에이전틱 코딩 도구. 이 페이지는 [[ai-native-sdlc]] 플레이북이 SDLC 각 단계에 배치하는 기능들 — plan mode, auto mode, `CLAUDE.md`, skills, hooks, subagents, worktrees, permissions/sandbox, 비대화형 실행 — 을 **통제와 워크플로우 관점에서** 정리한다.
 
-> ℹ️ **범위 주의:** 현재 이 페이지의 내용은 단일 출처([[2026-08-21-the-ai-native-sdlc-playbook]])에 기반하며, 그 출처가 SDLC 맥락에서 언급한 기능만 다룬다. 도구의 전체 기능 목록이 아니다. 새 소스가 들어오면 보강한다.
+> ℹ️ **범위 주의:** 이 페이지의 기능 서술은 주로 [[2026-08-21-the-ai-native-sdlc-playbook]]에 기반하며, 그 출처가 SDLC 맥락에서 언급한 기능만 다룬다. 도구의 전체 기능 목록이 아니다. 병렬성 절의 일반 원리는 [[2025-06-13-multi-agent-research-system]]을 함께 인용한다.
 
 ## Overview
 
@@ -90,7 +90,7 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 
 ### Parallel sessions (worktrees)
 
-병렬 세션은 **각자의 git worktree에서 별도 작업을 하는 완전한 Claude Code 인스턴스**다. 서로를 모르며, 공유하는 것은 그것들을 조종하는 엔지니어뿐이다.
+병렬 세션은 **각자의 git worktree에서 별도 작업을 하는 완전한 Claude Code 인스턴스**다. 서로를 모르며, 공유하는 것은 그것들을 조종하는 엔지니어뿐이다. 이 점이 병렬 세션을 *에이전트 간 실시간 위임*과 구분한다 — 세 가지 병렬성의 구분은 [[subagent]] 참조. 멀티에이전트 일반의 경제성은 [[multi-agent-systems]].
 
 - `claude --worktree feature-auth` 식으로 터미널마다 하나씩. worktree는 자기 브랜치의 별도 체크아웃이라 세션들이 파일에서 충돌하지 않는다.
 - 작업을 **서로 다른 파일을 건드리는 단위로** 쪼갠다. 파일을 공유하는 작업은 한 세션에서 순차로.
@@ -99,7 +99,7 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 
 ### Subagents
 
-`.claude/agents/<name>.md`에 정의. **단일 세션 안에서** 자기 컨텍스트 윈도와 도구 제한을 갖고 도는 스코프된 헬퍼.
+`.claude/agents/<name>.md`에 정의. **단일 세션 안에서** 자기 컨텍스트 윈도와 도구 제한을 갖고 도는 스코프된 헬퍼. 일반 개념은 [[subagent]], 이 장치를 쓰는 아키텍처 원리는 [[orchestrator-worker]].
 
 - 정의 요소: name, 언제 쓰는지에 대한 description, 건드릴 수 있는 tools.
 - git에 체크인해 팀이 공유한다.
@@ -107,7 +107,7 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 
 **병렬 세션 vs subagent:** 병렬 세션은 엔지니어가 동시에 진행할 수 있는 작업 수를 늘리고, subagent는 각 세션이 자기 작업에 집중하게 유지한다. 엔지니어의 일은 그 전부를 조종하고 리뷰하는 것.
 
-**verifier subagent vs 피드백 루프:** 피드백 루프는 작업 내내 필요한 만큼 반복된다. verifier subagent는 세션이 작업이 끝났다고 믿을 때 **신선한 컨텍스트 윈도로 한 번** 도는 최종 확인이다. 요점은 **판정이 코드를 만든 가정에 오염되지 않는다는 것.**
+**verifier subagent vs 피드백 루프:** 피드백 루프는 작업 내내 필요한 만큼 반복된다. verifier subagent는 세션이 작업이 끝났다고 믿을 때 **신선한 컨텍스트 윈도로 한 번** 도는 최종 확인이다. 요점은 **판정이 코드를 만든 가정에 오염되지 않는다는 것.** 이것은 [[agent-evaluation]]의 "경로가 아니라 결과를 본다" 원칙을 도구 차원에서 구현한 것이다.
 
 ## 통제 표면
 
@@ -150,7 +150,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **Claude Tag** (public beta, Slack) — Claude가 자기 정체성으로 채널에 참여. 인시던트의 1차 대응자가 되고 채널 히스토리가 audit trail이 된다.
 - **Cowork / claude.ai** — 엔지니어가 아닌 사람이 `intent.md`를 만드는 경로.
 - **모델 접근 경로** — API, AWS Bedrock, Google Vertex, Microsoft Foundry (트래픽이 조직의 클라우드 계약 안에 머물러야 할 때).
-- **OpenTelemetry export** — 세션 transcript, hook 결정(timestamp + allow/block verdict), 동시 세션 수 등이 조직 observability 스택으로 전달된다. 플레이북 측정 지표의 주요 출처 중 하나.
+- **OpenTelemetry export** — 세션 transcript, hook 결정(timestamp + allow/block verdict), 동시 세션 수 등이 조직 observability 스택으로 전달된다. 플레이북 측정 지표의 주요 출처 중 하나. [[agent-evaluation]]이 요구하는 "full production tracing"의 구체적 수단이다.
 
 ## Key Points
 
@@ -166,6 +166,10 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[ai-native-sdlc]] — 이 기능들이 SDLC 6단계에 배치되는 방식
 - [[agentic-governance]] — skill/hook/settings 계층과 production gate의 일반 원리
 - [[artifact-chain]] — `CLAUDE.md`·`plan.md` 등이 만드는 아티팩트 체인
+- [[subagent]] — 이 페이지의 subagent·병렬 세션이 속한 일반 개념
+- [[orchestrator-worker]] — subagent를 쓰는 아키텍처의 일반 원리
+- [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성과 적합 조건
+- [[agent-evaluation]] — verifier subagent와 OTel export가 기여하는 평가 체계
 
 ## Sources
 

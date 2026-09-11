@@ -3,7 +3,7 @@ title: AI-Native SDLC
 type: topic
 created: 2026-09-11
 updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
 tags: [sdlc, agentic-coding, enterprise-ai, governance, ai-native]
 status: draft
 ---
@@ -76,7 +76,7 @@ status: draft
 - **`CLAUDE.md`** — 신규 입사자가 첫날 필요할 것. 한 페이지 이하. `/init`으로 시작해 잘라낸다. 규칙: **Claude가 같은 실수를 두 번 하면 교정이 여기 들어간다.**
 - **skills as institutional knowledge** — 일관되게 적용되어야 하는 조직 지식을 skill로. 판단 기준: `CLAUDE.md`나 프롬프트에 속할 것은 skill로 쓰지 않는다.
 - **hooks as build-time guardrails** — 보호 경로 편집 차단, 편집 후 포매터·린터 실행, 자격증명 유출 방지. 빠르고 변경된 파일에 스코프되어야 한다. 무거운 검사는 commit이나 PR로.
-- **parallel sessions and subagents** — worktree로 격리된 병렬 세션 vs 세션 내부의 스코프된 subagent. → [[claude-code]]
+- **parallel sessions and subagents** — worktree로 격리된 병렬 세션 vs 세션 내부의 스코프된 subagent. → [[claude-code]], [[subagent]]. 에이전트를 여럿 굴리는 것의 일반적 비용과 적합 조건은 [[multi-agent-systems]] — 그쪽에 이 단계와 직결된 **미판정 모순 1건**이 기록되어 있다.
 
 ### Stage 4 — Test: 세션이 스스로 검증한다
 
@@ -86,7 +86,7 @@ status: draft
 
 **루프 자체를 보호해야 한다.** 코드를 고치는 에이전트가 그 코드에 대한 검사를 약화시킬 수 있으면 안 된다. 버그 수정은 실패하는 테스트를 먼저 쓰고 커밋한 뒤, 테스트 파일 편집을 막는 hook 아래에서 통과시킨다.
 
-**연속 eval**은 stage-gate QA의 AI-native 대응물이다. 실제 작업 20~50개를 프롬프트+합격 조건으로 만들고, `CLAUDE.md`·skills·hooks가 바뀔 때와 스케줄에 CI에서 비대화형으로 돌린다. 통과율을 떨어뜨리는 설정 변경은 머지 전에 리뷰된다. **production incident 하나당 eval 하나**를 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아지면 변별력을 잃은 케이스를 교체해야 하는 살아있는 suite다.
+**연속 eval**은 stage-gate QA의 AI-native 대응물이다. 실제 작업 20~50개를 프롬프트+합격 조건으로 만들고, `CLAUDE.md`·skills·hooks가 바뀔 때와 스케줄에 CI에서 비대화형으로 돌린다. 통과율을 떨어뜨리는 설정 변경은 머지 전에 리뷰된다. **production incident 하나당 eval 하나**를 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아지면 변별력을 잃은 케이스를 교체해야 하는 살아있는 suite다. 에이전트를 평가하는 일반 원리(경로 대신 결과, LLM-as-judge 루브릭, end-state evaluation)는 [[agent-evaluation]].
 
 ### Stage 5 — Deploy: 리뷰는 양방향, 게이트는 hook
 
@@ -156,11 +156,20 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - "리뷰가 따라가는 동안에만 세션을 늘린다"는 실용적이지만, 리뷰 능력 자체를 측정하는 지표는 제시되지 않는다.
 - eval suite의 유지 비용 — "모델이 좋아지면 변별력 잃은 케이스를 교체"해야 한다면 suite 자체가 지속적 부담 아닌가?
 
+## Contradiction: 코딩은 멀티에이전트에 맞는가
+
+> ⚠️ **Contradiction (2026-09-12, 미판정):** 이 토픽은 Stage 3에서 **worktree 병렬 세션 2~3개**를 권장하고 Stage 5에서 **계층화된 에이전트 리뷰 pass**를 정식 단계로 둔다. 그러나 [[2025-06-13-multi-agent-research-system]](2025-06)은 코딩을 멀티에이전트 **부적합** 사례로 명시한다 — *"most coding tasks involve fewer truly parallelizable tasks than research, and LLM agents are not yet great at coordinating and delegating to other agents in real time."*
+>
+> 양쪽 주장을 모두 보존한다. 논의와 해소 가설은 [[multi-agent-systems]]의 Contradiction 절에 모아두었고, 병렬성 세 층위(subagent / 병렬 세션 / 에이전트 간 실시간 위임)의 구분은 [[subagent]]에 있다. **판정은 3번째 소스를 기다린다.**
+
 ## Related
 
 - [[artifact-chain]] — 이 토픽의 구조적 척추. 단계 간 인터페이스가 어떻게 작동하는지
 - [[agentic-governance]] — Deploy·Build 단계 통제의 일반화. skill/hook/settings 계층과 production gate
 - [[claude-code]] — 이 플레이북이 각 단계에 배치하는 도구
+- [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성. 아래 Contradiction의 상대편
+- [[agent-evaluation]] — Stage 4 연속 eval의 일반 원리
+- [[subagent]] — Stage 3의 subagent·병렬 세션이 속한 개념
 
 ## Sources
 

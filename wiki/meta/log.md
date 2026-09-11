@@ -29,3 +29,34 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[index]]
 - contradictions: 없음 (첫 콘텐츠 ingest — 기존 페이지 0개)
 - notes: 위키의 첫 실질 ingest. 1049줄 플레이북에서 합의한 takeaway 7개를 3개 축으로 분할 — 아티팩트 체인(구조), 거버넌스 계층(통제), Claude Code(도구). 사용자 승인으로 5페이지 안 채택(CLAUDE.md 권장치 1~3개보다 많으나, 빈 위키의 앵커 확보 목적). [[claude-code]]는 단일 출처 기반이라 범위 주의 배너를 달았다.
+
+## [2026-09-11 23:58] ingest | How we built our multi-agent research system
+- source: [[2025-06-13-multi-agent-research-system]] — Jeremy Hadfield, Barry Zhang, Kenneth Lien, Florian Scholz, Jeremy Fox, Daniel Ford (Anthropic Engineering, 2025-06-13)
+- created: [[2025-06-13-multi-agent-research-system]] (source), [[multi-agent-systems]] (topic), [[orchestrator-worker]] (concept), [[agent-evaluation]] (concept), [[anthropic]] (entity)
+- updated: [[index]]
+- contradictions: [[multi-agent-systems]] — 코딩 도메인에서의 멀티에이전트 적합성. 이 소스(2025-06)는 코딩을 부적합 사례로 명시("most coding tasks involve fewer truly parallelizable tasks than research"), [[ai-native-sdlc]](2026-08)는 worktree 병렬 세션과 에이전트 리뷰 pass를 권장. 해소 가설 2개(오케스트레이터 주체가 사람이냐 에이전트냐 / 14개월 시차)를 페이지에 기록, 미검증.
+- notes: 사용자 승인으로 5페이지 안. 핵심 takeaway는 "멀티에이전트가 이기는 이유는 지능이 아니라 토큰"(BrowseComp 분산의 80%를 token usage 단독 설명). 비용 15x와 코딩 부적합 판정을 함께 기록해 무비판적 채택을 막았다. [[anthropic]]은 stub으로 시작 — 조직 전반이 아니라 이 위키의 소스 편향 추적용 앵커.
+- caveat: 작업 중 다른 세션이 SDLC ingest를 완결(커밋 e0abf6c, 23:54)했다. 그 결과 존재하게 된 [[claude-code]]·[[ai-native-sdlc]]에 이번 새 페이지들의 cross-reference를 사후 보정했다. 역방향 링크(SDLC 페이지 → 이번 페이지들)는 사용자 지시로 이번에 손대지 않았다 — 후속 /lint 대상.
+
+## [2026-09-12 00:20] lint | 10페이지 점검 — 기계적 0건, 의미 층위 2건 High
+- report: [[lint-2026-09-12]]
+- touched: 없음 (lint는 읽기 전용. 자동 수정하지 않음)
+- clean: 깨진 링크 0, 고아 0, frontmatter 오류 0 (10/10 통과)
+- findings: 🔴 단방향 클러스터 다리 — SDLC 클러스터 5페이지 → 멀티에이전트 클러스터 5페이지 링크가 0개 (역방향은 6개). 고아는 아니나 [[ai-native-sdlc]]에서 출발하면 [[multi-agent-systems]]에 도달 경로 없음. 🔴 모순 1건이 [[multi-agent-systems]]에만 표시되고 [[ai-native-sdlc]]엔 대칭 마커 없음.
+- discovery: **기록된 모순의 해소 근거가 이미 위키 안에 있었다.** [[claude-code]]의 병렬성 절이 "병렬 세션은 서로를 모르며 공유하는 것은 그것들을 조종하는 엔지니어뿐", subagent는 "단일 세션 안에서"라고 명시 → 2025-06 소스가 부정한 '에이전트 간 실시간 위임'과 2026-08이 권하는 '사람이 조종하는 병렬'은 서로 다른 대상. 실질적 모순 아님. 해소 확정은 사용자 승인 대기.
+- stale: [[claude-code]] ↔ [[orchestrator-worker]] — 같은 패턴의 구현과 원리인데 상호 참조 0. 위키 편입 순서 때문이지 내용상 이유 아님.
+- gaps: 미통합 raw 1건(2026-08-20-a-harness-for-every-task-dynamic-workflows), 소스 2개 모두 Anthropic 발행(외부 관점 0), 미해결 Open Questions 6건.
+- next: 우선순위 액션 8개 제시. 추천 조합 #1(모순 해소) → #2(역링크) 또는 #3([[subagent]] 페이지 신설) → #4(stale 상호 보강).
+
+## [2026-09-12 00:40] curate | lint 액션 #2·#3·#4·#6 수행 — 두 클러스터 연결
+- report: [[lint-2026-09-12]] (액션 #1은 사용자 판단으로 보류)
+- created: [[subagent]] (concept) — 두 클러스터의 공통 노드. 리서치형/코딩형 subagent 용어 정렬 + 병렬성 세 층위(subagent / 병렬 세션 / 에이전트 간 실시간 위임) 구분표
+- updated: [[claude-code]], [[ai-native-sdlc]], [[artifact-chain]], [[orchestrator-worker]], [[agent-evaluation]], [[multi-agent-systems]], [[anthropic]], [[index]]
+- #2 A→B 역링크: SDLC 클러스터 → 멀티에이전트 클러스터 링크가 0 → 16개. 단방향 다리 해소.
+- #3 [[subagent]] 신설: 양쪽 클러스터에서 inbound 6개.
+- #4 stale 보강: [[claude-code]]와 [[orchestrator-worker]]가 서로의 소스를 sources에 추가하고 본문 교차 — 같은 패턴의 원리(리서치)와 구현(.claude/agents/, verifier/researcher/simplifier)이 이어짐. [[ai-native-sdlc]]·[[artifact-chain]]도 2025-06 소스를 인용하게 되어 sources 갱신.
+- #6 cross-ref 6건: 파일시스템 출력↔artifact-chain(가장 값진 쌍, 양방향), verifier subagent↔end-state evaluation, 노력 스케일↔리뷰 천장, full tracing↔OTel export, 토큰 경제성↔SDLC 지표 공백, anthropic→concept 3개.
+- contradictions: **여전히 1건, 미판정 유지(사용자 판단).** [[ai-native-sdlc]]에 대칭 마커를 추가해 양쪽 페이지에서 보이게 함(이전엔 [[multi-agent-systems]]에만). lint에서 발견한 증거([[claude-code]]의 병렬 세션 정의가 해소 가설 ①과 일관)를 마커에 기록하되 결론은 내리지 않음 — 3번째 소스 대기.
+- notes: 총 8페이지 수정 + 1페이지 신설. 검증: 깨진 링크 0, frontmatter 10/11 필수 필드 통과, 고아 0.
+- next: lint 액션 #5(2026-08-20-a-harness-for-every-task-dynamic-workflows ingest), #7(`MCP` 페이지), #8(비-Anthropic 소스 확보) 미수행.
+

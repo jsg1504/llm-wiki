@@ -3,7 +3,7 @@ title: Artifact Chain
 type: concept
 created: 2026-09-11
 updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
 tags: [sdlc, agentic-coding, audit-trail, version-control, ai-native]
 status: draft
 ---
@@ -23,6 +23,8 @@ artifact chain은 이 인터페이스를 **커밋된 파일 하나**로 고정�
 3. **audit trail이 공짜로 나온다.** 누가 무엇을 요청했고, 에이전트가 무엇을 만들었고, 누가 승인했는지가 git history에 이미 있다. 별도 추적 시스템을 세울 필요가 없다.
 
 에이전트 맥락에서 특히 중요한 이유는 **에이전트가 상태를 갖지 않기 때문**이다. 비대화형으로 도는 세션은 이전 세션의 대화를 기억하지 못한다. 커밋된 아티팩트는 세션 사이에 살아남는 유일한 기억이다. 대화가 아니라 파일이 프로세스를 잇는다.
+
+> 💡 **같은 통찰의 다른 층위:** 멀티에이전트 리서치 시스템도 독립적으로 같은 결론에 도달했다 — subagent의 결과를 부모 에이전트를 통해 전달하면 정보가 손실되고(*"game of telephone"*) 큰 출력이 대화 히스토리에 복사되며 토큰을 낭비한다. 처방도 같다: **subagent가 산출물을 파일시스템에 저장하고 부모에게는 참조만 넘긴다.** artifact chain은 *세션 사이의* 기억 손실을, 이쪽은 *단일 세션 내부의* 전달 손실을 다루지만 둘 다 "대화가 아니라 파일이 인터페이스가 되게 하라"로 수렴한다. → [[orchestrator-worker]], [[subagent]] ([[2025-06-13-multi-agent-research-system]])
 
 ## 체인의 형태
 
@@ -107,6 +109,8 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - [[ai-native-sdlc]] — 이 패턴이 SDLC 6단계에 구체적으로 어떻게 배치되는지
 - [[agentic-governance]] — 아티팩트에 걸리는 승인 게이트와 통제 계층
 - [[claude-code]] — `CLAUDE.md`, plan mode 등 아티팩트를 생성·소비하는 도구 기능
+- [[orchestrator-worker]] — subagent 출력을 파일시스템으로 보내는 같은 처방의 세션 내부 판본
+- [[subagent]] — 그 처방이 적용되는 단위
 
 ## Sources
 
