@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -56,6 +56,16 @@ status: draft
 - **skeptic 페르소나** — 검증자를 촘촘히 걸면 false positive가 늘어난다. 규칙·판정 자체가 타당한지 되묻는 에이전트를 두어 과잉 지적을 억제한다.
 - **disjoint 증거원** — 근본원인 조사에서 로그·파일·데이터 담당 에이전트를 나눠 가설이 서로 오염되지 않게 한다.
 
+#### 정지 조건도 판정 대상이다 (2026-09-21)
+
+같은 원리가 한 층 위에 적용된 사례가 [[2026-06-07-loop-engineering]]에 있다. [[claude-code]]의 `/goal`은 조건이 참이 될 때까지 작업을 이어가되, **매 턴 후 별도의 작은 모델**이 완료 여부를 판정한다:
+
+> *"a separate small model checks whether you are done, so the agent that wrote the code isnt the one grading it."*
+
+지금까지 이 페이지의 판정자 분리는 **산출물**을 대상으로 했다. 여기서는 판정 대상이 *"끝났는가"* 라는 메타 질문이고, 그것을 만든 쪽(작업한 세션)과 판정하는 쪽이 분리된다. Codex에도 같은 이름의 기능이 있다 — **두 제품이 독립적으로 같은 자리에 판정자 분리를 놓았다.**
+
+단, 이 소스도 §4의 제약을 그대로 상속한다 — 정지 조건은 *"all tests in test/auth pass and lint is clean"* 처럼 **검증 가능한 문장**이어야 하고, 표현할 수 없는 태스크에는 쓸 수 없다. 그리고 소스 자신의 경고: **"done"은 주장이지 증명이 아니다.** → [[loop-engineering]]
+
 **eval 자체를 워크플로로 돌릴 수도 있다** — worktree에서 에이전트를 띄워 산출물을 만들고, 비교 에이전트가 루브릭으로 채점한다. 예: 내가 만든 skill을 특정 기준으로 평가·개선. → [[dynamic-workflows]]
 
 ### 3. 사람 평가가 자동화의 사각지대를 잡는다
@@ -87,9 +97,11 @@ status: draft
 - [[claude-code]] — verifier subagent와 OTel export. 이 페이지 원칙들의 도구 구현.
 - [[subagent]] — 오염되지 않은 판정자로서의 subagent.
 - [[anthropic]] — 이 지침을 공개한 주체.
+- [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — self-preferential bias, adversarial verification, skeptic 페르소나, pairwise 판정
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). "Effective evaluation of agents" 절과 부록. 이 페이지의 1~5절.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog (2026-08-21). 6절(eval을 CI에 넣기)만 이 소스에서 왔다.
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 2b절의 "정지 조건도 판정 대상이다"만 이 소스에서 왔다.

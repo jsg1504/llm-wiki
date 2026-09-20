@@ -3,7 +3,7 @@ title: Subagent
 type: concept
 created: 2026-09-12
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
@@ -92,6 +92,19 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 >
 > 전체 논의와 근거는 [[multi-agent-systems]]의 Contradiction 절.
 
+## 벤더 밖에서의 확인 — maker/checker 분리 (2026-09-21)
+
+[[2026-06-07-loop-engineering]]은 이 위키의 유일한 비-[[anthropic]] 소스이고, subagent의 **가장 유용한 용도**를 하나로 지목한다:
+
+> *"The most useful structural thing in a loop, by far, is splitting the one who writes from the one who checks. The model that wrote the code is way too nice grading its own homework."*
+
+새 주장은 아니다 — [[agent-evaluation]] §2b(self-preferential bias)와 [[claude-code]]의 verifier subagent가 같은 것을 말한다. 값은 **출처가 다르다**는 데 있고, 두 가지가 더해진다:
+
+- **모델·노력 수준을 역할별로 나눈다.** Codex의 subagent 정의(TOML)는 선택적 model과 reasoning effort를 받는다 — *"your security reviewer can be a strong model on high effort while your explorer is some fast read-only thing."* 이 위키는 지금까지 subagent를 **컨텍스트와 도구**로만 구분했고, **모델 등급**을 분화 축으로 기록한 적이 없다.
+- **루프에서 이 분리가 필수가 되는 이유.** 루프는 사람이 안 볼 때 돈다. *"a verifier you actually trust is the only reason you can walk away."* → [[loop-engineering]]
+
+비용 쪽도 같은 방향이다 — subagent마다 자기 모델·도구 작업을 하므로 토큰을 더 쓰고, **두 번째 의견이 값을 하는 자리에만** 쓰라는 것이 처방이다. [[multi-agent-systems]]의 15배 배수와 같은 결론이다.
+
 ## 알려진 한계
 
 - **subagent끼리 협력할 수 없다.** 네 층위 전부에서 그렇다 — 반환은 부모(또는 프로그램)에게만 간다. [[agent-orchestration-patterns]]의 여섯 패턴 중 에이전트가 서로 직접 주고받는 것은 하나도 없다. 리서치 시스템은 현재 lead가 subagent 묶음을 **동기적으로** 기다리므로, 느린 하나가 전체를 막고 lead가 진행 중인 subagent를 조종할 수도 없다.
@@ -128,6 +141,7 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[managed-agents]] — brain끼리 hand를 넘기는 것이 가능한 실제 구조
 - [[prompt-injection]] — subagent 경계에서 일어나는 trust escalation
 - [[agent-containment]] — 에이전트를 여럿 굴릴 때의 환경 층위 격리
+- [[loop-engineering]] — 조정 주체 네 층위에 시간 축(누가 실행을 *시작시키는가*)을 더하는 자리
 
 ## Sources
 
@@ -136,3 +150,4 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 결정론적 프로그램이 조정하는 네 번째 층위, 모순 판정의 근거
 - [[2026-04-08-scaling-managed-agents]] — 조정 상태의 durable한 거처, "brains pass hands" 부분 예외
 - [[2026-05-25-how-we-contain-claude]] — multi-agent trust escalation. subagent 경계가 신뢰 경계로서 갖는 양면성
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). maker/checker 분리의 외부 확인, 역할별 모델 등급 분화

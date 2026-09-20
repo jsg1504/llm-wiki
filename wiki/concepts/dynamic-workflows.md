@@ -3,7 +3,7 @@ title: Dynamic Workflows (동적 harness)
 type: concept
 created: 2026-09-12
 updated: 2026-09-21
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents]
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering]
 tags: [dynamic-workflows, agentic-harness, orchestration, multi-agent, context-window, token-economics]
 status: draft
 ---
@@ -126,6 +126,16 @@ LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 
 
 **이 페이지에 주는 시사점 하나:** 위의 "세 실패 모드" 표에 적힌 처방들 — context pollution, context rot, goal drift를 subagent 격리로 막는 것 — 도 **모델 능력에 대한 가정**이다. 단일 컨텍스트가 길어지면 무너진다는 전제가 어느 모델에서 약해지면, 워크플로가 막아주던 것 중 일부는 reset과 같은 길을 갈 수 있다. 소스가 *"best practices are still developing"* 이라고 쓴 것과 같은 방향의 경계다.
 
+## 한 칸 위 — 루프
+
+[[meta-harness]]가 이 개념의 **아래쪽** 대비항이라면, [[2026-06-07-loop-engineering]]이 기술하는 **loop**는 위쪽이다. 저자의 표현으로 *"Loop engineering sits one floor above the harness."*
+
+dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에서 결정론적 코드로 내린다. 루프는 그 실행을 **언제 시작할지**와 **실행 사이에 무엇이 남을지**를 정한다 — 스케줄(automations)과 대화 밖 state 파일. 루프의 한 턴이 dynamic workflow를 띄우는 것이 자연스러운 조합이다.
+
+겉보기 긴장이 하나 있다. 이 페이지의 정의적 특징은 *조정이 사람·LLM에서 코드로 내려갔다*인데, 루프는 골격 설계를 **사람에게 다시 올린다.** 모순이 아니라 대상이 다르다 — 사람이 정하는 것은 주기·어떤 skill을 부를지·state를 어디 둘지이고(한 번 설계하고 그 뒤로 안 만짐), 한 턴 안의 병렬화·검증·정지는 여전히 프로그램이 정한다. 상세는 [[loop-engineering]].
+
+이 소스는 [[claude-code]]의 `/loop`(주기 재실행)와 `/goal`(정지 조건까지 실행, **별도의 작은 모델이 완료를 판정**)을 그 층의 in-session primitive로 짚는다. 후자는 이 페이지가 인용하는 self-preferential bias 처방이 **정지 조건이라는 메타 판정에까지** 적용된 형태다.
+
 ## 한계와 읽을 때의 주의
 
 > ⚠️ **이 소스에는 정량 데이터가 없다.** [[2025-06-13-multi-agent-research-system]]이 BrowseComp 분산 분석과 90.2% 같은 수치를 제시한 것과 달리, 이 소스는 성능 비교·토큰 실측·성공률을 **전혀 제시하지 않는다.** Bun 재작성도 외부 X 스레드 링크로만 언급된다. 저자들 스스로 *"best practices are still developing"*이라고 쓴다. 따라서 이 페이지의 주장은 **경험 보고이지 측정이 아니다.**
@@ -146,9 +156,11 @@ LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 
 - [[agentic-governance]] — quarantine 패턴이 워크플로 층위의 통제로 등장한다
 - [[meta-harness]] — 같은 문제의 반대 방향 처방. harness를 새로 쓰는 대신 갈아 끼울 수 있게 만든다
 - [[managed-agents]] — 이 워크플로가 얹힐 수 있는 하부 층위의 구현
+- [[loop-engineering]] — 한 칸 위 층위. 이 워크플로를 *언제* 돌리고 결과를 어디에 남길 것인가
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 이 페이지의 주 출처
 - [[2025-06-13-multi-agent-research-system]] — 대조군으로 인용. *"에이전트 간 실시간 위임"*의 한계 보고와 orchestrator-worker의 LLM 주도 조정
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "반대 방향의 처방" 절
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). "한 칸 위 — 루프" 절

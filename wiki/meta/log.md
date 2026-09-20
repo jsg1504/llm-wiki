@@ -101,3 +101,19 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - [[anthropic]]에 **네 번째 얼굴(보안 사고 보고자)** 추가 + 편향 노트 재구조화 — 이 소스는 홍보 인센티브와 반대 방향이라 기존 경계가 덜 적용된다. 대신 새 경계 둘: 공개된 것은 *발견되고 수정된* 것들, 그리고 완화 이후 재측정이 없다. **이 위키에 처음으로 외부 기관 참조(NIST/ACSC·CISA·NCSC/ISO 42001)가 등장** — 외부 관점 부재를 메울 단서로 기록.
   - [[glossary]]에 "보안 용어" 절 신설 9개 (blast radius, containment, direct/indirect injection, capability grant, memory poisoning, trust escalation, approval fatigue, egress control 등).
   - [[agent-containment]]에 소스 판단 하나를 비판적으로 기록: Cowork가 에이전트 루프를 VM 밖으로 뺀 것을 *"보안 영향 최소"*라 평가하는데 근거가 없고, 글이 스스로 세운 "탈출 열쇠를 쥔 바깥 프로세스" 기준에서 한 걸음 물러난 것이다.
+
+## [2026-09-21 03:05] ingest | Loop Engineering
+- source: [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07)
+- created: [[2026-06-07-loop-engineering]] (source), [[loop-engineering]] (concept)
+- updated: [[meta-harness]], [[dynamic-workflows]], [[agent-evaluation]], [[agent-orchestration-patterns]], [[subagent]], [[claude-code]], [[anthropic]], [[index]]
+- contradictions: **없음.** 긴장 1건은 모순 아님으로 판정 — [[dynamic-workflows]]는 "조정이 LLM 컨텍스트 → 결정론적 코드"인데 루프는 골격 설계를 사람에게 올린다. 대상이 다르다(루프 골격 = 사람이 한 번, 한 턴 내부 조정 = 프로그램). ⚠️ 마커 없이 양쪽 페이지에 층위 절로 기록.
+- notes:
+  - **이 위키 최초의 비-Anthropic 소스.** [[anthropic]]의 편향 추적 노트를 5/5 → 6개 중 5개로 갱신하고, 새 블록에서 "메우는 것(벤더 단일 시점 해소, 반대 방향 톤) vs 못 메우는 것(독립 벤치마크 없음, 저자가 인용한 권위 하나가 Boris Cherny — 순환 참조)"을 구분해 기록. **관점의 외부성이지 증거의 외부성이 아니다.**
+  - 중심 개념 [[loop-engineering]] 신설. 핵심은 다섯 primitive 목록이 아니라 **층위** — 저자 본인 표현 *"sits one floor above the harness."* [[meta-harness]]의 층위 다이어그램 맨 위에 `loop` 칸을 얹고, 그 배치가 소스의 단정이 아니라 이 위키의 연장임을 명시.
+  - **위키가 비어 있던 축을 채운다:** 그동안 [[subagent]](누가 조정하는가 네 층위)와 [[agent-orchestration-patterns]](여섯 제어 구조) 모두 *한 번의 실행 내부*만 다뤘다. 루프가 더하는 것은 **cadence**(무엇이 실행을 시작시키는가)와 **연속성**(실행 사이에 무엇이 남는가 = 외부 state). orchestration-patterns의 "카탈로그에 없는 것"에 항목 추가.
+  - `/goal` 항목이 기존 주장을 **벤더 밖에서 확증한다** — [[agent-evaluation]] §2b의 판정자 분리가 "끝났는가"라는 메타 판정에까지 제품 기능으로 구현됨. Codex에도 같은 이름. §2b 아래 소절로 추가.
+  - [[subagent]]에 새 분화 축 기록: 지금까지 컨텍스트·도구로만 구분했으나 Codex의 subagent TOML은 **model과 reasoning effort**를 받는다("security reviewer는 강한 모델 high effort, explorer는 빠른 read-only").
+  - [[claude-code]]에 `/loop`·`/goal` 절 신설 + skill↔plugin 구분(저작 포맷 vs 배포 수단) 보강. **Claude Code가 이 기능군의 유일한 구현이 아니라는 첫 기록.**
+  - 반대급부 3종(verification은 사람 몫 / comprehension debt / cognitive surrender)은 [[loop-engineering]] 안의 절로 유지. 저자의 인접 글들이 더 들어오면 분할 후보. [[ai-native-sdlc]]에 comprehension debt 대응 경계가 없다는 점을 그 절에 기록만 해둠(그 페이지는 미수정).
+  - 사용자 결정: `addy-osmani`·`openai-codex` entity는 **만들지 않음** — 이 소스 하나로는 stub이라 고아 페이지 위험. [[loop-engineering]] 안에서 언급만.
+  - 정량 데이터 0. 증거 두께는 [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]와 같은 급(경험 보고).

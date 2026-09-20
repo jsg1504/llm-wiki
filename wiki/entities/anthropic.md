@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키에 현재 들어온 소스는 전부 Anthropic이 발행한 것이므로, **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **6개 중 5개**가 Anthropic 발행이므로, **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -19,7 +19,7 @@ status: draft
 - **엔지니어링 조직으로서** — 자사 프로덕션 시스템(Research 기능)을 만들며 깨진 것들을 공개한다 ([[2025-06-13-multi-agent-research-system]]).
 - **엔터프라이즈 조력자로서** — Applied AI 팀이 고객사와 일하며 얻은 패턴을 플레이북으로 낸다 ([[2026-08-21-the-ai-native-sdlc-playbook]]).
 - **플랫폼 제공자로서** — 남의 에이전트 워크로드를 호스팅하며 겪은 아키텍처 전환을 공개한다 ([[2026-04-08-scaling-managed-agents]]). 앞의 둘과 성격이 다르다. 여기서는 Anthropic이 *에이전트를 만드는 쪽*이 아니라 **에이전트가 돌아갈 바닥을 까는 쪽**이다.
-- **보안 사고 보고자로서** — 세 제품을 2년간 운영하며 **깨진 것들을 이름과 수치와 함께** 공개한다 ([[2026-05-25-how-we-contain-claude]]). 책임공개로 받은 취약점 3건, 자사 직원이 피싱당한 red-team, 서드파티가 찾아낸 유출 경로, 엔터프라이즈 도입 장애물. 이 위키의 다섯 소스 중 **홍보 인센티브와 가장 반대 방향으로 쓰인 글**이다.
+- **보안 사고 보고자로서** — 세 제품을 2년간 운영하며 **깨진 것들을 이름과 수치와 함께** 공개한다 ([[2026-05-25-how-we-contain-claude]]). 책임공개로 받은 취약점 3건, 자사 직원이 피싱당한 red-team, 서드파티가 찾아낸 유출 경로, 엔터프라이즈 도입 장애물. Anthropic 발행 다섯 소스 중 **홍보 인센티브와 가장 반대 방향으로 쓰인 글**이다.
 
 ## Key Points
 
@@ -46,13 +46,20 @@ status: draft
 - **주장의 강도를 수치로 제한한다.** *"모델 층위 방어는 결코 100%가 아니다"*, *"auto mode는 sandbox 대체재가 아니다(~17% 통과)"* 처럼 자사 기능의 상한을 명시한다.
 - **단, 핵심 수치는 내부 eval이고 루브릭은 비공개다.** 90.2% 같은 숫자는 외부 재현이 불가능하다.
 
-> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. 멀티에이전트·에이전틱 코딩에 대한 **외부 관점(비판, 독립 벤치마크, 경쟁 아키텍처)** 이 현재 위키에 없다. **소스 5개 중 5개가 Anthropic이며**, [[multi-agent-systems]]의 모순 판정도 전부 이 출처들에 기대고 있다. 정량 근거의 두께는 소스마다 다르다 — [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 수치를 전혀 제시하지 않는 경험 보고이고, [[2026-04-08-scaling-managed-agents]]의 검증 가능한 숫자는 TTFT 개선 하나뿐이며, [[2026-05-25-how-we-contain-claude]]가 이 위키에서 가장 두꺼운 수치를 낸다.
+> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. **소스 6개 중 5개가 Anthropic이며**, [[multi-agent-systems]]의 모순 판정도 전부 이 출처들에 기대고 있다. 정량 근거의 두께는 소스마다 다르다 — [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 수치를 전혀 제시하지 않는 경험 보고이고, [[2026-04-08-scaling-managed-agents]]의 검증 가능한 숫자는 TTFT 개선 하나뿐이며, [[2026-05-25-how-we-contain-claude]]가 이 위키에서 가장 두꺼운 수치를 낸다.
 
 > **편향의 성격이 소스마다 다르다 (2026-09-21).** "Anthropic 발행이니 자사에 유리하게 쓰였을 것"이라는 경계가 모든 소스에 같은 무게로 적용되지는 않는다.
 >
 > - [[2026-05-25-how-we-contain-claude]]는 **홍보 인센티브와 반대 방향**이다. 자사 취약점·red-team 실패·도입 장애물을 구체적으로 공개한다. 이 소스에는 그 경계가 덜 적용된다.
 > - **대신 다른 경계가 필요하다:** 여기 공개된 것은 **발견되고 수정된 것들**이다. 발견되지 않은 것의 분포는 알 수 없다. 그리고 **완화 이후의 재측정이 없다** — 93%, 84%, 83%, 0.1% 같은 숫자는 전부 문제를 진단하는 쪽이고 해결을 검증하는 쪽이 아니다.
 > - 같은 소스가 이 위키에 들어온 소스 중 **처음으로 외부 기관을 참조 지점으로 제시한다** — NIST의 AI agent identity/authorization 프로젝트, 호주 ACSC·CISA·영국 NCSC 등 6개 기관의 agentic AI 도입 지침, ISO/IEC 42001. *"partners and competitors 양쪽과 함께 일하기를 기대한다"* 고 쓴다. 외부 관점 부재를 메울 **구체적 단서**다.
+
+> **첫 외부 소스가 들어왔다 (2026-09-21) — 그러나 관점의 외부성이지 증거의 외부성은 아니다.** [[2026-06-07-loop-engineering]](Addy Osmani, 개인 블로그)이 이 위키 최초의 비-Anthropic 소스다. 무엇을 메우고 무엇을 못 메우는지를 구분해 기록한다.
+>
+> - **메우는 것 — 벤더 단일 시점의 해소.** Codex와 Claude Code를 대칭으로 놓고 다섯 primitive(automations·worktrees·skills·connectors·subagents)가 양쪽에 다 있다고 기록한다. [[claude-code]]가 이 기능군의 유일한 구현이 아니라는 첫 근거다. 그리고 maker/checker 분리를 벤더 밖에서 재확인한다 → [[subagent]], [[agent-evaluation]]
+> - **메우는 것 — 반대 방향의 톤.** 처방을 제시하면서 결론을 유보로 끝낸다(검증 책임, comprehension debt, cognitive surrender, 토큰 비용). 위 목록의 *"비판"* 항목에 부분적으로 해당한다. → [[loop-engineering]]
+> - **못 메우는 것 — 독립 벤치마크.** 저자는 두 벤더의 제품 문서와 X 포스트를 읽고 정리했지 **스스로 측정하지 않았다.** 정량 데이터가 하나도 없다. 위 목록의 *"독립 벤치마크"* 와 *"경쟁 아키텍처"* 는 여전히 비어 있다.
+> - **못 메우는 것 — 순환 참조.** 이 소스가 인용하는 두 권위 중 하나가 Claude Code 책임자 Boris Cherny다. 외부 소스가 내부 주장을 전달하는 경로도 섞여 있다.
 
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
@@ -71,6 +78,7 @@ status: draft
 - [[meta-harness]] — 네 번째 소스의 중심 개념.
 - [[agent-containment]] — 다섯 번째 소스의 중심 개념. 세 제품의 격리 아키텍처.
 - [[prompt-injection]] — 같은 소스가 보고한 공격면과 실패 사례.
+- [[loop-engineering]] — 이 위키 최초의 비-Anthropic 소스가 들어온 개념. 편향 추적의 대조군.
 
 ## Sources
 
@@ -79,3 +87,7 @@ status: draft
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog, Applied AI 팀 (2026-08-21).
 - [[2026-04-08-scaling-managed-agents]] — Anthropic Engineering 블로그, Lance Martin·Gabe Cemaj·Michael Cohen (2026-04-08).
 - [[2026-05-25-how-we-contain-claude]] — Anthropic Engineering 블로그, Max McGuinness·Mikaela Grace·Jiri De Jonghe·Jake Eaton·Abel Ribbink (2026-05-25). Jake Eaton은 앞 소스의 감사문에도 등장.
+
+**비-Anthropic 소스 (대조군):**
+
+- [[2026-06-07-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-06-07). 이 위키 최초의 외부 소스. Codex와 Claude Code를 대칭으로 다룬다.

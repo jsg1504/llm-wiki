@@ -2,8 +2,8 @@
 title: 에이전트 오케스트레이션 패턴
 type: concept
 created: 2026-09-12
-updated: 2026-09-12
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system]
+updated: 2026-09-21
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering]
 tags: [orchestration, multi-agent, agent-design, patterns, evaluation, dynamic-workflows]
 status: draft
 ---
@@ -70,6 +70,7 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - **막는 것:** "3번 돌린다" 같은 임의의 상한이 만드는 미완성. agentic laziness의 프로그램 버전.
 - **[[orchestrator-worker]]와의 관계:** 그쪽에서 lead agent가 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄우는 루프와 같은 자리다. 차이는 판단 주체 — LLM의 재량 대신 **미리 표현된 정지 조건**이 결정한다. 그래서 정지 조건을 표현할 수 없는 태스크에는 못 쓴다.
 - **비용이 가장 예측하기 어려운 패턴이다.** 명시적 토큰 예산과 함께 쓰는 것이 안전하다.
+- **제품 기능으로 구현된 형태 (2026-09-21).** [[claude-code]]의 `/goal`이 이 패턴 그대로다 — 조건이 참이 될 때까지 진행하되 **매 턴 후 별도의 작은 모델이 완료를 판정한다.** 즉 loop-until-done에 #3 adversarial verification이 **정지 판정 자체에** 결합되어 있다. Codex에도 같은 이름의 기능이 있다. 정지 조건은 *"all tests in test/auth pass and lint is clean"* 같이 검증 가능해야 한다는 위 제약이 실물에서도 그대로다 ([[2026-06-07-loop-engineering]]). → [[loop-engineering]]
 
 ## 조합하기
 
@@ -92,6 +93,9 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 
 - **에이전트끼리 직접 협상하는 패턴이 없다.** 여섯 개 전부 부모(또는 프로그램)를 거친다. [[subagent]]에 기록된 *"subagent끼리 협력할 수 없다"*는 제약이 여기서도 유지된다.
 - **사람이 루프 안에 있는 패턴이 없다.** 소스는 별도로 `AskUserQuestion`을 쓰는 예시 프롬프트("루브릭을 만들기 위해 나를 인터뷰해")를 들지만 패턴 목록에는 넣지 않았다.
+- **cadence가 없다.** 여섯 패턴은 전부 *한 번의 실행 안*의 제어 구조다. 무엇이 그 실행을 시작시키는지, 실행과 실행 사이에 무엇이 남는지는 이 카탈로그 밖이다. [[2026-06-07-loop-engineering]]이 그 자리에 automations(주기)와 대화 밖 state를 놓는다. → [[loop-engineering]]
+
+  > 위의 "사람이 루프 안에 있는 패턴이 없다"도 거기서 부분적으로 답을 얻는다 — 루프가 처리하지 못한 것만 triage inbox로 사람에게 간다. 사람이 매 턴이 아니라 **예외 경로**에 놓인다.
 - **실패·재시도 패턴이 없다.** [[multi-agent-systems]]가 프로덕션 요건으로 기록한 resume·checkpoint·retry에 대응하는 항목이 이 카탈로그에는 없다. (워크플로 자체는 중단 후 재개를 지원한다.)
 
 ## Related
@@ -101,8 +105,10 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[subagent]] — 모든 패턴의 실행 단위
 - [[agent-evaluation]] — adversarial verification과 tournament가 평가 방법론으로서 갖는 함의
 - [[multi-agent-systems]] — 이 패턴들을 쓸 경제적 조건
+- [[loop-engineering]] — 이 패턴들을 *주기적으로* 돌리는 한 층 위. cadence와 외부 state를 더한다
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 여섯 패턴과 사용 사례 전부의 출처
 - [[2025-06-13-multi-agent-research-system]] — subagent 간 협력 제약, 동기 실행 병목, 프로덕션 요건(resume·checkpoint·retry)의 출처
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/goal`의 loop-until-done 구현, 카탈로그에 없는 cadence

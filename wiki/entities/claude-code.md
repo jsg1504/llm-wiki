@@ -3,7 +3,7 @@ title: Claude Code
 type: entity
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -71,6 +71,8 @@ Claude Code는 저장소에 접근해 코드를 읽고, 편집하고, 명령을 
 - **성격은 advisory다.** 세션이 따르도록 강제하는 것은 없다. → [[agentic-governance]]
 
 ### Plugins / marketplaces
+
+> **구분 (2026-09-21):** **skill은 저작 포맷이고 plugin은 배포 수단이다.** repo를 넘어 공유하거나 여러 개를 묶을 때 plugin으로 패키징한다. [[2026-06-07-loop-engineering]]은 이 구분이 Codex에서도 동일하다고 기록한다. 같은 소스의 트리거 설계 조언 하나 — description이 매칭되면 암묵 호출되므로 ***"a tight boring description beats a clever one."***
 
 skill과 hook을 조직 전체에 배포하는 경로. 엔터프라이즈 설정에서는 `strictKnownMarketplaces`와 `disableSideloadFlags`로 **모든 skill·agent·hook·MCP 서버가 승인된 marketplace를 통해서만 도착하게** 고정할 수 있다.
 
@@ -152,6 +154,17 @@ Claude가 **태스크별 harness를 JavaScript로 즉석에서 작성·실행**�
 
 > **다른 병렬 장치와의 관계:** 병렬 세션은 **사람이**, orchestrator-worker는 **lead agent가**, dynamic workflow는 **프로그램이** 조정한다. 셋은 대체재가 아니라 조정 주체가 다른 층위다 → [[subagent]]
 
+### `/loop`과 `/goal` — 실행을 반복시키는 층
+
+앞의 장치들이 **한 번의 실행 안**을 다룬다면, 이 둘은 실행 자체를 반복시킨다. 개념은 [[loop-engineering]].
+
+- **`/loop`** — 프롬프트나 커맨드를 **정해진 주기로 재실행**한다.
+- **`/goal`** — 내가 쓴 조건이 **실제로 참이 될 때까지** 이어간다. 매 턴 후 **별도의 작은 모델**이 완료 여부를 판정한다 — *"so the agent that wrote the code isnt the one grading it."* 조건은 *"all tests in test/auth pass and lint is clean"* 처럼 검증 가능해야 한다. 판정자 분리의 근거는 [[agent-evaluation]] §2b.
+- 세션 밖으로 나가는 경로: **스케줄 태스크와 cron**, **hooks**(에이전트 수명주기의 특정 지점에서 셸 명령 실행), 그리고 노트북을 닫은 뒤에도 돌게 하려면 **GitHub Actions**.
+- subagent에 **`isolation: worktree`** 를 걸면 헬퍼마다 자기 체크아웃을 받고 끝나면 정리된다. 터미널 세션 단위 격리는 위의 `--worktree`.
+
+> ℹ️ 이 절의 출처는 [[2026-06-07-loop-engineering]]으로, **이 위키에서 유일한 비-[[anthropic]] 소스**다. 외부 관찰자가 Codex의 대응 기능(Automations 탭, `/goal`, `.codex/agents/` TOML subagent, 내장 worktree)과 나란히 놓고 기술한다. 결론은 *"다섯 개가 양쪽에 다 있으므로 어느 도구에 앉아 있든 작동하는 루프를 설계하라"* 는 것 — **Claude Code가 이 기능군의 유일한 구현이 아니라는 첫 기록이다.**
+
 ## 통제 표면
 
 ### Hooks
@@ -224,6 +237,8 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **dynamic workflow는 조정 로직을 컨텍스트 밖 코드로 옮긴다.** 병렬 세션(사람이 조정)·subagent(lead가 조정)와 구분되는 세 번째 조정 주체다.
 - **Claude Code는 harness 중 하나다.** 여기 있는 기능의 상당수는 모델의 부족분을 메우는 구조이고, 모델이 좋아지면 일부는 불필요해진다. 통제 목적의 기능(plan mode, hook)은 그렇지 않다.
 - **승인 기반 감독은 측정된 실패다** — 프롬프트의 93%가 승인된다. sandbox가 프롬프트를 84% 줄였고, auto mode는 sandbox **안에서 쓰는 한 겹**이지 대체재가 아니다(~17% 통과).
+- **`/loop`·`/goal`은 실행 자체를 반복시키는 층이다.** `/goal`은 완료 판정을 별도의 작은 모델에 맡겨 판정자 분리를 정지 조건에까지 적용한다.
+- **이 기능군은 Claude Code 고유가 아니다.** automations·worktrees·skills·connectors·subagents 다섯 개가 Codex에도 있다. 외부 소스 하나가 기록한 첫 대조군이다.
 - **`CLAUDE.md`와 `.claude/settings.json`은 양면이다.** 리뷰 가능하다는 장점과 공격자가 커밋하면 매 세션 로드된다는 위험이 같은 속성에서 나온다.
 
 ## Related
@@ -235,6 +250,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[agent-orchestration-patterns]] — 워크플로가 조합하는 여섯 가지 제어 구조
 - [[subagent]] — 이 페이지의 subagent·병렬 세션이 속한 일반 개념
 - [[orchestrator-worker]] — subagent를 쓰는 아키텍처의 일반 원리
+- [[loop-engineering]] — `/loop`·`/goal`·automations가 속한 개념. 외부 관찰자가 본 이 도구의 위치
 - [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성과 적합 조건
 - [[agent-evaluation]] — verifier subagent와 OTel export가 기여하는 평가 체계
 - [[meta-harness]] — harness라는 범주 자체. 이 페이지의 기능들이 인코딩한 가정을 읽는 틀
@@ -248,3 +264,4 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Dynamic workflows 절의 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "Claude Code는 harness 중 하나다" 절의 출처
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 격리 아키텍처·취약점·sandbox 수치·auto mode 전제의 출처
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/loop`·`/goal` 절, skill↔plugin 구분, Codex 대조군. **이 페이지의 유일한 비-Anthropic 출처**
