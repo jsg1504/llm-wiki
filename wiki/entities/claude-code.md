@@ -3,7 +3,7 @@ title: Claude Code
 type: entity
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -56,6 +56,10 @@ Claude Code는 저장소에 접근해 코드를 읽고, 편집하고, 명령을 
 
 측정: `CLAUDE.md`가 잡았어야 할 실수를 Claude가 반복하는 빈도(leading), 신규 팀원의 첫 머지 PR까지 시간(lagging).
 
+> ⚠️ **`CLAUDE.md`는 공격 표면이기도 하다 (2026-09-21).** 위 서술과 [[agentic-governance]]는 *"설정이 파일이므로 리뷰·감사·버전 관리의 대상이 된다"* 를 장점으로 적는다. [[2026-05-25-how-we-contain-claude]]가 같은 속성의 반대편을 보고한다 — **파일이므로 공격자도 커밋할 수 있고, 커밋되면 매 세션 로드된다.** 저자들은 `CLAUDE.md`를 **persistent memory poisoning 벡터** 목록에 명시적으로 넣는다(product memory, 마운트된 workspace, 장기 실행 에이전트의 state 디렉토리와 함께).
+>
+> 모순은 아니다. 리뷰 가능성은 실재하고 **방어의 일부**다 — 악성 `CLAUDE.md` 변경은 PR에서 보인다. 다만 *"세션 시작 시의 좋은 classifier가 더 일반화되어야 한다"* 는 것이 저자들의 전망이다. 상세는 [[prompt-injection]].
+
 ### Skills
 
 `.claude/skills/<name>/SKILL.md` — frontmatter가 **언제 트리거되는지**를, 본문이 **무엇을 할지**를 말한다.
@@ -91,6 +95,12 @@ Claude가 **코드베이스를 읽되 바꾸지 못하는** 상태. 플레이북
 엔지니어가 계획을 승인한 뒤 Claude가 **편집마다 묻지 않고** 각 변경을 적용한다.
 
 가드레일이 성숙하면(튜닝된 `CLAUDE.md`, 정책을 인코딩한 skill, 위험한 동작을 막는 hook, Claude가 돌릴 수 있는 테스트 suite) 일상 작업의 기본이 된다. 조건은 **빡빡한 `spec.md`, 작은 blast radius, 테스트가 이미 덮고 있는 코드.**
+
+**전제 하나 보강 (2026-09-21).** 위 목록은 [[2026-08-21-the-ai-native-sdlc-playbook]]에서 온 것이고 대부분 **model/config 층위**다. [[2026-05-25-how-we-contain-claude]]는 여기에 **환경 층위 전제를 명시적으로 건다.** auto mode는 명령 승인을 모델 기반 classifier에 위임하는 것이고, 각주에서 못 박는다:
+
+> *"it's one layer of defense-in-depth **inside a sandbox**, not a substitute for one."*
+
+수치가 그 이유를 말한다 — **overeager 행동의 약 83%를 실행 전에 포착하지만 ~17%는 통과한다.** 마찰은 낮다(benign 명령의 **0.4%**만 차단). 즉 **auto mode는 sandbox를 대체하는 것이 아니라 sandbox 안에서 쓰는 한 겹**이다. 정면충돌은 아니지만 우선순위가 다르다 — 플레이북은 sandbox를 별도로 다루면서 auto mode의 전제로는 걸지 않는다. → [[agent-containment]]
 
 의미: 검토 대상이 "에이전트가 편집하는 것을 지켜보기"에서 **"더 긴 자율 세션 이후의 아티팩트"**로 옮겨간다. worktree와 함께 쓰면 개인·팀 차원의 병렬성을 가능하게 하고, SDLC를 자율적으로 돌려 루프를 닫는 데 근본적이다.
 
@@ -157,7 +167,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 ### Permissions / sandbox / managed settings
 
 - `permissions.deny` / `allow` — 비밀을 컨텍스트에서 배제하고 안전한 inner loop는 미리 승인 (deny 목록이 프롬프트 피로가 되지 않게)
-- `sandbox` — OS 수준 파일시스템·네트워크 격리. **permission이 닫지 못하는 구멍을 닫는다** (도구 수준 WebFetch deny는 셸 명령의 네트워크 접근을 막지 못한다)
+- `sandbox` — OS 수준 파일시스템·네트워크 격리(macOS **Seatbelt**, Linux **bubblewrap**). **permission이 닫지 못하는 구멍을 닫는다** (도구 수준 WebFetch deny는 셸 명령의 네트워크 접근을 막지 못한다). 정책은 **읽기 허용 / workspace 내 쓰기 허용 / 네트워크 기본 거부**이며, 도입 결과 **권한 프롬프트가 84% 줄었다.** 런타임은 오픈소스로 공개되어 경계가 감사 가능하다 ([[2026-05-25-how-we-contain-claude]])
 - `credentials` — sandbox된 셸 명령이 `~/.ssh`, `~/.aws/credentials`를 읽거나 지정된 환경변수를 보는 것을 막는다
 - managed settings — MDM이나 admin console로 배포되어 엔지니어·프로젝트 파일·CLI 플래그가 규칙을 넓히지 못하게 고정
 
@@ -171,6 +181,24 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **인시던트 대응** — 지표가 baseline으로 돌아왔는지 확인
 
 엔터프라이즈에서는 `allowManagedMcpServersOnly`로 에이전트의 도구 표면 전체를 플랫폼 팀이 소유하는 allowlist로 만들 수 있다.
+
+### 격리 아키텍처와 보고된 취약점
+
+[[2026-05-25-how-we-contain-claude]]는 Claude Code의 containment를 **HITL sandbox 패턴**으로 분류하고, 그것이 성립하는 조건과 깨진 지점을 기록한다.
+
+**왜 이 도구에서 HITL이 성립하는가.** 평균 사용자가 **개발자**이기 때문이다 — bash를 읽고, `rm -rf`가 뭔지 알고, 이미 매주 신뢰할 수 없는 출처에서 `npm install`을 돌린다. "허용하시겠습니까" 대화상자가 떴을 때 판단할 전문성이 있을 가능성이 높다. 같은 전략이 비기술 사용자 제품(Cowork)으로는 전이되지 않으며, 거기서는 관리자가 **절대적이고 상시적인 경계**를 세운다. 세 패턴 비교는 [[agent-containment]].
+
+**그런데 감독은 측정된 실패다.** 텔레메트리상 **사용자는 권한 프롬프트의 약 93%를 승인했다.** 승인을 많이 볼수록 각각에 덜 주의하게 된다 — *"감독을 제공하려고 설계된 기능이 오히려 반대 효과를 낼 수 있다."* 숙련도별 차이도 측정됐다: **경험 많은 사용자는 신규 대비 auto-approve를 약 2배 하지만 실행 중 중단(interrupt)은 더 자주 한다.** 단계별 게이팅 대신 이탈했을 때만 감독하는 쪽으로 진화한다. 저자들은 이것도 fallible하다고 본다 — 에이전트가 점점 야심찬 bash를 쓰고 멀티에이전트로 갈수록 드리프트를 알아채기 어려워진다.
+
+> ⚠️ **구조적 취약점: 탈출 열쇠를 쥔 바깥 프로세스.** Claude Code는 **특권 프로세스가 sandbox 밖에서 명령마다 강제 여부를 결정**한다. 저자들의 지적 — *"설득력 있게 주입된 프롬프트나 피곤한 승인 클릭 하나가 그 프로세스에게 sandbox 없이 무언가를 실행시킬 수 있다."* Cowork의 초기 full-VM 모드에는 그런 바깥 프로세스가 아예 없었다(예외를 허가할 권한을 가진 컴포넌트가 없음). 대비는 [[agent-containment]].
+
+**보고된 취약점 3건 — 신뢰 경계 이전에 실행되는 코드.** 2025 중반~2026년 1월, 책임공개 프로그램으로 받은 취약점 3건이 전부 **사용자가 아무것도 동의하기 전에 실행되는 코드**를 노렸다. 가장 직접적인 형태: 개발자가 PR 리뷰하려고 repo를 clone하는데 거기 `.claude/settings.json`이 hook을 정의하고 있고, **Claude Code가 시작 시 project settings를 읽는 시점이 "이 폴더를 신뢰합니까?" 프롬프트보다 앞서므로** 공격자가 커밋한 hook이 자동 실행된다. 나머지 둘도 구조가 같았다.
+
+수정은 셋 다 같은 모양이었다 — **project-local 설정의 파싱과 실행을 trust 프롬프트 수락 이후로 미룬다.** 일반 처방:
+
+> *"treat project-open, config-load, and localhost listeners the way you'd treat any inbound request from the internet."*
+
+**사용자 자신이 injection 벡터가 될 수 있다.** 2026년 2월 내부 red-team에서 직원이 피싱당해 악성 프롬프트로 Claude Code를 띄웠고, `~/.aws/credentials` 유출이 **25회 중 24회** 성공했다. 사용자가 직접 친 지시이므로 **모델 층위 방어에 잡을 이상 징후가 없었다.** 이 도구의 `permissions.deny`·`credentials`·`sandbox` 설정이 장식이 아닌 이유다. → [[prompt-injection]]
 
 ## 통합과 관련 제품
 
@@ -195,6 +223,8 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **비대화형 실행이 루프를 닫는 열쇠다** — stateless하게 시작하고 끝나므로 사람이 호출 경로에 없어도 된다.
 - **dynamic workflow는 조정 로직을 컨텍스트 밖 코드로 옮긴다.** 병렬 세션(사람이 조정)·subagent(lead가 조정)와 구분되는 세 번째 조정 주체다.
 - **Claude Code는 harness 중 하나다.** 여기 있는 기능의 상당수는 모델의 부족분을 메우는 구조이고, 모델이 좋아지면 일부는 불필요해진다. 통제 목적의 기능(plan mode, hook)은 그렇지 않다.
+- **승인 기반 감독은 측정된 실패다** — 프롬프트의 93%가 승인된다. sandbox가 프롬프트를 84% 줄였고, auto mode는 sandbox **안에서 쓰는 한 겹**이지 대체재가 아니다(~17% 통과).
+- **`CLAUDE.md`와 `.claude/settings.json`은 양면이다.** 리뷰 가능하다는 장점과 공격자가 커밋하면 매 세션 로드된다는 위험이 같은 속성에서 나온다.
 
 ## Related
 
@@ -209,9 +239,12 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[agent-evaluation]] — verifier subagent와 OTel export가 기여하는 평가 체계
 - [[meta-harness]] — harness라는 범주 자체. 이 페이지의 기능들이 인코딩한 가정을 읽는 틀
 - [[managed-agents]] — 이 harness가 얹힐 수 있는 하부 인터페이스. 경쟁 제품이 아니라 다른 층위
+- [[agent-containment]] — 이 도구의 sandbox가 속한 세 격리 패턴 중 HITL 패턴
+- [[prompt-injection]] — 보고된 취약점 3건과 피싱 사례가 속한 공격면
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Dynamic workflows 절의 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "Claude Code는 harness 중 하나다" 절의 출처
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 격리 아키텍처·취약점·sandbox 수치·auto mode 전제의 출처

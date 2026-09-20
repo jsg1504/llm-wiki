@@ -2,8 +2,8 @@
 title: AI-Native SDLC
 type: topic
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude]
 tags: [sdlc, agentic-coding, enterprise-ai, governance, ai-native]
 status: draft
 ---
@@ -71,6 +71,10 @@ status: draft
 거버넌스 관점에서 plan mode의 가치는 도구가 스스로 강제한다는 것이다 — 엔지니어가 계획을 수락하기 전에는 Claude가 파일을 편집할 수 없다. 즉 설계 리뷰가 **코드가 생성되기 전, 방향 전환이 아직 문서 편집으로 끝나는 시점에** 일어난다.
 
 가드레일이 성숙하면(튜닝된 `CLAUDE.md`, 정책을 인코딩한 skill, 위험한 동작을 막는 hook, Claude가 돌릴 수 있는 테스트 suite) **auto mode**가 일상 작업의 기본이 된다. 이때 검토 대상은 "에이전트가 편집하는 것을 지켜보기"에서 "더 긴 자율 세션 이후의 아티팩트"로 옮겨간다.
+
+> **전제 보강 (2026-09-21).** 위 가드레일 목록은 대부분 **model/config 층위**다. [[2026-05-25-how-we-contain-claude]]는 여기에 **환경 층위 전제**를 명시적으로 건다 — auto mode는 *"one layer of defense-in-depth **inside a sandbox**, not a substitute for one."* 수치도 있다: **overeager 행동의 약 83%를 실행 전에 포착하지만 ~17%는 통과**하고, benign 명령의 0.4%를 차단한다.
+>
+> 정면충돌은 아니다. 플레이북도 sandbox·permission을 다루고 *"작은 blast radius"*를 조건으로 건다. 다만 **auto mode의 전제 목록에 sandbox를 넣지 않는다.** 두 소스를 합쳐 읽으면 순서는 이렇다 — **sandbox가 먼저 서고, 그 안에서 auto mode가 마찰을 줄이는 한 겹으로 돈다.** → [[agent-containment]], [[claude-code]]
 
 이 단계의 하위 주제들:
 - **`CLAUDE.md`** — 신규 입사자가 첫날 필요할 것. 한 페이지 이하. `/init`으로 시작해 잘라낸다. 규칙: **Claude가 같은 실수를 두 번 하면 교정이 여기 들어간다.**
@@ -146,6 +150,8 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - **탐지는 결정론적, 대응은 티어링.** 모델은 band가 깨진 뒤에만 부른다.
 - **skill은 위반을 드물게, hook은 거의 불가능하게 만든다.** 어느 쪽이 필요한지는 "이 정책이 예외 없이 성립해야 하는가"로 결정된다.
 - **에이전트는 production gate까지, 그리고 코드를 쓴 에이전트는 그것을 승인할 수 없다.**
+- **auto mode는 sandbox 안에서 쓰는 한 겹이다.** 가드레일 목록(CLAUDE.md·skill·hook·테스트)은 model/config 층위이고, 그 아래 환경 층위가 먼저 서 있어야 한다.
+- **`CLAUDE.md`·`plan.md`·skill은 아티팩트이자 공격 표면이다.** 커밋되면 매 세션 로드되므로 리뷰가 방어의 일부가 된다.
 - **측정 지표는 이미 있는 데이터에서 나온다** — git history, PR metadata, CI, incident tracker, OTel.
 - **병렬성의 천장은 에이전트 수가 아니라 사람의 리뷰 능력이다.**
 
@@ -171,6 +177,7 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 
 - [[artifact-chain]] — 이 토픽의 구조적 척추. 단계 간 인터페이스가 어떻게 작동하는지
 - [[agentic-governance]] — Deploy·Build 단계 통제의 일반화. skill/hook/settings 계층과 production gate
+- [[agent-containment]] — 이 프로세스가 돌아가는 환경 층위의 격리
 - [[claude-code]] — 이 플레이북이 각 단계에 배치하는 도구
 - [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성. 아래 Contradiction의 상대편
 - [[dynamic-workflows]] — 마이그레이션·리팩터와 리뷰 pass를 워크플로로 돌리는 접근. Stage 3·5의 확장 경로
@@ -180,4 +187,5 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). auto mode 전제 보강
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Contradiction 절에서 인용. 코딩 태스크의 에이전트 조정 실증과 경제성 재확인.

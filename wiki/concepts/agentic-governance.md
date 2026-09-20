@@ -3,7 +3,7 @@ title: Agentic Governance
 type: concept
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
 tags: [governance, enterprise-ai, agentic-coding, security, compliance, ai-native]
 status: draft
 ---
@@ -122,6 +122,16 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 > ⚠️ 소스가 이 패턴을 한 문단으로만 언급하며, 구현 예시나 실패 사례는 제시하지 않는다. 원리는 분명하지만 이 위키에는 아직 **검증된 레시피가 없다.**
 
+> ⚠️ **정정 (2026-09-21): "무력화"가 아니라 트레이드오프다.** 위 유보가 옳았다. [[2026-05-25-how-we-contain-claude]]가 같은 구조의 **역효과**를 보고한다 — **multi-agent trust escalation**:
+>
+> *"if a sub-agent's output is treated as higher-trust than raw tool results, because such output came from "us," a new vector for prompt injection is introduced. In multi-agent systems, there is a tradeoff between allocating differing trust levels and becoming liable to trust escalation."*
+>
+> **격리가 세탁이 된다.** 경계를 넘으면서 데이터의 출처 표식이 사라지고, "우리 subagent가 준 것"이라는 이유로 오히려 신뢰 등급이 **올라간다.** 주입된 지시가 "구조화된 사실"로 포장되어 메인 에이전트에 도달한다.
+>
+> 완화 방향은 분명하다 — **subagent 출력을 raw tool result와 같은 등급으로 다루고 같은 검사를 통과시킨다.** 단 이 소스도 구체적 레시피는 주지 않는다(*"looking ahead"* 절의 전망이지 해결된 문제가 아니다). 상세는 [[prompt-injection]].
+>
+> 즉 quarantine은 **여전히 유효하지만 공짜가 아니다.** 신뢰 수준을 차등 배분하는 순간 그 차등 자체가 공격 대상이 된다.
+
 ## 방어가 모델 능력의 함수인가 — 자격증명 격리
 
 앞의 계층들(skill / hook / managed settings)과 quarantine은 **에이전트의 행동 표면**을 통제한다. [[2026-04-08-scaling-managed-agents]]는 그 위에 얹히는 **판별 질문** 하나를 준다.
@@ -152,6 +162,34 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 > ℹ️ 이 소스는 **호스팅 플랫폼**의 관점이다. 단일 팀이 자기 에이전트를 돌리는 상황에서 vault·프록시를 세우는 비용이 정당한지는 다루지 않는다.
 
+### 환경 층위가 최후 방어선이다 — 측정된 근거
+
+위 판별 기준을 [[2026-05-25-how-we-contain-claude]]가 **사고 보고로 실증한다.** 이 페이지가 다루는 통제(skill / hook / managed settings / quarantine)는 전부 에이전트의 **행동 시점**에 개입한다. 그 아래에 **환경 층위**(sandbox, VM, 파일시스템 경계, egress 통제)가 있고, 두 인시던트가 왜 그것이 먼저여야 하는지를 보여준다.
+
+**이 페이지의 전제 하나가 흔들리는 지점:** 위 Overview는 통제를 *"리뷰에서 행동 시점으로 옮기는 것"*으로 요약한다. 그런데 행동 시점의 통제 상당수가 **사용자 의도에 닻을 내리고 있다.** 2026년 2월 내부 red-team에서 직원이 피싱당해 악성 프롬프트로 세션을 띄웠을 때 — **25회 중 24회 자격증명 유출 성공** — 모델 층위 방어가 아무것도 하지 못했다:
+
+> *"Our model-layer defenses anchor on user intent—when the user is the one typing the instruction, there's nothing anomalous for a classifier to catch. A human contractor handed the same script would have done the same thing."*
+
+**사용자가 속으면 행동 시점 통제의 상당 부분이 조용히 통과시킨다.** 버틴 것은 egress 통제와 파일시스템 경계뿐이었다.
+
+두 번째 사례는 경계가 **제대로 그어졌는데도** 졌다. egress allowlist가 `api.anthropic.com`을 통과시켰고, 공격자가 심은 API 키로 데이터가 그 통로로 나갔다. *"sandbox는 완벽하게 작동했는데 데이터는 유출됐다."* 교훈은 **allowlist를 목적지 필터가 아니라 capability grant로 읽는 것** — 허용된 도메인 뒤의 모든 기능이 공격 표면이다.
+
+> **요약부의 원칙:** *"Design for containment at the environment layer first, then steer behavior at the model layer. The deterministic boundary is what gets hit when everything probabilistic misses."*
+
+이 페이지의 세 계층(skill / hook / managed settings)은 **그 위에 얹히는 조직 통제**이지 그것을 대체하지 않는다. 전체 구조와 세 격리 패턴은 [[agent-containment]], 공격면은 [[prompt-injection]].
+
+**정량 근거** (이 위키에서 가장 두꺼운 보안 수치):
+
+| 지표 | 값 |
+|---|---|
+| 권한 프롬프트 승인율 | **약 93%** — 감독이 실패하는 방식 |
+| OS sandbox 도입 후 프롬프트 감소 | **84%** |
+| auto mode가 포착하는 overeager 행동 | **약 83%** (→ **~17% 통과**) |
+| auto mode가 차단하는 benign 명령 | **0.4%** |
+| Gray Swan 단발 공격 성공률 (Opus 4.7) | **~0.1%** |
+| Gray Swan 100회 적응적 공격 후 | **5~6%** |
+| 피싱 red-team 유출 성공 | **25회 중 24회** |
+
 ## 인간 주의의 재배치
 
 통제를 옮기는 것의 목적은 사람을 빼는 것이 아니라 **사람의 주의를 값어치 있는 곳에 놓는 것**이다.
@@ -177,6 +215,12 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 세 가지 로그가 반복 등장한다 — **git history, PR metadata, OpenTelemetry export.** 새 감사 인프라를 만들지 않고 이미 감사받고 있는 것을 재사용한다. → [[artifact-chain]]
 
+> ⚠️ **격리 ↔ 관측가능성 트레이드오프 (2026-09-21).** 위 표는 OTel export를 증거 인프라로 낙관적으로 다루지만, [[2026-05-25-how-we-contain-claude]]가 그 한계를 보고한다. 엔터프라이즈 보안팀이 Cowork를 평가하며 물었다 — **"우리 EDR이 왜 안을 못 봅니까?"** 답은 **Claude를 가둔 그 격리가 호스트 기반 EDR도 막는다**는 것이었다. EDR 입장에서 sandbox는 불투명한 하이퍼바이저 프로세스다.
+>
+> **격리는 가시성을 줄인다.** 현재 완화책은 관리자가 사후에 이벤트 로그를 가져가는 **pull 기반 OTLP export**인데, 저자들이 명시한다 — *"this is not the same as live monitoring."* 그리고 *"비슷한 걸 만든다면 이 대화를 위한 예산을 일찍 잡아라."*
+>
+> 컴플라이언스가 엔드포인트 가시성에 걸려 있는 조직에게는 **격리 강화가 곧 감사 약화**다. 위 표의 증거들이 전부 사후 기록이라는 점을 이 축에서 다시 읽어야 한다. → [[agent-containment]]
+
 ## 설정도 회귀 테스트한다
 
 `CLAUDE.md`·skills·hooks는 에이전트를 조종하는 설정이므로 **코드가 받는 회귀 테스트를 받아야 한다.**
@@ -192,6 +236,9 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 - **여러 에이전트를 돌리면 통제 축이 하나 늘어난다** — 무엇을 할 수 있는가에 더해 **누가** 할 수 있는가. quarantine 패턴이 그 최소 형태다.
 - **방어가 "모델이 X를 못 한다"에 기대면 모델과 함께 낡는다.** 좁은 스코핑은 완화책이고, 구조적 해결은 비밀이 에이전트의 실행 환경에 **존재하지 않게** 하는 것이다.
+- **환경 층위가 먼저다.** 이 페이지의 세 계층은 그 위에 얹히는 조직 통제이지 대체재가 아니다. 사용자가 속으면 행동 시점 통제의 상당 부분이 통과시킨다 — 그때 버티는 것은 egress·파일시스템 경계뿐이다.
+- **quarantine은 무력화가 아니라 트레이드오프다.** 신뢰 수준을 차등 배분하면 그 차등이 공격 대상이 된다(trust escalation).
+- **격리를 강화하면 감사 가시성이 줄어든다.** 사후 OTLP export는 live monitoring과 같지 않다.
 
 - **통제는 계층이다.** skill(advisory) < hook(deterministic) < managed settings(강제). 판단 기준은 "이 정책이 예외 없이 성립해야 하는가".
 - **각 계층은 이전 계층이 남긴 구멍을 닫는다.** permission → sandbox → credentials. 통제 하나가 완결적이라 가정하지 않는다.
@@ -209,6 +256,9 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 - 승인 게이트가 사람에 남는다면, 에이전트 산출량이 늘 때 **승인자**의 병목은 어떻게 다루나? 리뷰는 에이전트에 위임했지만 승인은 위임할 수 없다.
 - 자격증명 격리(vault·프록시)와 **로컬 개발 경험**은 어떻게 양립하나? 엔지니어의 터미널 세션은 보통 이미 인증된 환경에서 돈다. 이 소스는 호스팅 환경만 다룬다.
 - **어디까지가 "닿을 수 없음"인가?** git remote에 배선된 토큰은 sandbox 안의 코드가 `.git/config`를 읽으면 노출되지 않나? 소스는 이 지점을 설명하지 않는다.
+- **trust escalation의 구체적 완화 레시피는?** "subagent 출력을 동급으로 검사하라"가 원리인데, 그러면 quarantine의 이득(메인 에이전트가 raw text를 안 본다)이 얼마나 남나? 두 소스 다 답하지 않는다.
+- **격리와 실시간 감사를 동시에 얻는 방법은?** 게스트 내부 에이전트 기반 관측이 가능한지, 그것이 다시 공격 표면이 되지는 않는지 다뤄지지 않는다.
+- **에이전트 identity** — 자기 principal을 가져야 하나, 사용자 권한을 상속해야 하나? 이 위키의 두 소스가 같은 축의 다른 지점에 있고 답이 없다. → [[prompt-injection]]
 
 ## Related
 
@@ -220,9 +270,12 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 - [[claude-code]] — skill·hook·permission·sandbox·managed settings의 구현
 - [[meta-harness]] — "방어가 모델 능력의 함수인가"라는 판별 기준의 출처. harness 가정 노후화의 일반론
 - [[managed-agents]] — 자격증명 격리 두 패턴의 실제 구현
+- [[agent-containment]] — 이 페이지 아래의 환경 층위. blast radius, 세 격리 패턴, 격리↔관측가능성
+- [[prompt-injection]] — 이 통제들이 막으려는 공격면. quarantine의 실패 모드가 기록된 곳
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — quarantine 패턴 (Quarantine 절)
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 자격증명 격리 절
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 환경 층위 절, quarantine 정정, EDR 트레이드오프, 정량 데이터

@@ -2,8 +2,8 @@
 title: Artifact Chain
 type: concept
 created: 2026-09-11
-updated: 2026-09-11
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system]
+updated: 2026-09-21
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-05-25-how-we-contain-claude]
 tags: [sdlc, agentic-coding, audit-trail, version-control, ai-native]
 status: draft
 ---
@@ -67,6 +67,14 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 
 `plan.md`의 기준이 특히 시사적이다. "에이전트가 이해할 수 있는가"가 아니라 **"제3의 사람이 이해할 수 있는가"**가 기준이다. 아티팩트는 에이전트를 위한 것이 아니라 프로세스를 위한 것이다.
 
+> ⚠️ **지속 아티팩트는 공격 표면이다 (2026-09-21).** 이 페이지의 전제 — *에이전트는 stateless하고 커밋된 아티팩트가 세션 사이에 살아남는 유일한 기억이다* — 에는 반대편이 있다. [[2026-05-25-how-we-contain-claude]]는 **persistent memory poisoning**을 앞으로 커질 위험으로 꼽으며 그 목록에 **`CLAUDE.md` 파일**과 **장기 실행 에이전트의 state 디렉토리**를 명시적으로 넣는다.
+>
+> *"An injection that lands in any of these is **reloaded each time the agent starts.** As more agent state survives the session, we are threatened by new persistence mechanisms in the classic post-exploitation sense."*
+>
+> 즉 **"세션 사이에 살아남는다"는 이 패턴의 장점이 그대로 지속성 메커니즘의 정의**다. 실제로 [[claude-code]]에서 보고된 취약점 3건이 `.claude/settings.json`을 노렸다.
+>
+> **모순은 아니고, 오히려 이 페이지의 처방이 방어의 일부다** — 아티팩트가 커밋되고 리뷰되므로 악성 변경이 PR에서 보인다. 위 "동기화 문제" 절의 hook·리뷰 pass가 여기서도 작동한다. 다만 저자들의 전망은 그것으로 부족하다는 쪽이다: *"세션 시작 시의 좋은 classifier가 더 일반화되어야 한다."* → [[prompt-injection]]
+
 ## 동기화 문제
 
 체인의 가장 약한 지점은 **아티팩트가 현실과 어긋나는 것**이다. 구현이 계획에서 벗어났는데 `plan.md`가 그대로면 그 파일은 audit trail이 아니라 거짓말이 된다.
@@ -98,6 +106,7 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - 아티팩트의 합격 기준은 "다음 단계가 대화 없이 소비할 수 있는가"다.
 - **동기화는 규율이 아니라 자동화된 검사로 유지된다.** hook과 리뷰 pass가 없으면 문서화 부채로 퇴화한다.
 - 레거시를 대체하지 않는다. 아티팩트마다 source of truth를 하나 지명하고 나머지는 링크한다.
+- **세션을 넘어 살아남는다는 장점이 곧 지속성 메커니즘이다.** 커밋·리뷰가 방어의 일부지만, 지속 아티팩트는 injection이 착륙하면 매 세션 다시 로드되는 자리이기도 하다.
 
 ## Open Questions
 
@@ -109,9 +118,12 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - [[ai-native-sdlc]] — 이 패턴이 SDLC 6단계에 구체적으로 어떻게 배치되는지
 - [[agentic-governance]] — 아티팩트에 걸리는 승인 게이트와 통제 계층
 - [[claude-code]] — `CLAUDE.md`, plan mode 등 아티팩트를 생성·소비하는 도구 기능
+- [[prompt-injection]] — 지속 아티팩트가 갖는 memory poisoning 면
+- [[agent-containment]] — 신뢰 경계 이전에 설정 파일이 로드되는 문제
 - [[orchestrator-worker]] — subagent 출력을 파일시스템으로 보내는 같은 처방의 세션 내부 판본
 - [[subagent]] — 그 처방이 적용되는 단위
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 지속 아티팩트의 공격 표면

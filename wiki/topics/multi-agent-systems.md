@@ -3,7 +3,7 @@ title: 멀티에이전트 시스템
 type: topic
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
 tags: [multi-agent, agentic-workflows, token-economics, architecture]
 status: draft
 ---
@@ -153,7 +153,9 @@ status: draft
 - **미해결:** *LLM이 다른 LLM에게 실시간 위임하는* 구조가 지금은 잘 되는가? 세 소스 모두 데이터 없음. 필요한 자료는 결정론적 harness **없이** 에이전트 간 위임을 측정한 것.
 - **미해결:** 결정론적 조정이 LLM 조정보다 항상 나은가, 아니면 유연성을 잃는 트레이드오프인가? [[dynamic-workflows]]의 한계 절에 기록.
 - **미해결:** 인프라 비용(TTFT·provisioning)과 토큰 비용을 **하나의 판단 기준**으로 합칠 수 있는가? 두 축이 각각 다른 소스에서 따로 보고되고 있다.
-- **편향 주의:** **네 소스 모두** Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
+- **미해결:** 에이전트를 여럿 굴릴 때 **신뢰 경계가 몇 개 늘어나는가**를 비용에 넣어야 하나? [[2026-05-25-how-we-contain-claude]]가 **multi-agent trust escalation**을 보고한다 — subagent 출력이 "우리 것"이라는 이유로 raw tool result보다 높은 신뢰를 받으면 새 injection 벡터가 생긴다. 이 위키의 경제성 논의는 토큰과 인프라만 세었고 **신뢰 경계 관리 비용**은 세지 않았다. → [[prompt-injection]], [[subagent]]
+- **미해결:** 같은 소스가 지적하듯 **감독이 멀티에이전트에서 더 빨리 무너진다** — *"사용자가 멀티에이전트 시스템으로 옮겨가면 이 접근(이탈 시 개입)은 효과적인 감독 전략일 가능성이 훨씬 낮아진다."* 사람의 리뷰 능력이 천장이라는 이 위키의 기록([[subagent]])에 **드리프트를 알아챌 수 있는가**라는 조건이 하나 더 붙는다.
+- **편향 주의:** **다섯 소스 모두** Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
 
 ## Related
 
@@ -167,6 +169,8 @@ status: draft
 - [[anthropic]] — 이 위키에 들어온 멀티에이전트 자료 **전부**의 출처. 외부 관점 부재는 이 페이지의 판정을 읽을 때의 주의 사항이다.
 - [[meta-harness]] — 여러 에이전트를 돌릴 때의 인프라 인터페이스. 위 "스케일의 인프라 비용" 절의 설계 논증.
 - [[managed-agents]] — TTFT 수치가 나온 실제 시스템.
+- [[agent-containment]] — 에이전트를 여럿 굴릴 때 blast radius가 곱해지는 문제.
+- [[prompt-injection]] — 신뢰 경계가 늘어날 때 생기는 trust escalation.
 
 ## Sources
 
@@ -174,3 +178,4 @@ status: draft
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Contradiction 절에서만 인용. 코딩 도메인의 병렬 세션 권장.
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 세 실패 모드, 조정 주체의 네 번째 범주, 경제성 재확인. Contradiction 축 1·2 판정의 근거.
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 스케일의 인프라 비용 절.
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 신뢰 경계 비용과 감독의 한계.

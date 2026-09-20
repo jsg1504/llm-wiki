@@ -3,7 +3,7 @@ title: Subagent
 type: concept
 created: 2026-09-12
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
@@ -103,6 +103,17 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
   > 관찰 하나 더: 이 소스는 many hands가 **모델이 똑똑해지면서 비로소 가능해진 것**이라고 말한다 — 여러 실행 환경 중 어디로 일을 보낼지 고르는 것은 단일 셸보다 어려운 인지 과제라 초기 모델로는 안 됐다는 것. 위 표의 세 번째 층위(LLM 간 실시간 위임, *"not yet great"*)가 **시간이 지나면 풀릴 종류의 한계**라는 방증으로 읽힌다. 다만 이 소스도 그 층위를 직접 측정하지는 않는다.
 - **개수를 스스로 정하지 못한다.** 초기 시스템은 단순한 쿼리에 subagent 50개를 띄웠다. 노력 배분 규칙을 프롬프트에 명시해야 한다.
 - **창발적 행동.** 부모 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다.
+- **⚠️ subagent 경계는 신뢰 경계이기도 하다 — 그리고 양방향이다.** [[2026-05-25-how-we-contain-claude]]가 **multi-agent trust escalation**을 보고한다.
+
+  좋은 쪽은 이미 이 위키에 있다 — [[agentic-governance]]의 **quarantine 패턴**: 미신뢰 콘텐츠를 읽는 subagent가 raw text 대신 **구조화된 사실**만 위로 올리면, 메인 에이전트는 주입된 텍스트를 보지 않는다.
+
+  나쁜 쪽이 새로 기록된다:
+
+  > *"if a sub-agent's output is treated as higher-trust than raw tool results, because such output came from "us," a new vector for prompt injection is introduced."*
+
+  **격리가 세탁이 된다.** 경계를 넘으면서 데이터의 출처 표식이 사라지고, "우리 subagent가 준 것"이라는 이유로 신뢰 등급이 오히려 **올라간다.** 주입된 지시가 "구조화된 사실"로 포장되어 도달한다.
+
+  > 위 표의 네 층위 전부에 걸린다. 조정 주체가 누구든(부모 LLM·사람·프로그램) **subagent 반환값을 무엇으로 취급하느냐**는 별개 결정이고, 이 위키는 지금까지 그것을 다루지 않았다. 완화 방향은 **subagent 출력을 raw tool result와 같은 등급으로 검사하는 것**이지만, 그러면 quarantine의 이득이 얼마나 남는지는 소스도 답하지 않는다. 상세는 [[prompt-injection]].
 
 ## Related
 
@@ -115,6 +126,8 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[agent-orchestration-patterns]] — subagent를 엮는 여섯 가지 제어 구조
 - [[meta-harness]] — 조정 상태를 durable하게 만드는 축. "누가 조정하는가"와 직교한다
 - [[managed-agents]] — brain끼리 hand를 넘기는 것이 가능한 실제 구조
+- [[prompt-injection]] — subagent 경계에서 일어나는 trust escalation
+- [[agent-containment]] — 에이전트를 여럿 굴릴 때의 환경 층위 격리
 
 ## Sources
 
@@ -122,3 +135,4 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — 코딩형 subagent 정의 방식, verifier/researcher/simplifier, 병렬 세션과의 구분
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 결정론적 프로그램이 조정하는 네 번째 층위, 모순 판정의 근거
 - [[2026-04-08-scaling-managed-agents]] — 조정 상태의 durable한 거처, "brains pass hands" 부분 예외
+- [[2026-05-25-how-we-contain-claude]] — multi-agent trust escalation. subagent 경계가 신뢰 경계로서 갖는 양면성

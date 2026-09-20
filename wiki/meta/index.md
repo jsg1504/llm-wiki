@@ -16,29 +16,31 @@ status: mature
 
 ## 🧠 Topics (큰 주제 영역)
 
-- [[ai-native-sdlc]] — SDLC 6단계를 선형 핸드오프에서 커밋된 아티팩트가 다음 단계를 트리거하는 루프로 재설계한 것 (소스 3개, 2026-09-12) ⚠️ 모순 1건 *부분 판정*
-- [[multi-agent-systems]] — 여러 에이전트가 협력하는 시스템. 중심 질문은 "어떻게"가 아니라 "언제 15배 토큰을 낼 가치가 있는가" + 스케일의 인프라 비용 (소스 4개, updated 2026-09-21) ⚠️ 모순 1건 *부분 판정 (적합성 ✅ / 경제성 ✅, 잔여 질문 3건)*
+- [[ai-native-sdlc]] — SDLC 6단계를 선형 핸드오프에서 커밋된 아티팩트가 다음 단계를 트리거하는 루프로 재설계한 것 (소스 4개, updated 2026-09-21) ⚠️ 모순 1건 *부분 판정*
+- [[multi-agent-systems]] — 여러 에이전트가 협력하는 시스템. 중심 질문은 "어떻게"가 아니라 "언제 15배 토큰을 낼 가치가 있는가" + 인프라 비용 + 신뢰 경계 비용 (소스 5개, updated 2026-09-21) ⚠️ 모순 1건 *부분 판정 (적합성 ✅ / 경제성 ✅, 잔여 질문 5건)*
 
 ---
 
 ## 💡 Concepts (개념·패턴·알고리즘)
 
+- [[agent-containment]] — 에이전트를 **감독**하는 대신 무엇을 할 수 있는지를 환경 층위에서 상한 짓는다. blast radius, 위험 3종 × 방어 3층, 세 격리 패턴 (소스 2개, 2026-09-21) 🆕
 - [[agent-evaluation]] — 경로가 매번 달라지는 에이전트를 결과 기준으로 평가하는 법. LLM-as-judge, end-state evaluation, 판정자 분리 (소스 3개, 2026-09-12)
 - [[agent-orchestration-patterns]] — 여러 에이전트를 엮는 여섯 가지 제어 구조. classify / fan-out / adversarial verification / generate-filter / tournament / loop-until-done (소스 2개, 2026-09-12) 🆕
-- [[agentic-governance]] — 에이전트가 코드를 쓸 때의 통제 계층(skill/hook/managed settings)과 production gate 경계, quarantine, 자격증명 격리 (소스 3개, updated 2026-09-21)
-- [[artifact-chain]] — 각 단계가 커밋된 파일로 끝나고 다음 단계가 그것을 읽는 패턴. 커밋 체인이 곧 audit trail (소스 2개, 2026-09-12)
+- [[agentic-governance]] — 통제 계층(skill/hook/managed settings), production gate 경계, quarantine, 자격증명 격리, 환경 층위 우선 (소스 4개, updated 2026-09-21) ⚠️ quarantine 정정 1건
+- [[artifact-chain]] — 각 단계가 커밋된 파일로 끝나고 다음 단계가 그것을 읽는 패턴. 커밋 체인이 곧 audit trail. **지속성은 공격 표면이기도 하다** (소스 3개, updated 2026-09-21)
 - [[dynamic-workflows]] — 에이전트가 태스크별 harness를 즉석에서 작성. 조정이 LLM 컨텍스트에서 결정론적 코드로 이동한다 (소스 3개, updated 2026-09-21)
-- [[meta-harness]] — harness의 가정은 모델이 좋아지면 썩는다. 더 좋은 harness 대신 **harness보다 오래 사는 인터페이스**를 고정한다 (소스 2개, 2026-09-21) 🆕
+- [[meta-harness]] — harness의 가정은 모델이 좋아지면 썩는다. 더 좋은 harness 대신 **harness보다 오래 사는 인터페이스**를 고정한다 (소스 3개, 2026-09-21) 🆕
 - [[orchestrator-worker]] — lead agent가 분해·위임·종합하고 subagent가 독립 context window에서 병렬 탐색하는 구조 (소스 3개, 2026-09-12)
-- [[subagent]] — 부모가 호출하는 독립 context window의 하위 에이전트. 리서치형↔코딩형 용어 정렬, 조정 주체 **네** 층위 구분 (소스 4개, updated 2026-09-21) ⚠️ 부분 예외 1건
+- [[prompt-injection]] — 에이전트 공격면. direct vs indirect, 사용자가 벡터(25중 24), capability grant, memory poisoning, trust escalation (소스 3개, 2026-09-21) 🆕
+- [[subagent]] — 부모가 호출하는 독립 context window의 하위 에이전트. 리서치형↔코딩형 용어 정렬, 조정 주체 **네** 층위 구분 (소스 5개, updated 2026-09-21) ⚠️ 부분 예외 1건 + trust escalation
 
 ---
 
 ## 👤 Entities (사람·조직·제품·도구·모델)
 
-- [[anthropic]] — Claude를 만드는 조직. **소스 4/4가 전부 여기 발행**이므로 관점 편향 추적 지점. 엔지니어링·엔터프라이즈·플랫폼 세 얼굴 (소스 4개, updated 2026-09-21)
-- [[claude-code]] — Anthropic의 에이전틱 코딩 도구. plan/auto mode, CLAUDE.md, skills, hooks, subagents, worktrees, dynamic workflows. **harness 중 하나**로 위치 지어짐 (소스 4개, updated 2026-09-21)
-- [[managed-agents]] — Claude Platform의 호스팅 에이전트 서비스. session/harness/sandbox 세 인터페이스, 자격증명 격리, TTFT −60%/−90% (소스 1개, 2026-09-21) 🆕
+- [[anthropic]] — Claude를 만드는 조직. **소스 4/4가 전부 여기 발행**이므로 관점 편향 추적 지점. 엔지니어링·엔터프라이즈·플랫폼·보안 사고 보고자 네 얼굴 (소스 5개, updated 2026-09-21)
+- [[claude-code]] — Anthropic의 에이전틱 코딩 도구. plan/auto mode, CLAUDE.md, skills, hooks, subagents, worktrees, dynamic workflows. **harness 중 하나**로 위치 지어짐. sandbox 수치·보고된 취약점 3건 (소스 5개, updated 2026-09-21)
+- [[managed-agents]] — Claude Platform의 호스팅 에이전트 서비스. session/harness/sandbox 세 인터페이스, 자격증명 격리, TTFT −60%/−90% (소스 2개, 2026-09-21) 🆕
 
 ---
 
@@ -46,6 +48,7 @@ status: mature
 
 - [[2025-06-13-multi-agent-research-system]] — *How we built our multi-agent research system*, Jeremy Hadfield 외 5인 (Anthropic Engineering, 2025-06-13). Research 기능의 orchestrator-worker 아키텍처·토큰 경제성·평가·프로덕션 회고 (2026-09-11)
 - [[2026-04-08-scaling-managed-agents]] — *Scaling Managed Agents: Decoupling the brain from the hands*, Lance Martin·Gabe Cemaj·Michael Cohen (Anthropic Engineering, 2026-04-08). harness 가정의 노후화, brain/hands/session 분리, 자격증명 격리, 창 밖 컨텍스트 (2026-09-21)
+- [[2026-05-25-how-we-contain-claude]] — *How we contain Claude across products*, Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). blast radius, 세 격리 패턴, 실패 사례 4건, 이 위키에서 가장 두꺼운 보안 수치 (2026-09-21)
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — *A harness for every task: dynamic workflows in Claude Code*, Thariq Shihipar·Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Claude가 harness를 직접 쓴다. 여섯 패턴·아홉 사용 사례·세 실패 모드 (2026-09-12)
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — *The AI-Native SDLC playbook*, Louis Claxton (Anthropic / Claude Blog, 2026-08-21). 규제 엔터프라이즈 대상 SDLC 6단계 재설계 플레이북 (2026-09-11)
 

@@ -3,7 +3,7 @@ title: Managed Agents
 type: entity
 created: 2026-09-21
 updated: 2026-09-21
-sources: [2026-04-08-scaling-managed-agents]
+sources: [2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
 tags: [managed-agents, anthropic, claude-platform, meta-harness, product, sandbox, session-log]
 status: draft
 ---
@@ -54,6 +54,12 @@ Managed Agents는 [[anthropic]]이 Claude Platform 안에서 제공하는 서비
 - **Git** — sandbox 초기화 시점에 repo access token으로 clone하고 그 토큰을 local git remote에 배선한다. 이후 `push`/`pull`은 **에이전트가 토큰을 한 번도 만지지 않고** 동작한다.
 - **커스텀 도구** — MCP를 지원하고 OAuth 토큰은 sandbox 밖 vault에 둔다. Claude는 전용 **프록시**를 통해 MCP 도구를 부르고, 프록시가 세션에 연결된 토큰을 받아 vault에서 해당 자격증명을 꺼내 외부 서비스를 호출한다. **harness조차 자격증명의 존재를 통보받지 않는다.**
 
+> **자매 사례 (2026-09-21).** [[2026-05-25-how-we-contain-claude]]가 Cowork에서 같은 원리를 다른 형태로 구현한다 — 자격증명은 **호스트 keychain**에 남고 게스트 VM에 들어가지 않으며, VM은 **세션별 스코프다운 토큰**을 받는다. 그 토큰은 **사용자 것과 독립적으로 폐기 가능하다.**
+>
+> 그리고 그쪽이 **이 페이지의 프록시 설계에 대칭인 교훈**을 준다. 여기서 프록시가 sandbox *밖*에 있는 이유는 비밀을 **안 보이게** 하기 위해서다. Cowork의 방어적 MITM 프록시는 VM *안*에 있는데, 이유는 반대다 — **provenance를 아는 것이 VM뿐**이기 때문이다(서버 입장에서 Cowork 요청은 다른 API 클라이언트와 구별되지 않는다). **경계를 어디 두느냐는 "누가 맥락을 아는가"로 정해진다.**
+>
+> ⚠️ 그쪽에서 실패한 것도 같은 계열이다. egress allowlist가 자사 API 도메인을 통과시켰고 공격자가 심은 키로 데이터가 나갔다. **allowlist는 목적지 필터가 아니라 capability grant다.** 이 페이지의 프록시도 같은 질문을 받는다 — *세션 토큰으로 도달 가능한 기능의 집합은 정확히 무엇인가?* 소스는 답하지 않는다. → [[prompt-injection]]
+
 ## Claude Code와의 관계
 
 같은 층위의 제품이 아니다. [[claude-code]]는 **하나의 harness**이고 Managed Agents는 **harness가 꽂히는 자리**다. 글이 명시적으로 이렇게 위치시킨다:
@@ -74,6 +80,7 @@ Managed Agents (meta-harness)
 - **어떤 harness를 실제로 가져다 쓸 수 있는가?** "어떤 harness든 수용한다"가 사용자가 임의의 harness를 배포할 수 있다는 뜻인지, Anthropic이 고른 harness 중 선택하는 것인지 글은 말하지 않는다.
 - **`getEvents()`의 슬라이스는 누가 결정하는가?** Claude가 직접 호출하는지, harness가 정책으로 부르는지 불명확하다. "the brain to interrogate context"라는 표현은 전자를 시사하지만 단정할 수 없다.
 - **세션 로그의 보존 기간·비용 모델.** durable 저장이 전제인데 한도가 언급되지 않는다.
+- **세션 토큰으로 도달 가능한 기능의 집합은 정확히 무엇인가?** capability grant 관점([[prompt-injection]])에서 이 vault·프록시 설계를 검증하려면 필요한데, 소스는 토큰의 존재만 말하고 그 권한 범위를 말하지 않는다.
 - **many hands를 쓸 때 Claude가 라우팅에 실패하면?** "어디로 일을 보낼지 고르는 것이 어려운 인지 과제"라고 인정하면서 그 실패 모드는 다루지 않는다.
 
 ## Related
@@ -82,9 +89,12 @@ Managed Agents (meta-harness)
 - [[claude-code]] — 이 위 또는 밖에서 도는 harness. 경쟁 제품이 아니라 다른 층위
 - [[dynamic-workflows]] — 여기 얹힐 수 있는 harness를 모델이 직접 쓰는 접근
 - [[agentic-governance]] — 자격증명·통제 표면의 일반 원리
+- [[agent-containment]] — 같은 원리의 클라이언트측 구현 세 가지. 여기와 대칭인 프록시 설계
+- [[prompt-injection]] — 이 격리가 막으려는 공격면
 - [[anthropic]] — 발행·운영 주체
 - [[multi-agent-systems]] — many brains로 스케일할 때의 경제성
 
 ## Sources
 
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin, Gabe Cemaj, Michael Cohen (Anthropic Engineering, 2026-04-08)
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 자격증명 처리 절의 자매 사례

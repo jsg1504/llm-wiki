@@ -84,3 +84,20 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - [[agentic-governance]]에 판별 기준 추가: *"이 방어는 모델이 X를 못 한다는 가정에 기대는가?"* — 좁은 스코핑 vs 도달 불가.
   - [[anthropic]] status stub → draft. **소스 4/4 전부 Anthropic** 편향 노트 갱신 + 새 경계 하나(중심 주장의 전제인 "모델은 계속 좋아진다"의 이해관계자가 저자와 동일).
   - [[glossary]]에 "에이전트 용어" 절 신설 — harness, meta-harness, brain/hands/session, pets vs cattle, TTFT, context anxiety, quarantine.
+
+## [2026-09-21 02:15] ingest | How we contain Claude across products
+- source: [[2026-05-25-how-we-contain-claude]] — Max McGuinness, Mikaela Grace, Jiri De Jonghe, Jake Eaton, Abel Ribbink (Anthropic Engineering, 2026-05-25)
+- created: [[2026-05-25-how-we-contain-claude]] (source), [[agent-containment]] (concept), [[prompt-injection]] (concept)
+- updated: [[agentic-governance]], [[claude-code]], [[subagent]], [[meta-harness]], [[managed-agents]], [[ai-native-sdlc]], [[artifact-chain]], [[anthropic]], [[multi-agent-systems]], [[glossary]], [[index]]
+- contradictions:
+  - **⚠️ 정정 1건 (실질적):** [[agentic-governance]]가 quarantine 패턴을 *"prompt injection을 아키텍처 층위에서 무력화"*한다고 적었으나, 이 소스가 **multi-agent trust escalation**을 보고 — subagent 출력이 raw tool result보다 높은 신뢰를 받으면 새 벡터가 된다. **무력화 → 트레이드오프**로 정정. 원 기록은 보존하고 ⚠️ 블록으로 병기. [[subagent]]·[[prompt-injection]]에도 반영.
+  - **보강 1건 (마커 없음, 사용자 결정):** auto mode의 전제조건. [[ai-native-sdlc]]·[[claude-code]]는 플레이북을 따라 model/config 층위(CLAUDE.md·skill·hook·테스트)만 적었으나, 이 소스는 *"one layer of defense-in-depth **inside a sandbox**, not a substitute for one"* + 수치(~17% 통과). 정면충돌이 아니라 우선순위 차이로 판단해 ⚠️ 마커 없이 양쪽에 보강.
+  - **긴장 2건 (새 축):** (a) `CLAUDE.md`가 persistent memory poisoning 벡터 — [[claude-code]]·[[artifact-chain]]이 장점으로만 적던 "설정이 파일"의 반대편. 취약점 3건이 `.claude/settings.json` 경유. (b) 격리 ↔ 관측가능성 — [[agentic-governance]]의 OTel 증거 체계에 "격리를 강화하면 EDR이 못 본다, pull OTLP는 live monitoring이 아니다" 추가.
+- notes:
+  - 중심 개념 둘을 나눠 신설(사용자 결정): **[[agent-containment]]**(방어 — blast radius, 위험 3종 × 방어 3층, 세 격리 패턴, 격리↔관측가능성, "직접 만든 것이 가장 약하다")와 **[[prompt-injection]]**(공격 — direct vs indirect, 사용자가 벡터, capability grant, memory poisoning, trust escalation, agent identity). prompt-injection은 기존 3페이지가 설명 없이 쓰던 용어라 lint가 잡을 간극이었다.
+  - **[[2026-04-08-scaling-managed-agents]]의 자매편.** 공통 저자(Jake Eaton). 그쪽의 *"토큰이 sandbox에 닿지 않게"* 논증을 실패 사례로 실증. [[meta-harness]]의 "방어가 모델 능력의 함수인가" 기준에 ✅ 실증 블록 추가.
+  - **가장 무거운 한 문장:** *"The sandbox worked perfectly, and yet the data was exfiltrated."* 경계를 제대로 긋고도 졌다 → **allowlist = capability grant** 재개념화. 이 위키의 기존 보안 서술(세 계층, 도달 불가, quarantine)이 전부 "경계를 제대로 그으면 이긴다" 형태였던 것에 대한 반례.
+  - **정량 데이터 대량 유입** (위키가 계속 아쉬워하던 것): 승인율 93%, sandbox 도입 후 프롬프트 −84%, auto mode 83% 포착/~17% 통과/benign 0.4% 차단, Gray Swan 단발 0.1%·100회 적응 후 5~6%, 피싱 red-team 25중 24.
+  - [[anthropic]]에 **네 번째 얼굴(보안 사고 보고자)** 추가 + 편향 노트 재구조화 — 이 소스는 홍보 인센티브와 반대 방향이라 기존 경계가 덜 적용된다. 대신 새 경계 둘: 공개된 것은 *발견되고 수정된* 것들, 그리고 완화 이후 재측정이 없다. **이 위키에 처음으로 외부 기관 참조(NIST/ACSC·CISA·NCSC/ISO 42001)가 등장** — 외부 관점 부재를 메울 단서로 기록.
+  - [[glossary]]에 "보안 용어" 절 신설 9개 (blast radius, containment, direct/indirect injection, capability grant, memory poisoning, trust escalation, approval fatigue, egress control 등).
+  - [[agent-containment]]에 소스 판단 하나를 비판적으로 기록: Cowork가 에이전트 루프를 VM 밖으로 뺀 것을 *"보안 영향 최소"*라 평가하는데 근거가 없고, 글이 스스로 세운 "탈출 열쇠를 쥔 바깥 프로세스" 기준에서 한 걸음 물러난 것이다.
