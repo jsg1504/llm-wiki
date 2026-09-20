@@ -71,3 +71,16 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - caveat: **이 소스에는 정량 데이터가 전혀 없다.** [[2025-06-13-multi-agent-research-system]]의 BrowseComp 분산 분석·90.2% 같은 수치와 달리 성능 비교·토큰 실측·성공률이 없고, Bun 재작성도 외부 X 스레드 링크로만 언급된다. 저자들도 "best practices are still developing"이라고 명시. 경험 보고와 측정의 차이를 [[dynamic-workflows]]와 source 페이지에 배너로 박아두었다.
 - open: ① *LLM이 LLM에게 실시간 위임*하는 구조의 데이터는 세 소스 어디에도 여전히 없다. ② 결정론적 조정 vs LLM 조정은 개선인가 트레이드오프인가. ③ [[agent-evaluation]]의 "단일 호출·단일 루브릭 절대 점수" vs 이 소스의 "pairwise가 더 신뢰도 높다" — 용도 구분으로 읽히나 어느 쪽도 측정되지 않았다.
 - gaps: 소스 3/3이 Anthropic. 미통합 raw 1건(2025-07-25 GEPA 논문, raw/papers/). lint 액션 #7(`MCP` 페이지)·#8(비-Anthropic 소스) 미수행.
+
+## [2026-09-21 01:30] ingest | Scaling Managed Agents: Decoupling the brain from the hands
+- source: [[2026-04-08-scaling-managed-agents]] — Lance Martin, Gabe Cemaj, Michael Cohen (Anthropic Engineering, 2026-04-08)
+- created: [[2026-04-08-scaling-managed-agents]] (source), [[managed-agents]] (entity), [[meta-harness]] (concept)
+- updated: [[anthropic]], [[claude-code]], [[dynamic-workflows]], [[agentic-governance]], [[subagent]], [[multi-agent-systems]], [[glossary]], [[index]]
+- contradictions: **경미 1건** — [[subagent]]의 *"subagent끼리 협력할 수 없다"* 단정 vs 이 소스의 *"brains can pass hands to one another"*. 뒤집히지 않음(자원 양도 ≠ 메시징). 양쪽 병기 + ⚠️ 부분 예외 노트로 기록.
+- notes:
+  - 중심 개념은 **meta-harness** — harness는 "모델이 아직 못 하는 것"에 대한 가정의 집합이고 모델이 좋아지면 썩는다(context anxiety → context reset → Opus 4.5에서 dead weight). 해법은 더 좋은 harness가 아니라 session/harness/sandbox 세 인터페이스를 고정하는 것.
+  - takeaway 5(세션 ≠ context window)는 사용자 결정에 따라 **meta-harness 안의 한 절**로 배치. compaction 실의 **세 번째 처방**으로 표에 정리 — (a) 잘 요약한다 / (b) 도달하지 않는다 / (c) 되돌릴 수 있게 한다. 소스가 더 쌓이면 `concepts/external-context-store`로 분할 후보.
+  - [[dynamic-workflows]]와는 **모순이 아니라 반대 방향의 처방**. 소스 결론부가 직접 화해시킨다(Claude Code = *"an excellent harness"*). 양쪽 페이지에 층위 다이어그램 추가.
+  - [[agentic-governance]]에 판별 기준 추가: *"이 방어는 모델이 X를 못 한다는 가정에 기대는가?"* — 좁은 스코핑 vs 도달 불가.
+  - [[anthropic]] status stub → draft. **소스 4/4 전부 Anthropic** 편향 노트 갱신 + 새 경계 하나(중심 주장의 전제인 "모델은 계속 좋아진다"의 이해관계자가 저자와 동일).
+  - [[glossary]]에 "에이전트 용어" 절 신설 — harness, meta-harness, brain/hands/session, pets vs cattle, TTFT, context anxiety, quarantine.

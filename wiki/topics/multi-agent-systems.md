@@ -2,8 +2,8 @@
 title: 멀티에이전트 시스템
 type: topic
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
 tags: [multi-agent, agentic-workflows, token-economics, architecture]
 status: draft
 ---
@@ -19,6 +19,7 @@ status: draft
 1. **구조** — 어떻게 조립하는가 → [[orchestrator-worker]]
 2. **경제성** — 언제 그 비용을 낼 가치가 있는가 → 이 페이지
 3. **검증** — 비결정적 시스템을 어떻게 평가하는가 → [[agent-evaluation]]
+4. **인프라** — 실제로 여럿을 돌릴 때 무엇이 병목인가 → 아래 "스케일의 인프라 비용" 절, [[meta-harness]]
 
 ## Key Points
 
@@ -45,6 +46,24 @@ status: draft
 따라서 멀티에이전트는 **태스크의 가치가 충분히 높을 때만** 경제적으로 성립한다. 이것은 기술적 제약이 아니라 경제적 제약이며, 아키텍처 선택의 1차 필터다.
 
 > 주목할 공백: [[ai-native-sdlc]]는 모든 play에 leading/lagging indicator 쌍을 요구하면서도 **토큰·비용 축을 지표 체계에 두지 않는다.** 그쪽 지표는 git history·PR metadata·CI·incident tracker에서 나오는 시간과 품질 지표뿐이다. 에이전트를 여럿 굴리는 SDLC의 실제 비용이 얼마인지는 두 소스 어느 쪽도 답하지 않는다.
+
+### 스케일의 인프라 비용 — 토큰이 전부가 아니다
+
+위의 15배는 **토큰** 축이다. [[2026-04-08-scaling-managed-agents]]는 실제로 여러 에이전트를 호스팅할 때 드러나는 **다른 축**을 보여준다: provisioning 지연.
+
+에이전트를 컨테이너 안에 두면 에이전트 수만큼 컨테이너가 필요하고, 그것이 뜰 때까지 추론이 시작되지 못한다. 문제는 **실행 환경을 영영 쓰지 않을 세션도 그 비용을 선불한다**는 것 — repo clone, 프로세스 부팅, 대기 이벤트 fetch. 이것이 **TTFT**(time-to-first-token)로 나타나고, 저자들은 이를 *사용자가 가장 예민하게 느끼는 지연*이라고 부른다.
+
+실행 환경을 에이전트의 tool call로 **필요할 때만** provision하게 바꾼 결과:
+
+> **p50 TTFT 약 60% 감소, p95 90% 이상 감소.**
+
+많은 에이전트로 스케일하는 일이 **stateless한 루프를 많이 띄우고 필요할 때만 실행 환경에 연결하는 일**로 바뀐다.
+
+> ⚠️ 내부 측정이고 워크로드 구성이 비공개다. 개선 메커니즘이 "실행 환경을 쓰지 않는 세션의 선불 비용 제거"이므로 **그런 세션의 비중이 높을수록 개선폭이 커진다.** 이 수치는 아키텍처의 우월성만큼이나 워크로드 믹스를 반영할 수 있다.
+
+**이 페이지의 경제성 판단에 주는 시사점:** 멀티에이전트의 비용은 토큰만이 아니라 **에이전트당 인프라 수명주기**이기도 하다. 그리고 이 부분은 토큰과 달리 설계로 크게 줄어든다 — 구조를 바꿨더니 사라진 비용이다. 15배 필터는 여전히 유효하지만, *"에이전트를 하나 더 띄우는 데 드는 비용"* 은 토큰 배수만으로 표현되지 않는다.
+
+한편 반대 방향의 기록도 있다. 같은 소스는 에이전트가 **여러 실행 환경을 놓고 어디로 일을 보낼지 고르는 것**이 단일 환경에서 작업하는 것보다 어려운 인지 과제라고 말하며, 초기 모델이 그것을 못 해서 단일 컨테이너로 시작했다고 밝힌다. 인텔리전스가 올라가자 단일 컨테이너가 오히려 제약이 됐다. → [[subagent]]의 조정 층위 논의
 
 ### 적합 / 부적합 판정 기준
 
@@ -133,7 +152,8 @@ status: draft
 
 - **미해결:** *LLM이 다른 LLM에게 실시간 위임하는* 구조가 지금은 잘 되는가? 세 소스 모두 데이터 없음. 필요한 자료는 결정론적 harness **없이** 에이전트 간 위임을 측정한 것.
 - **미해결:** 결정론적 조정이 LLM 조정보다 항상 나은가, 아니면 유연성을 잃는 트레이드오프인가? [[dynamic-workflows]]의 한계 절에 기록.
-- **편향 주의:** 세 소스 모두 Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
+- **미해결:** 인프라 비용(TTFT·provisioning)과 토큰 비용을 **하나의 판단 기준**으로 합칠 수 있는가? 두 축이 각각 다른 소스에서 따로 보고되고 있다.
+- **편향 주의:** **네 소스 모두** Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
 
 ## Related
 
@@ -145,9 +165,12 @@ status: draft
 - [[dynamic-workflows]] — 조정을 LLM이 아니라 결정론적 코드에 맡기는 접근. 위 Contradiction 축 1의 판정 근거.
 - [[agent-orchestration-patterns]] — 여러 에이전트를 엮는 여섯 가지 제어 구조 카탈로그.
 - [[anthropic]] — 이 위키에 들어온 멀티에이전트 자료 **전부**의 출처. 외부 관점 부재는 이 페이지의 판정을 읽을 때의 주의 사항이다.
+- [[meta-harness]] — 여러 에이전트를 돌릴 때의 인프라 인터페이스. 위 "스케일의 인프라 비용" 절의 설계 논증.
+- [[managed-agents]] — TTFT 수치가 나온 실제 시스템.
 
 ## Sources
 
 - [[2025-06-13-multi-agent-research-system]] — 이 페이지의 주 출처. 아키텍처·경제성·프로덕션 전반.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Contradiction 절에서만 인용. 코딩 도메인의 병렬 세션 권장.
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 세 실패 모드, 조정 주체의 네 번째 범주, 경제성 재확인. Contradiction 축 1·2 판정의 근거.
+- [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 스케일의 인프라 비용 절.

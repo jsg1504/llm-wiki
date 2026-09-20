@@ -2,8 +2,8 @@
 title: Agentic Governance
 type: concept
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
 tags: [governance, enterprise-ai, agentic-coding, security, compliance, ai-native]
 status: draft
 ---
@@ -122,6 +122,36 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 
 > ⚠️ 소스가 이 패턴을 한 문단으로만 언급하며, 구현 예시나 실패 사례는 제시하지 않는다. 원리는 분명하지만 이 위키에는 아직 **검증된 레시피가 없다.**
 
+## 방어가 모델 능력의 함수인가 — 자격증명 격리
+
+앞의 계층들(skill / hook / managed settings)과 quarantine은 **에이전트의 행동 표면**을 통제한다. [[2026-04-08-scaling-managed-agents]]는 그 위에 얹히는 **판별 질문** 하나를 준다.
+
+> **이 방어는 "모델이 X를 하지 못한다"는 가정에 기대고 있는가?**
+
+기댄다면 그 방어는 모델이 좋아질수록 약해진다. 저자들의 사례는 자격증명 스코핑이다. 에이전트와 자격증명이 같은 실행 환경에 있으면 prompt injection은 *에이전트에게 자기 환경을 읽도록 설득하기만* 하면 된다. 그리고 토큰을 얻은 공격자는 **제약 없는 새 세션을 띄워 거기에 일을 위임할 수 있다** — 원래 세션에 걸린 skill·hook·permission이 전부 우회된다.
+
+토큰을 좁게 스코핑하는 것이 명백한 완화책이지만:
+
+> *"Narrow scoping is an obvious mitigation, but this encodes an assumption about what Claude can't do with a limited token—and Claude is getting increasingly smart. The structural fix was to make sure the tokens are never reachable from the sandbox where Claude's generated code runs."*
+
+**좁은 스코프는 harness의 가정과 같은 종류의 물건이다.** 구조적 해결은 자격증명이 에이전트의 실행 환경에서 **애초에 닿을 수 없게** 만드는 것 — 모델 능력의 함수에서 벗어나는 유일한 방어다. 두 패턴([[managed-agents]]의 구현):
+
+| 패턴 | 작동 방식 | 에이전트가 토큰을 보는가 |
+|---|---|---|
+| **자원에 auth를 번들** | sandbox 초기화 시점에 repo access token으로 clone하고 그 토큰을 local git remote에 배선 | ❌ `push`/`pull`은 동작하지만 토큰은 만지지 않는다 |
+| **sandbox 밖 vault + 프록시** | OAuth 토큰은 vault에. 에이전트는 전용 프록시로 MCP 도구를 부르고, 프록시가 세션 토큰으로 vault에서 자격증명을 꺼내 호출 | ❌ **harness조차 자격증명의 존재를 통보받지 않는다** |
+
+이 축으로 이 페이지의 기존 수단들을 다시 읽으면 서열이 보인다:
+
+- `permissions.deny` — 에이전트가 **요청**할 수 있는 것을 제한. 도구 층위를 우회하는 경로(셸 명령의 네트워크 접근 등)가 남는다 → 부분적으로 가정에 기댄다
+- `sandbox` / `credentials` — OS 층위에서 **접근 자체**를 차단. 가정에 덜 기댄다
+- **번들·vault 격리** — 비밀이 그 경계 안에 **존재하지 않는다.** 가정에 기대지 않는다
+- **quarantine** — 같은 발상을 에이전트 사이로 확장. 주입을 읽은 쪽에 권한이 없다
+
+> 순서가 아니라 성격의 차이다. 앞의 것들은 여전히 필요하다 — **prompt fatigue와 capability 손실 없이** 통제하려면 계층이 있어야 한다. 이 절이 더하는 것은 *무엇이 최후 방어선이 될 수 있는가*의 기준이다. 설계 논증 전체는 [[meta-harness]].
+
+> ℹ️ 이 소스는 **호스팅 플랫폼**의 관점이다. 단일 팀이 자기 에이전트를 돌리는 상황에서 vault·프록시를 세우는 비용이 정당한지는 다루지 않는다.
+
 ## 인간 주의의 재배치
 
 통제를 옮기는 것의 목적은 사람을 빼는 것이 아니라 **사람의 주의를 값어치 있는 곳에 놓는 것**이다.
@@ -161,6 +191,7 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 ## Key Points
 
 - **여러 에이전트를 돌리면 통제 축이 하나 늘어난다** — 무엇을 할 수 있는가에 더해 **누가** 할 수 있는가. quarantine 패턴이 그 최소 형태다.
+- **방어가 "모델이 X를 못 한다"에 기대면 모델과 함께 낡는다.** 좁은 스코핑은 완화책이고, 구조적 해결은 비밀이 에이전트의 실행 환경에 **존재하지 않게** 하는 것이다.
 
 - **통제는 계층이다.** skill(advisory) < hook(deterministic) < managed settings(강제). 판단 기준은 "이 정책이 예외 없이 성립해야 하는가".
 - **각 계층은 이전 계층이 남긴 구멍을 닫는다.** permission → sandbox → credentials. 통제 하나가 완결적이라 가정하지 않는다.
@@ -176,6 +207,8 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 - skill이 "트리거되지 않는 것"과 "텍스트가 정책에서 드리프트한 것"을 어떻게 구분해 진단하나? 플레이북은 findings가 0으로 수렴하지 않으면 둘 중 하나라고만 말한다.
 - hook이 늘어날수록 세션 지연이 쌓인다. "빠르고 스코프되어야 한다"는 지침은 있으나 예산이나 측정 방법은 제시되지 않는다.
 - 승인 게이트가 사람에 남는다면, 에이전트 산출량이 늘 때 **승인자**의 병목은 어떻게 다루나? 리뷰는 에이전트에 위임했지만 승인은 위임할 수 없다.
+- 자격증명 격리(vault·프록시)와 **로컬 개발 경험**은 어떻게 양립하나? 엔지니어의 터미널 세션은 보통 이미 인증된 환경에서 돈다. 이 소스는 호스팅 환경만 다룬다.
+- **어디까지가 "닿을 수 없음"인가?** git remote에 배선된 토큰은 sandbox 안의 코드가 `.git/config`를 읽으면 노출되지 않나? 소스는 이 지점을 설명하지 않는다.
 
 ## Related
 
@@ -185,8 +218,11 @@ hook은 특정 단계에 속하지 않는다 — **Claude가 행동하는 모든
 - [[ai-native-sdlc]] — 이 통제들이 배치되는 6단계 프로세스
 - [[artifact-chain]] — 승인 게이트가 걸리는 대상이자 audit trail의 기반
 - [[claude-code]] — skill·hook·permission·sandbox·managed settings의 구현
+- [[meta-harness]] — "방어가 모델 능력의 함수인가"라는 판별 기준의 출처. harness 가정 노후화의 일반론
+- [[managed-agents]] — 자격증명 격리 두 패턴의 실제 구현
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — quarantine 패턴 (Quarantine 절)
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
+- [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 자격증명 격리 절

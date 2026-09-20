@@ -2,8 +2,8 @@
 title: Subagent
 type: concept
 created: 2026-09-12
-updated: 2026-09-12
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
@@ -81,6 +81,10 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 | 에이전트 간 실시간 위임 | 에이전트들 사이 (합의) | *"not yet great"* — 보고된 미성숙 |
 | dynamic workflow | **프로그램 변수 (컨텍스트 밖)** | 정지 조건을 **미리 표현할 수 있어야** 한다 |
 
+> **네 층위 모두가 공유하는 취약점 하나:** 조정 상태가 **휘발성**이라는 것. 부모 컨텍스트도, 사람의 머리도, 프로그램 변수도 프로세스가 죽으면 같이 죽는다. [[2026-04-08-scaling-managed-agents]]가 보여주는 다섯 번째 선택지는 조정의 *주체*가 아니라 **거처**를 바꾼다 — 상태를 append-only 이벤트 로그에 durable하게 두고, harness가 crash하면 `wake(sessionId)` → `getSession(id)`로 마지막 이벤트부터 재개한다. 조정을 *누가* 하느냐(이 표의 축)와 그것이 *어디 살아남느냐*는 직교하는 질문이고, 이 위키의 세 소스는 후자를 다루지 않았다. → [[meta-harness]]
+>
+> 단 이 소스는 **단일 brain의 세션 복구**를 설명하지, 여러 subagent를 조율하는 스키마를 제시하지 않는다. 위 표의 다섯 번째 행이 되기에는 근거가 부족하다.
+
 > ✅ **판정 (2026-09-12):** [[multi-agent-systems]]의 모순은 **두 축으로 나뉘어 부분 판정됐다.**
 >
 > - **적합성 축** — 코딩에서 에이전트를 여럿 조정하는 것은 **가능해졌다.** 단 2025-06의 판단이 **반증된 것이 아니라 우회됐다** — 네 번째 층위는 LLM의 조정 능력에 의존하지 않는다. 세 번째 층위(LLM이 LLM에게 실시간 위임)에 대한 데이터는 세 소스 어디에도 **여전히 없다.**
@@ -91,6 +95,12 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 ## 알려진 한계
 
 - **subagent끼리 협력할 수 없다.** 네 층위 전부에서 그렇다 — 반환은 부모(또는 프로그램)에게만 간다. [[agent-orchestration-patterns]]의 여섯 패턴 중 에이전트가 서로 직접 주고받는 것은 하나도 없다. 리서치 시스템은 현재 lead가 subagent 묶음을 **동기적으로** 기다리므로, 느린 하나가 전체를 막고 lead가 진행 중인 subagent를 조종할 수도 없다.
+
+  > ⚠️ **부분 예외 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]는 *"brains can pass hands to one another"* 라고 적는다 — 어떤 hand(sandbox·도구)도 특정 brain에 결합되어 있지 않으므로 에이전트끼리 **실행 환경을 넘겨줄 수 있다.**
+  >
+  > 위 단정을 뒤집지는 않는다. 넘어가는 것은 **메시지가 아니라 자원**이고, 산출은 여전히 부모나 세션 로그로 간다. 그래도 *"에이전트가 서로 직접 주고받는 것은 하나도 없다"* 는 문장은 이제 **"결과를 주고받지 않는다"** 로 좁혀 읽어야 한다. 공유 상태를 통한 간접 전달의 경로는 열려 있다.
+  >
+  > 관찰 하나 더: 이 소스는 many hands가 **모델이 똑똑해지면서 비로소 가능해진 것**이라고 말한다 — 여러 실행 환경 중 어디로 일을 보낼지 고르는 것은 단일 셸보다 어려운 인지 과제라 초기 모델로는 안 됐다는 것. 위 표의 세 번째 층위(LLM 간 실시간 위임, *"not yet great"*)가 **시간이 지나면 풀릴 종류의 한계**라는 방증으로 읽힌다. 다만 이 소스도 그 층위를 직접 측정하지는 않는다.
 - **개수를 스스로 정하지 못한다.** 초기 시스템은 단순한 쿼리에 subagent 50개를 띄웠다. 노력 배분 규칙을 프롬프트에 명시해야 한다.
 - **창발적 행동.** 부모 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다.
 
@@ -103,9 +113,12 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[artifact-chain]] — 파일을 인터페이스로 삼는 같은 처방의 다른 층위
 - [[dynamic-workflows]] — 조정을 컨텍스트 밖 코드로 옮긴 네 번째 층위
 - [[agent-orchestration-patterns]] — subagent를 엮는 여섯 가지 제어 구조
+- [[meta-harness]] — 조정 상태를 durable하게 만드는 축. "누가 조정하는가"와 직교한다
+- [[managed-agents]] — brain끼리 hand를 넘기는 것이 가능한 실제 구조
 
 ## Sources
 
 - [[2025-06-13-multi-agent-research-system]] — 리서치형 subagent, 위임 사양, game of telephone, 동기 실행 한계
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — 코딩형 subagent 정의 방식, verifier/researcher/simplifier, 병렬 세션과의 구분
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 결정론적 프로그램이 조정하는 네 번째 층위, 모순 판정의 근거
+- [[2026-04-08-scaling-managed-agents]] — 조정 상태의 durable한 거처, "brains pass hands" 부분 예외

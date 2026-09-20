@@ -2,8 +2,8 @@
 title: Dynamic Workflows (동적 harness)
 type: concept
 created: 2026-09-12
-updated: 2026-09-12
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system]
+updated: 2026-09-21
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents]
 tags: [dynamic-workflows, agentic-harness, orchestration, multi-agent, context-window, token-economics]
 status: draft
 ---
@@ -103,6 +103,29 @@ LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 
 
 주목할 실증 하나: **Bun이 Zig에서 Rust로 재작성된 것이 워크플로를 통해서였다.** 방법은 태스크를 조작 단위(callsite, 실패 테스트, 모듈)로 쪼개고, 수정마다 worktree에서 subagent를 띄우고, 별도 에이전트가 적대적으로 리뷰한 뒤 머지하는 것. 팁 — **리소스 집약적 명령을 쓰지 말라고 지시**해야 머신 자원 고갈 없이 최대 병렬화가 된다.
 
+## 반대 방향의 처방 — meta-harness
+
+[[2026-04-08-scaling-managed-agents]]는 **같은 관찰에서 출발해 반대로 간다.** 관찰은 이 페이지 Overview의 그것과 거의 같다 — 모든 엣지케이스를 커버해야 하는 generic harness는 어떤 태스크에도 최적이 아니다. 거기에 이 소스가 한 겹을 더한다: **harness는 "모델이 아직 못 하는 것"에 대한 가정의 집합이고, 모델이 좋아지면 그 가정이 썩는다.**
+
+그쪽이 든 증거가 구체적이다. Sonnet 4.5가 컨텍스트 한계를 감지하면 작업을 조기 종료하는 "context anxiety"를 보여 harness에 context reset을 넣었는데, **Opus 4.5에서는 그 행동이 없어서 reset이 dead weight가 됐다.**
+
+```
+        "generic harness는 최적이 아니고, 가정은 시간이 지나면 썩는다"
+                                │
+            ┌───────────────────┴───────────────────┐
+            ▼                                       ▼
+     dynamic workflow (이 페이지)              [[meta-harness]]
+  harness를 태스크마다 새로 쓴다          harness를 교체 가능하게 만든다
+            │                                       │
+ 주체: 모델이 실행 시점에 작성            주체: 플랫폼이 경계선을 고정
+ 수명: 그 태스크 동안 (저장은 가능)        수명: harness들보다 길게
+ 푸는 문제: **태스크 적합성**              푸는 문제: **시간에 따른 노후화**
+```
+
+**대체재가 아니다.** 그 소스가 직접 화해시킨다 — [[claude-code]]를 *"an excellent harness"* 라고 부르고, 태스크 전용 harness가 좁은 도메인에서 뛰어나다는 것도 인정하며, [[managed-agents]]가 그중 무엇이든 수용한다고 말한다. 여기서 Claude가 쓰는 JavaScript 프로그램도 그 위에 얹힐 수 있는 harness 한 종류다.
+
+**이 페이지에 주는 시사점 하나:** 위의 "세 실패 모드" 표에 적힌 처방들 — context pollution, context rot, goal drift를 subagent 격리로 막는 것 — 도 **모델 능력에 대한 가정**이다. 단일 컨텍스트가 길어지면 무너진다는 전제가 어느 모델에서 약해지면, 워크플로가 막아주던 것 중 일부는 reset과 같은 길을 갈 수 있다. 소스가 *"best practices are still developing"* 이라고 쓴 것과 같은 방향의 경계다.
+
 ## 한계와 읽을 때의 주의
 
 > ⚠️ **이 소스에는 정량 데이터가 없다.** [[2025-06-13-multi-agent-research-system]]이 BrowseComp 분산 분석과 90.2% 같은 수치를 제시한 것과 달리, 이 소스는 성능 비교·토큰 실측·성공률을 **전혀 제시하지 않는다.** Bun 재작성도 외부 X 스레드 링크로만 언급된다. 저자들 스스로 *"best practices are still developing"*이라고 쓴다. 따라서 이 페이지의 주장은 **경험 보고이지 측정이 아니다.**
@@ -110,6 +133,7 @@ LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 
 - **토큰 비용이 상방으로 열려 있다.** 15x 같은 구체적 배수조차 제시되지 않는다. 예산을 명시적으로 걸라는 조언이 그 자체로 비용이 예측 불가함을 시사한다.
 - **조정을 코드로 옮긴 대가는 유연성이다.** 결정론적 프로그램은 실행 중 전략을 바꾸지 못한다. [[orchestrator-worker]]에서 lead agent는 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄울 수 있지만, 그 판단을 코드가 하려면 정지 조건을 미리 표현할 수 있어야 한다 (loop-until-done 패턴이 이 자리를 메운다).
 - **harness를 쓰는 것 자체가 한 번의 LLM 판단이다.** 잘못 설계된 워크플로는 잘못을 병렬로 확대한다. 소스가 skeptic 페르소나와 루브릭을 반복 권하는 이유가 이것으로 읽힌다.
+- **워크플로가 인코딩한 가정도 낡는다.** 태스크마다 새로 쓰므로 노후화 주기가 짧다는 것이 이 접근의 방어책이지만, skill이나 `~/.claude/workflows`에 **저장·배포된** 워크플로는 손으로 만든 harness와 같은 문제를 갖는다. 저장하는 순간 수명이 길어지기 때문이다. → [[meta-harness]]
 
 ## Related
 
@@ -120,8 +144,11 @@ LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 
 - [[agent-evaluation]] — adversarial verification과 pairwise 판정이 평가 원리로서 갖는 의미
 - [[claude-code]] — 이 기능이 실제로 사는 도구
 - [[agentic-governance]] — quarantine 패턴이 워크플로 층위의 통제로 등장한다
+- [[meta-harness]] — 같은 문제의 반대 방향 처방. harness를 새로 쓰는 대신 갈아 끼울 수 있게 만든다
+- [[managed-agents]] — 이 워크플로가 얹힐 수 있는 하부 층위의 구현
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 이 페이지의 주 출처
 - [[2025-06-13-multi-agent-research-system]] — 대조군으로 인용. *"에이전트 간 실시간 위임"*의 한계 보고와 orchestrator-worker의 LLM 주도 조정
+- [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "반대 방향의 처방" 절

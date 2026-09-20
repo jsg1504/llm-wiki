@@ -2,8 +2,8 @@
 title: Claude Code
 type: entity
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-09-21
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -19,6 +19,25 @@ status: draft
 Claude Code는 저장소에 접근해 코드를 읽고, 편집하고, 명령을 실행하는 에이전트다. 플레이북에서의 위치는 단순한 "코드 생성기"가 아니다 — **버전 관리되는 설정 파일들(`CLAUDE.md`, skill, hook, agent 정의)이 조직의 정책과 지식을 담고, 에이전트가 매 세션 그것을 읽는다.** 즉 도구의 행동이 repo에 커밋된 텍스트로 결정되고, 따라서 리뷰·감사·버전 관리의 대상이 된다.
 
 이 설계가 [[agentic-governance]]의 전제다. 설정이 파일이므로 코드처럼 다룰 수 있다.
+
+### 층위: Claude Code는 harness 중 하나다
+
+[[2026-04-08-scaling-managed-agents]]는 Claude Code를 **harness**라는 일반 범주의 한 사례로 위치시킨다:
+
+> *"Claude Code is an excellent harness that we use widely across tasks. We've also shown that task-specific agent harnesses excel in narrow domains. Managed Agents can accommodate any of these."*
+
+**Harness**란 모델을 감싸고 무엇을 언제 할지를 정하는 바깥 껍질이다 — Claude를 호출하는 루프, tool call을 인프라로 라우팅하는 배선, 컨텍스트를 채우고 비우는 규칙. 이 페이지가 기술하는 거의 전부(plan mode, auto mode, `CLAUDE.md` 로딩, hook 실행 시점, subagent spawn)가 그 껍질의 내용물이다.
+
+```
+[[managed-agents]] (meta-harness)   ← 인터페이스. 가장 느리게 변함
+  ├─ Claude Code                     ← 이 페이지. 범용, 코딩 중심
+  ├─ 태스크 전용 harness             ← 좁은 도메인
+  └─ dynamic workflow가 쓴 프로그램  ← 태스크마다 생성
+```
+
+이 구분이 실용적으로 중요한 이유는 [[meta-harness]]의 중심 주장 때문이다 — **harness에 들어간 모든 결정은 "모델이 아직 무엇을 못 하는지"에 대한 진술이고, 그 진술은 다음 모델에서 틀릴 수 있다.** 그쪽 소스의 사례는 Sonnet 4.5의 "context anxiety"를 막으려 넣은 context reset이 Opus 4.5에서 dead weight가 된 일이다.
+
+아래 기능들을 읽을 때 유용한 질문: **이것은 모델의 무엇을 보완하고 있는가, 그리고 그 보완이 여전히 필요한가?** 일부는 그렇지 않다 — plan mode의 게이트나 hook의 차단은 *모델이 못 해서*가 아니라 **사람이 통제를 원해서** 있는 것이고, 모델이 좋아져도 이유가 사라지지 않는다. 둘을 구분해두면 기능이 낡았는지 판별하기 쉽다.
 
 대화형 터미널 세션 외에 **비대화형 실행**(`claude -p`)이 있고, 이것이 CI/CD 파이프라인·스케줄 작업·모니터링 루프에서 쓰인다. 세션이 stateless하게 시작하고 끝나므로 *"아무도 시작하지 않아도 루프가 시작되고 끝난다."*
 
@@ -175,6 +194,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **skill은 advisory, hook은 deterministic.** 둘은 대체재가 아니라 계층이다.
 - **비대화형 실행이 루프를 닫는 열쇠다** — stateless하게 시작하고 끝나므로 사람이 호출 경로에 없어도 된다.
 - **dynamic workflow는 조정 로직을 컨텍스트 밖 코드로 옮긴다.** 병렬 세션(사람이 조정)·subagent(lead가 조정)와 구분되는 세 번째 조정 주체다.
+- **Claude Code는 harness 중 하나다.** 여기 있는 기능의 상당수는 모델의 부족분을 메우는 구조이고, 모델이 좋아지면 일부는 불필요해진다. 통제 목적의 기능(plan mode, hook)은 그렇지 않다.
 
 ## Related
 
@@ -187,8 +207,11 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[orchestrator-worker]] — subagent를 쓰는 아키텍처의 일반 원리
 - [[multi-agent-systems]] — 에이전트를 여럿 굴리는 것의 경제성과 적합 조건
 - [[agent-evaluation]] — verifier subagent와 OTel export가 기여하는 평가 체계
+- [[meta-harness]] — harness라는 범주 자체. 이 페이지의 기능들이 인코딩한 가정을 읽는 틀
+- [[managed-agents]] — 이 harness가 얹힐 수 있는 하부 인터페이스. 경쟁 제품이 아니라 다른 층위
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Dynamic workflows 절의 출처
+- [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "Claude Code는 harness 중 하나다" 절의 출처
