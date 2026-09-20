@@ -117,3 +117,22 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - 반대급부 3종(verification은 사람 몫 / comprehension debt / cognitive surrender)은 [[loop-engineering]] 안의 절로 유지. 저자의 인접 글들이 더 들어오면 분할 후보. [[ai-native-sdlc]]에 comprehension debt 대응 경계가 없다는 점을 그 절에 기록만 해둠(그 페이지는 미수정).
   - 사용자 결정: `addy-osmani`·`openai-codex` entity는 **만들지 않음** — 이 소스 하나로는 stub이라 고아 페이지 위험. [[loop-engineering]] 안에서 언급만.
   - 정량 데이터 0. 증거 두께는 [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]와 같은 급(경험 보고).
+
+## [2026-09-21 04:20] ingest | Practical Loop Engineering
+- source: [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14)
+- created: [[2026-08-14-practical-loop-engineering]] (source)
+- updated: [[loop-engineering]], [[agent-evaluation]], [[claude-code]], [[agent-orchestration-patterns]], [[subagent]], [[anthropic]], [[index]]
+- contradictions:
+  - **⚠️ 정정 1건 (실질적, 자기 정정):** 3시간 전 [[2026-06-07-loop-engineering]] ingest에서 `/goal`을 [[agent-evaluation]] §2b 판정자 분리의 *"정지 조건이라는 메타 판정으로의 확장"* 이라 기록했으나 **그 기술이 넓었다.** 같은 저자가 두 달 뒤 직접 좁힌다 — evaluator는 *"대화 transcript를 보고 내가 명시한 하드 룰 충족 여부만"* 판정하며 산출물의 좋고 나쁨을 보지 않는다. 차이 두 겹: (a) 대상이 품질이 아니라 룰 충족, (b) 보는 것이 코드가 아니라 transcript. **self-preferential bias는 품질 판정에서만 나는 문제이므로 evaluator는 그것을 겪지도 풀지도 않는다.** 원 기록은 보존하고 ⚠️ 블록으로 병기. [[loop-engineering]]·[[agent-evaluation]]·[[claude-code]]·[[subagent]]·[[agent-orchestration-patterns]] 다섯 곳에 반영. 실무적 함의로 "루프에 evaluator를 걸었으니 검증은 됐다"는 잘못된 안심을 명시.
+  - **긴장 1건 (마커 없음):** 병렬 세션 수. [[claude-code]]는 플레이북을 따라 *"2~3개가 합리적 출발점"*, 이 소스는 매일 5~10개(동시 5개). 엔터프라이즈 도입 초기 ↔ 숙련자 개인 상한이고 **양쪽 다 천장은 리뷰 능력**이라는 데 동의하므로 ⚠️ 없이 양쪽 병기.
+- notes:
+  - 새 페이지 없음 (사용자 승인). 이 소스는 [[loop-engineering]]의 **실무 층**이라 그 페이지를 174 → 260줄로 보강. CLAUDE.md 적정 범위(100~400) 안.
+  - **네 종류의 루프** 표 신설 — turn-based(agentic loop) / goal-based / time-based / proactive. 축 넷: 트리거·정지·primitive·맞는 태스크. 위로 갈수록 사람이 멀어진다.
+  - **`/loop` ≠ `/schedule`.** `/loop`는 로컬·세션 스코프·**7일 만료**(저자가 "3일이라 말해왔는데 7일"이라고 자기 정정), `--resume`로 복귀. 세션보다 오래 살려면 `/schedule` 클라우드 routine. 어제 [[claude-code]]에 "스케줄 태스크와 cron"으로 뭉뚱그렸던 것 정밀화.
+  - **위키에 없던 축 추가 — 위임 경계.** 기존 페이지들은 *병렬화 가능한가*(기술)와 *지불할 가치가 있는가*(경제성)만 다뤘고 **무엇을 사람이 봐야 하는가**(태스크 민감도)는 비어 있었다. 완전 위임(문서·테스트 커버리지) vs 밀착 감시(인증·보안·금융, 시스템 접근, 스펙 좋아도 신뢰 안 서는 것) + evergreen↔brownfield 구분.
+  - **cognitive surrender 절에 실물 사례.** 경쟁사 gap 분석 → 로컬 PR → 거의 푸시. 리서치는 읽고 구현은 안 봄. **실패의 형태가 정확하다 — 검증 실패가 아니라 취향 판단의 위임이다.** 코드는 동작했을 것이고 문제는 "만들 가치가 있는 변경인가"였으며 그건 어떤 정지 조건으로도 표현되지 않는다. 규율: task는 위임하고 judgment는 되가져온다.
+  - [[agent-orchestration-patterns]] #6에 실무 판정 기준 — 나쁜 목표의 형태(*"keep going until this UI design is good"*), 3회 무변화면 정지.
+  - [[claude-code]] Skills 절에 `verify-frontend-change` 실물(dev server → 직접 조작 → before/after 스크린샷 → 콘솔 0 에러 → DevTools MCP로 Core Web Vitals → 실패 시 1단계부터).
+  - **[[anthropic]]에 새 경계 (사용자 결정):** 이 소스 내용의 상당 부분이 **Claude Code 팀 X article 인용**이다. 발행처로는 외부 2개지만 내용 출처로는 아니므로 "비-Anthropic 소스 2개 확보"는 착시. 저자 고유 기여는 운용 경험 쪽(위임 경계·실패담·triage·3회 신호). 다만 이 경로가 값을 하나 냈다 — 저자가 벤더 문서를 정확히 읽은 덕에 위키의 오독이 잡혔다.
+  - 팀의 composed example(`/schedule` + `/goal` + skills + dynamic workflows + auto mode)이 **루프가 위, 워크플로가 아래**라는 층위 배치를 벤더 쪽에서 확인해준다. 어제 세운 층위 다이어그램의 근거 보강.
+  - 정량 데이터 여전히 0. 80k stars·하루 80~90 PR·5~10 에이전트·7일은 사실 진술이지 효과 측정이 아니다.

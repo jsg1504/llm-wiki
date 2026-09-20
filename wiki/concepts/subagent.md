@@ -3,7 +3,7 @@ title: Subagent
 type: concept
 created: 2026-09-12
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
@@ -105,6 +105,10 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 
 비용 쪽도 같은 방향이다 — subagent마다 자기 모델·도구 작업을 하므로 토큰을 더 쓰고, **두 번째 의견이 값을 하는 자리에만** 쓰라는 것이 처방이다. [[multi-agent-systems]]의 15배 배수와 같은 결론이다.
 
+**후속 소스가 이 분리를 더 밀어붙인다 ([[2026-08-14-practical-loop-engineering]]).** 한 subagent가 변경을 초안하고 **별도의 하나가 검증한다.** 실패 양상이 구체적이다 — 에이전트가 자기가 만든 경험의 성능이 괜찮다고 확신하는데 **데스크톱만 보고 평가했고** 정작 중요한 건 모바일인 경우. *"very confident about one dimension of the problem, but not the other."*
+
+> ⚠️ **`/goal`의 evaluator를 이 checker로 착각하지 말 것.** 그것은 대화 transcript를 보고 **하드 룰 충족 여부만** 판정하며 산출물의 좋고 나쁨을 보지 않는다. 루프에 `/goal`을 걸었다는 사실이 verifier subagent를 세운 것을 대체하지 않는다 — **둘 다 필요하다.** → [[agent-evaluation]] §2b의 정정, [[loop-engineering]]
+
 ## 알려진 한계
 
 - **subagent끼리 협력할 수 없다.** 네 층위 전부에서 그렇다 — 반환은 부모(또는 프로그램)에게만 간다. [[agent-orchestration-patterns]]의 여섯 패턴 중 에이전트가 서로 직접 주고받는 것은 하나도 없다. 리서치 시스템은 현재 lead가 subagent 묶음을 **동기적으로** 기다리므로, 느린 하나가 전체를 막고 lead가 진행 중인 subagent를 조종할 수도 없다.
@@ -151,3 +155,4 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[2026-04-08-scaling-managed-agents]] — 조정 상태의 durable한 거처, "brains pass hands" 부분 예외
 - [[2026-05-25-how-we-contain-claude]] — multi-agent trust escalation. subagent 경계가 신뢰 경계로서 갖는 양면성
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). maker/checker 분리의 외부 확인, 역할별 모델 등급 분화
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). checker와 `/goal` evaluator의 구분

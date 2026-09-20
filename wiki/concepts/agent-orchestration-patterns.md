@@ -3,7 +3,7 @@ title: 에이전트 오케스트레이션 패턴
 type: concept
 created: 2026-09-12
 updated: 2026-09-21
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering]
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [orchestration, multi-agent, agent-design, patterns, evaluation, dynamic-workflows]
 status: draft
 ---
@@ -71,6 +71,9 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - **[[orchestrator-worker]]와의 관계:** 그쪽에서 lead agent가 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄우는 루프와 같은 자리다. 차이는 판단 주체 — LLM의 재량 대신 **미리 표현된 정지 조건**이 결정한다. 그래서 정지 조건을 표현할 수 없는 태스크에는 못 쓴다.
 - **비용이 가장 예측하기 어려운 패턴이다.** 명시적 토큰 예산과 함께 쓰는 것이 안전하다.
 - **제품 기능으로 구현된 형태 (2026-09-21).** [[claude-code]]의 `/goal`이 이 패턴 그대로다 — 조건이 참이 될 때까지 진행하되 **매 턴 후 별도의 작은 모델이 완료를 판정한다.** 즉 loop-until-done에 #3 adversarial verification이 **정지 판정 자체에** 결합되어 있다. Codex에도 같은 이름의 기능이 있다. 정지 조건은 *"all tests in test/auth pass and lint is clean"* 같이 검증 가능해야 한다는 위 제약이 실물에서도 그대로다 ([[2026-06-07-loop-engineering]]). → [[loop-engineering]]
+- **실무 판정 기준 (2026-09-21).** 정지 조건을 *표현할 수 있는가*를 가르는 구체적 형태가 [[2026-08-14-practical-loop-engineering]]에 있다. 나쁜 목표: *"keep going until this UI design is good"* — **누구에게 good이고 무엇으로 평가되는가.** 사람의 taste·주관적 디자인·열린 창작 탐색은 이 패턴에 맞지 않는다. 좋은 목표는 결정론적이다 — 통과한 테스트 수, 점수 임계값. 그리고 이미 도는 루프를 끊는 신호: **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
+
+  > ⚠️ 위 항목의 evaluator를 #3 adversarial verification으로 읽지 말 것. **품질이 아니라 하드 룰 충족만** 보고, 대상도 코드가 아니라 대화 transcript다. 두 패턴의 결합이 아니라 **#6이 정지 판정을 외부화한 것**이다. → [[agent-evaluation]] §2b의 정정
 
 ## 조합하기
 
@@ -112,3 +115,4 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 여섯 패턴과 사용 사례 전부의 출처
 - [[2025-06-13-multi-agent-research-system]] — subagent 간 협력 제약, 동기 실행 병목, 프로덕션 요건(resume·checkpoint·retry)의 출처
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/goal`의 loop-until-done 구현, 카탈로그에 없는 cadence
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). #6의 실무 판정 기준과 evaluator 성격의 정정

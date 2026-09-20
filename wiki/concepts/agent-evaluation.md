@@ -3,7 +3,7 @@ title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -64,7 +64,17 @@ status: draft
 
 지금까지 이 페이지의 판정자 분리는 **산출물**을 대상으로 했다. 여기서는 판정 대상이 *"끝났는가"* 라는 메타 질문이고, 그것을 만든 쪽(작업한 세션)과 판정하는 쪽이 분리된다. Codex에도 같은 이름의 기능이 있다 — **두 제품이 독립적으로 같은 자리에 판정자 분리를 놓았다.**
 
-단, 이 소스도 §4의 제약을 그대로 상속한다 — 정지 조건은 *"all tests in test/auth pass and lint is clean"* 처럼 **검증 가능한 문장**이어야 하고, 표현할 수 없는 태스크에는 쓸 수 없다. 그리고 소스 자신의 경고: **"done"은 주장이지 증명이 아니다.** → [[loop-engineering]]
+> ⚠️ **정정 (2026-09-21) — 이 evaluator는 §2b의 checker가 아니다.** 위 문단은 처음에 `/goal`을 이 절의 판정자 분리가 확장된 사례로 적었다. **그 기술은 넓었다.** 같은 저자가 두 달 뒤 직접 좁힌다:
+>
+> > *"The evaluator sitting behind goal is not that checker, by the way. It doesn't look at the content to see if it's good or bad in any way, shape, or form. All it does is examine the conversation transcript to see if the hard rules you specified have been met."* — [[2026-08-14-practical-loop-engineering]]
+>
+> **차이가 두 겹이다.** (a) 판정 대상이 **산출물의 품질이 아니라 내가 명시한 하드 룰의 충족 여부**이고, (b) 보는 것이 **코드가 아니라 대화 transcript**다. 이 절이 다루는 self-preferential bias — 루브릭에 비추어 자기 결과를 후하게 보는 경향 — 는 애초에 **품질 판정에서만 발생하는 문제**이므로, `/goal`의 evaluator는 그 문제를 겪지도 않고 풀지도 않는다.
+>
+> **따라서 evaluator는 adversarial verifier를 대신하지 않는다.** 같은 소스가 둘을 나란히 요구한다 — 한 subagent가 초안하고 별도의 하나가 검증한다. 실무적 함의는 잘못된 안심의 경계다: *"루프에 evaluator를 걸었으니 검증은 됐다"* 는 성립하지 않는다.
+>
+> **남는 것:** 이 사례가 이 절에 여전히 기여하는 것은 *"작업한 쪽이 완료를 선언하게 두지 않는다"* 는 **구조**이지, *"판정자가 품질을 본다"* 가 아니다. §4의 end-state 평가에 더 가깝다 — 경로가 아니라 **최종 상태가 지정한 조건을 만족하는가**만 본다.
+
+단, 이 사례도 §4의 제약을 그대로 상속한다 — 정지 조건은 *"all tests in test/auth pass and lint is clean"* 처럼 **검증 가능한 문장**이어야 하고, 표현할 수 없는 태스크에는 쓸 수 없다. 결정론적 기준(통과한 테스트 수, 점수 임계값)일수록 강하다는 것이 후속 소스의 권고다. 그리고 첫 소스 자신의 경고: **"done"은 주장이지 증명이 아니다.** → [[loop-engineering]]
 
 **eval 자체를 워크플로로 돌릴 수도 있다** — worktree에서 에이전트를 띄워 산출물을 만들고, 비교 에이전트가 루브릭으로 채점한다. 예: 내가 만든 skill을 특정 기준으로 평가·개선. → [[dynamic-workflows]]
 
@@ -105,3 +115,4 @@ status: draft
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). "Effective evaluation of agents" 절과 부록. 이 페이지의 1~5절.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog (2026-08-21). 6절(eval을 CI에 넣기)만 이 소스에서 왔다.
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 2b절의 "정지 조건도 판정 대상이다"만 이 소스에서 왔다.
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 같은 절의 ⚠️ 정정 — evaluator는 룰 체커이지 품질 판정자가 아니다.

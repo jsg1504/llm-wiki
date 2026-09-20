@@ -3,7 +3,7 @@ title: Claude Code
 type: entity
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -69,6 +69,7 @@ Claude Code는 저장소에 접근해 코드를 읽고, 편집하고, 명령을 
 - **트리거 테스트가 필수다.** 관련 작업을 여러 방식으로 요청해 skill이 매번 로드되는지 확인한다.
 - 정책이 바뀌면 skill을 바꾸고 정책 소유자가 사인오프한다. 엔지니어는 다음 세션에서 새 버전을 자동으로 집는다.
 - **성격은 advisory다.** 세션이 따르도록 강제하는 것은 없다. → [[agentic-governance]]
+- **검증 절차를 skill로 코드화할 수 있다.** Claude Code 팀의 `verify-frontend-change` 예시 — 편집 성공만으로 UI 변경을 완료 보고하지 말고 dev server를 띄워 직접 조작하고, before/after 스크린샷을 남기고, 콘솔 에러 0을 확인하고, Chrome DevTools MCP로 Core Web Vitals를 감사한다. **어느 단계든 실패하면 고치고 1단계부터 다시.** ([[2026-08-14-practical-loop-engineering]])
 
 ### Plugins / marketplaces
 
@@ -126,6 +127,8 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 - `claude --worktree feature-auth` 식으로 터미널마다 하나씩. worktree는 자기 브랜치의 별도 체크아웃이라 세션들이 파일에서 충돌하지 않는다.
 - 작업을 **서로 다른 파일을 건드리는 단위로** 쪼갠다. 파일을 공유하는 작업은 한 세션에서 순차로.
 - **2~3개가 합리적 출발점.** 실질적 천장은 *"한 사람이 제대로 리뷰할 수 있는 스트림 수"*이며, 리뷰가 따라가는 동안에만 늘린다.
+
+  > ℹ️ **숙련자의 상한은 더 높다 (2026-09-21).** [[2026-08-14-practical-loop-engineering]]의 저자는 매일 5~10개를 돌리고 **동시 실행은 보통 최대 5개**다. 모순이 아니다 — 위는 엔터프라이즈 도입 초기의 권고이고, 양쪽 다 **천장은 사람의 리뷰 능력**이라는 데 동의한다. 같은 소스가 태스크 민감도로 위임 경계를 나눈다(문서·테스트 커버리지는 완전 위임, 인증·보안·금융은 밀착 감시). → [[loop-engineering]]
 - 전제: `CLAUDE.md`(모든 세션이 읽는다), 피드백 루프(세션이 자기 작업을 검증할 수 있으면 감독이 덜 필요하다), 안전한 명령에 대해 승인을 기다리지 않도록 튜닝된 permission 설정.
 
 ### Subagents
@@ -158,10 +161,16 @@ Claude가 **태스크별 harness를 JavaScript로 즉석에서 작성·실행**�
 
 앞의 장치들이 **한 번의 실행 안**을 다룬다면, 이 둘은 실행 자체를 반복시킨다. 개념은 [[loop-engineering]].
 
-- **`/loop`** — 프롬프트나 커맨드를 **정해진 주기로 재실행**한다.
-- **`/goal`** — 내가 쓴 조건이 **실제로 참이 될 때까지** 이어간다. 매 턴 후 **별도의 작은 모델**이 완료 여부를 판정한다 — *"so the agent that wrote the code isnt the one grading it."* 조건은 *"all tests in test/auth pass and lint is clean"* 처럼 검증 가능해야 한다. 판정자 분리의 근거는 [[agent-evaluation]] §2b.
-- 세션 밖으로 나가는 경로: **스케줄 태스크와 cron**, **hooks**(에이전트 수명주기의 특정 지점에서 셸 명령 실행), 그리고 노트북을 닫은 뒤에도 돌게 하려면 **GitHub Actions**.
+- **`/goal`** — 내가 쓴 조건이 **실제로 참이 될 때까지** 이어간다. Claude가 멈추려 할 때마다 **별도의 evaluator 모델**이 조건을 확인해 되돌려보내며, 목표 달성 또는 지정한 턴 수에서 끝난다. 완료의 정의를 사람이 쥐고 있으므로 Claude가 *"이만하면 됐다"* 로 조기 종료하지 않는다.
+
+  > ⚠️ **evaluator는 품질 검사기가 아니다.** *"It doesn't look at the content to see if it's good or bad... All it does is examine the conversation transcript to see if the hard rules you specified have been met"* ([[2026-08-14-practical-loop-engineering]]). 따라서 **verifier subagent를 대신하지 않는다** — 둘 다 세워야 한다. 상세는 [[agent-evaluation]] §2b의 정정.
+
+  조건은 결정론적일수록 강하다: `/goal get the homepage Lighthouse score to 90 or above, stop after 5 tries.`
+- **`/loop`** — 프롬프트나 커맨드를 **정해진 주기로 재실행**한다. **내 컴퓨터에서 돌고**(끄면 멈춘다) **세션 스코프**라 새 대화를 시작하면 정지한다. `--resume`/`--continue`로 세션을 되살리면 아직 유효한 반복 태스크가 같이 돌아온다. **생성 후 7일에 만료된다.**
+- **`/schedule`** — 세션보다 오래 살아야 하는 것을 **클라우드 routine**으로 돌린다. `/loop`와 구분되는 지점이 여기다.
+- 그 밖의 경로: **hooks**(에이전트 수명주기의 특정 지점에서 셸 명령 실행), 그리고 노트북을 닫은 뒤에도 돌게 하려면 **GitHub Actions**.
 - subagent에 **`isolation: worktree`** 를 걸면 헬퍼마다 자기 체크아웃을 받고 끝나면 정리된다. 터미널 세션 단위 격리는 위의 `--worktree`.
+- **조합이 최종 형태다.** `/loop`로 점검을 스케줄하고 `/goal`로 문제를 푼다. Claude Code 팀의 composed example은 `/schedule` + `/goal` + skills + **dynamic workflows** + **auto mode**까지 엮는다 — 루프가 위, 워크플로가 아래라는 층위가 여기서 명시된다.
 
 > ℹ️ 이 절의 출처는 [[2026-06-07-loop-engineering]]으로, **이 위키에서 유일한 비-[[anthropic]] 소스**다. 외부 관찰자가 Codex의 대응 기능(Automations 탭, `/goal`, `.codex/agents/` TOML subagent, 내장 worktree)과 나란히 놓고 기술한다. 결론은 *"다섯 개가 양쪽에 다 있으므로 어느 도구에 앉아 있든 작동하는 루프를 설계하라"* 는 것 — **Claude Code가 이 기능군의 유일한 구현이 아니라는 첫 기록이다.**
 
@@ -237,7 +246,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **dynamic workflow는 조정 로직을 컨텍스트 밖 코드로 옮긴다.** 병렬 세션(사람이 조정)·subagent(lead가 조정)와 구분되는 세 번째 조정 주체다.
 - **Claude Code는 harness 중 하나다.** 여기 있는 기능의 상당수는 모델의 부족분을 메우는 구조이고, 모델이 좋아지면 일부는 불필요해진다. 통제 목적의 기능(plan mode, hook)은 그렇지 않다.
 - **승인 기반 감독은 측정된 실패다** — 프롬프트의 93%가 승인된다. sandbox가 프롬프트를 84% 줄였고, auto mode는 sandbox **안에서 쓰는 한 겹**이지 대체재가 아니다(~17% 통과).
-- **`/loop`·`/goal`은 실행 자체를 반복시키는 층이다.** `/goal`은 완료 판정을 별도의 작은 모델에 맡겨 판정자 분리를 정지 조건에까지 적용한다.
+- **`/loop`·`/goal`·`/schedule`은 실행 자체를 반복시키는 층이다.** `/loop`는 로컬·세션 스코프·7일 만료, `/schedule`은 클라우드 routine. `/goal`의 evaluator는 **하드 룰 충족만** 보므로 verifier subagent를 대신하지 않는다.
 - **이 기능군은 Claude Code 고유가 아니다.** automations·worktrees·skills·connectors·subagents 다섯 개가 Codex에도 있다. 외부 소스 하나가 기록한 첫 대조군이다.
 - **`CLAUDE.md`와 `.claude/settings.json`은 양면이다.** 리뷰 가능하다는 장점과 공격자가 커밋하면 매 세션 로드된다는 위험이 같은 속성에서 나온다.
 
@@ -264,4 +273,5 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). Dynamic workflows 절의 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "Claude Code는 harness 중 하나다" 절의 출처
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 격리 아키텍처·취약점·sandbox 수치·auto mode 전제의 출처
-- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/loop`·`/goal` 절, skill↔plugin 구분, Codex 대조군. **이 페이지의 유일한 비-Anthropic 출처**
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/loop`·`/goal` 절, skill↔plugin 구분, Codex 대조군
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). `/loop`↔`/schedule` 구분과 7일 만료, evaluator의 성격, verification skill, 병렬 상한 수치. **단, 상당 부분이 Claude Code 팀 원문의 인용이다** → [[anthropic]]

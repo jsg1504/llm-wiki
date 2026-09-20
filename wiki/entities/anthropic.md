@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **6개 중 5개**가 Anthropic 발행이므로, **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **7개 중 5개**가 Anthropic 발행이고, 나머지 둘도 벤더 원문을 실어 나르므로, **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -46,7 +46,7 @@ status: draft
 - **주장의 강도를 수치로 제한한다.** *"모델 층위 방어는 결코 100%가 아니다"*, *"auto mode는 sandbox 대체재가 아니다(~17% 통과)"* 처럼 자사 기능의 상한을 명시한다.
 - **단, 핵심 수치는 내부 eval이고 루브릭은 비공개다.** 90.2% 같은 숫자는 외부 재현이 불가능하다.
 
-> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. **소스 6개 중 5개가 Anthropic이며**, [[multi-agent-systems]]의 모순 판정도 전부 이 출처들에 기대고 있다. 정량 근거의 두께는 소스마다 다르다 — [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 수치를 전혀 제시하지 않는 경험 보고이고, [[2026-04-08-scaling-managed-agents]]의 검증 가능한 숫자는 TTFT 개선 하나뿐이며, [[2026-05-25-how-we-contain-claude]]가 이 위키에서 가장 두꺼운 수치를 낸다.
+> 이 위키의 소스가 한 조직에 편중되어 있다는 점을 의식할 것. **소스 7개 중 5개가 Anthropic 발행이며**, [[multi-agent-systems]]의 모순 판정도 전부 이 출처들에 기대고 있다. 정량 근거의 두께는 소스마다 다르다 — [[2026-08-20-a-harness-for-every-task-dynamic-workflows]]는 수치를 전혀 제시하지 않는 경험 보고이고, [[2026-04-08-scaling-managed-agents]]의 검증 가능한 숫자는 TTFT 개선 하나뿐이며, [[2026-05-25-how-we-contain-claude]]가 이 위키에서 가장 두꺼운 수치를 낸다.
 
 > **편향의 성격이 소스마다 다르다 (2026-09-21).** "Anthropic 발행이니 자사에 유리하게 쓰였을 것"이라는 경계가 모든 소스에 같은 무게로 적용되지는 않는다.
 >
@@ -60,6 +60,13 @@ status: draft
 > - **메우는 것 — 반대 방향의 톤.** 처방을 제시하면서 결론을 유보로 끝낸다(검증 책임, comprehension debt, cognitive surrender, 토큰 비용). 위 목록의 *"비판"* 항목에 부분적으로 해당한다. → [[loop-engineering]]
 > - **못 메우는 것 — 독립 벤치마크.** 저자는 두 벤더의 제품 문서와 X 포스트를 읽고 정리했지 **스스로 측정하지 않았다.** 정량 데이터가 하나도 없다. 위 목록의 *"독립 벤치마크"* 와 *"경쟁 아키텍처"* 는 여전히 비어 있다.
 > - **못 메우는 것 — 순환 참조.** 이 소스가 인용하는 두 권위 중 하나가 Claude Code 책임자 Boris Cherny다. 외부 소스가 내부 주장을 전달하는 경로도 섞여 있다.
+
+> **외부 소스가 벤더 원문을 실어 나른다 (2026-09-21) — 세는 법에 주의.** 두 번째 외부 소스 [[2026-08-14-practical-loop-engineering]]의 상당 부분이 **Claude Code 팀의 X article을 그대로 인용한 것**이다 — 네 종류의 루프 분류, goal/time/proactive 각각의 설명, `verify-frontend-change` skill, composed example. 즉 Anthropic 원문이 외부 저자를 **경유해** 들어온다.
+>
+> - 이 위키가 가진 것은 **인용본이지 원문이 아니다.** 원문(X article)은 raw에 없고, 인용된 범위 밖은 확인할 수 없다.
+> - **"비-Anthropic 소스 2개 확보"로 세면 착시다.** 발행처로는 2개지만 내용의 출처로는 그렇지 않다.
+> - 저자 고유의 기여는 **운용 경험** 쪽이다 — 위임 경계(무엇을 완전 위임하고 무엇을 감시하는가), judgment 위임 실패담, PR triage 사례, "3회 무변화면 멈춰라". 이쪽은 벤더가 말하지 않는 것이고, 실제로 벤더 톤과 다르다.
+> - **다만 이 경로가 값을 하나 냈다.** 저자가 벤더 문서를 정확히 읽은 덕에 이 위키의 오독 하나가 잡혔다 — `/goal`의 evaluator를 품질 판정자로 적은 것. → [[agent-evaluation]] §2b의 정정, [[loop-engineering]]
 
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
@@ -91,3 +98,4 @@ status: draft
 **비-Anthropic 소스 (대조군):**
 
 - [[2026-06-07-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-06-07). 이 위키 최초의 외부 소스. Codex와 Claude Code를 대칭으로 다룬다.
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-08-14). 앞 글의 실전편. **내용의 상당 부분이 Claude Code 팀 X article의 인용**이므로 순수 외부 소스로 세면 안 된다.

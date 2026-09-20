@@ -3,7 +3,7 @@ title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
 updated: 2026-09-21
-sources: [2026-06-07-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
 ---
@@ -69,18 +69,92 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 
 [[agent-orchestration-patterns]]의 "무엇이 이 카탈로그에 없는가"에 적힌 세 공백 중 하나(사람이 루프 안에 있는 패턴)가 여기서 부분적으로 답을 얻는다 — 소스의 예시 루프에서 **루프가 처리 못 한 것만 triage inbox로 사람에게 간다.** 사람은 매 턴이 아니라 **예외 경로**에 있다.
 
-### 정지 조건의 판정자도 분리한다 — `/goal`
+### 네 종류의 루프
 
-세션 안의 두 primitive가 구분된다:
+[[2026-08-14-practical-loop-engineering]]이 인용한 Claude Code 팀의 분류다. 축은 넷 — **어떻게 트리거되는가 / 어떻게 멈추는가 / 어떤 primitive / 어떤 태스크에 맞는가.**
 
-- **`/loop`** — 정해진 주기로 **재실행**한다.
-- **`/goal`** — 내가 쓴 조건이 **실제로 참이 될 때까지** 계속한다. 그리고 매 턴 후 **별도의 작은 모델**이 완료 여부를 판정한다.
+| 종류 | 트리거 | 정지 | primitive | 맞는 일 |
+|---|---|---|---|---|
+| **turn-based** (agentic loop) | 사람의 프롬프트 하나하나 | 한 턴이 끝나면 | (모든 프롬프트가 이걸 연다) | 사람이 매 턴을 지시하고 결과를 직접 확인하는 일반 작업 |
+| **goal-based** | 사람이 목표를 씀 | evaluator가 조건 충족 판정, 또는 지정한 턴 수 도달 | `/goal` | 한 턴으로 부족한 복잡한 작업. 완료를 **결정론적으로** 쓸 수 있을 때 |
+| **time-based** | 주기 | 사람이 끌 때까지 | `/loop`(로컬), `/schedule`(클라우드) | 입력만 바뀌는 반복 작업, 외부 시스템 폴링 |
+| **proactive** | 이벤트 또는 스케줄. **실시간으로 사람이 없다** | 각 태스크는 목표 달성 시, routine 자체는 끌 때까지 | `/schedule` routine | 잘 정의된 작업의 정기 스트림 — 버그 리포트, 이슈 triage, 마이그레이션, 의존성 업그레이드 |
 
-> *"so the agent that wrote the code isnt the one grading it."*
+위로 갈수록 사람이 루프에서 멀어진다. 팀 자신의 단서: ***"Not all tasks require complex loops; start with the simplest solution and use these patterns selectively."*** proactive 층의 비용 관리법도 함께 나온다 — **routine은 작고 빠른 모델로 라우팅하고, 판단이 필요한 대목에만 가장 유능한 모델을 쓴다.**
 
-이건 [[agent-evaluation]] §2b(self-preferential bias 때문에 판정자를 분리하라)가 **정지 조건이라는 메타 판정에까지** 적용된 형태다. [[agent-orchestration-patterns]]로 보면 #3 adversarial verification과 #6 loop-until-done의 결합이며, 그 카탈로그가 *"정지 조건을 표현할 수 없는 태스크에는 못 쓴다"* 고 적은 제약이 여기서도 그대로다 — `/goal`에 주는 건 *"all tests in test/auth pass and lint is clean"* 같이 **검증 가능한 문장**이어야 한다.
+**`/loop`와 `/schedule`은 다른 물건이다.** `/loop`는 **내 컴퓨터에서** 돌고 끄면 멈춘다. **세션 스코프**라 새 대화를 시작하면 정지하며(`--resume`/`--continue`로 세션을 되살리면 아직 유효한 반복 태스크가 같이 돌아온다), **생성 후 7일에 만료된다.** 세션보다 오래 살아야 하면 `/schedule`로 클라우드 routine을 만든다. → [[claude-code]]
 
-Codex에도 같은 이름의 `/goal`이 있다. 두 제품이 독립적으로 같은 자리에 같은 것을 놓았다는 점이 이 항목의 무게다.
+### `/goal`의 evaluator는 룰 체커이지 품질 판정자가 아니다
+
+`/goal`은 내가 쓴 조건이 **실제로 참이 될 때까지** 계속하고, Claude가 멈추려 할 때마다 **별도의 evaluator 모델**이 조건을 확인해 되돌려보낸다. 완료의 정의를 사람이 쥐고 있으므로 Claude가 *"이만하면 됐다"* 를 스스로 판단해 조기 종료하지 않는다.
+
+> ⚠️ **정정 (2026-09-21).** 이 페이지는 처음에 이것을 [[agent-evaluation]] §2b(self-preferential bias 때문에 판정자를 분리하라)가 *"정지 조건이라는 메타 판정에까지 적용된 형태"* 라고 적었다. **그 기술은 넓었다.** 같은 저자가 두 달 뒤 직접 좁힌다:
+>
+> > *"The evaluator sitting behind goal is not that checker, by the way. It doesn't look at the content to see if it's good or bad in any way, shape, or form. All it does is examine the conversation transcript to see if the hard rules you specified have been met."* — [[2026-08-14-practical-loop-engineering]]
+>
+> **분리된 것은 맞지만 판정 대상이 다르다** — 산출물의 품질이 아니라 **내가 명시한 하드 룰의 충족 여부**이고, 보는 것도 코드가 아니라 **대화 transcript**다. 따라서 evaluator는 maker/checker의 checker를 **대신하지 않는다.** 같은 소스가 그 둘을 나란히 요구하는 이유다 — 한 subagent가 초안하고 **별도의 하나가 검증한다.**
+>
+> 실무적 함의: *"루프에 evaluator를 걸었으니 검증은 됐다"* 는 잘못된 안심이다. 저자가 명시적으로 경계하는 것이 정확히 이것이다.
+
+그래서 정지 조건은 **결정론적일수록 강하다.** 팀의 표현으로 *"deterministic criteria, such as number of tests passed or clearing a certain score threshold, are so effective."*
+
+```
+/goal get the homepage Lighthouse score to 90 or above, stop after 5 tries.
+```
+
+[[agent-orchestration-patterns]]로 보면 #6 loop-until-done이고, 그 카탈로그가 *"정지 조건을 표현할 수 없는 태스크에는 못 쓴다"* 고 적은 제약이 여기서도 그대로다. Codex에도 같은 이름의 `/goal`이 있다.
+
+### 무엇을 위임하고 무엇을 지켜보는가
+
+이 위키가 그동안 다루지 않은 축이다. 기존 페이지들은 *무엇을 병렬화할 수 있는가*(기술적 가능성)와 *얼마를 지불할 가치가 있는가*([[multi-agent-systems]]의 경제성)는 다뤘지만, **무엇을 사람이 봐야 하는가**(태스크 민감도)는 비어 있었다.
+
+저자의 실제 운용 — 매일 5~10개 에이전트, 동시 실행은 보통 **최대 5개**:
+
+| | 예 | 기준 |
+|---|---|---|
+| **완전 위임** | 구현한 기능의 문서 작성, 테스트 커버리지 점검 | 정지 조건과 제약이 명확하고 틀려도 비용이 작다 |
+| **밀착 감시** | 인증·보안·금융을 건드리는 기능, 시스템 접근을 준 작업, 스펙이 좋아 보여도 다 맞히지 못할 여지가 큰 복잡한 문제 | 민감하거나, 정지 조건을 줘도 신뢰가 안 선다 |
+
+코드베이스의 성격도 변수다 — 유저도 히스토리도 없는 evergreen 프로젝트와 **brownfield 은행 코드베이스**는 같은 루프를 다르게 대해야 한다.
+
+> ℹ️ **숫자 하나가 기존 기록과 달라 보인다.** [[claude-code]]는 [[2026-08-21-the-ai-native-sdlc-playbook]]을 따라 병렬 세션을 *"2~3개가 합리적 출발점"* 이라 적는다. 모순이 아니다 — 그쪽은 엔터프라이즈 도입 초기의 권고이고 이쪽은 숙련자의 개인 상한이며, **양쪽 다 천장은 사람의 리뷰 능력**이라는 데 동의한다.
+
+### 루프가 안 맞는 일, 그리고 멈춰야 할 신호
+
+완료·done·good이 무엇인지 명확하지 않으면 애초에 틀린 패턴이다. 나쁜 목표의 형태가 구체적으로 제시된다:
+
+> *"keep going until this UI design is good"* — **누구에게 good이고 무엇으로 평가되는가?**
+
+사람의 taste, 주관적 디자인, 열린 창작 탐색은 맞지 않는다. 이건 [[agent-orchestration-patterns]] #6의 제약을 실무 판정 기준으로 만든 것이다.
+
+그리고 이미 도는 루프를 끊는 신호 하나 — **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
+
+### 검증을 skill로 코드화한다
+
+수동 확인을 Claude가 스스로 적용하는 것으로 옮기는 방법. 팀이 제시한 `verify-frontend-change` SKILL.md의 요지 — **편집이 성공했다는 것만으로 UI 변경을 완료 보고하지 말고, 사람 리뷰어가 하듯 확인하라:**
+
+1. dev server를 띄우고 편집한 페이지를 브라우저로 연다.
+2. 직접 조작한다. 새 컨트롤이면 클릭해 기대한 상태 변화를 확인하고 **before/after 스크린샷**.
+3. 브라우저 콘솔에 **새 에러·경고 0**.
+4. Chrome DevTools MCP로 performance trace와 **Core Web Vitals** 감사.
+5. **어느 단계든 실패하면 고치고 1단계부터 다시.** 부분 검증된 작업을 넘기지 않는다.
+
+앞 소스의 *"skill이 없으면 루프는 매 사이클 프로젝트를 처음부터 재추론한다"* 가 여기서 **검증 절차**에 적용된 형태다. state 파일이 *무엇을 했는지*, skill이 *어떻게 하는지*, 그리고 이 skill이 **무엇을 통과해야 끝인지**를 나른다.
+
+### 조합이 최종 형태다
+
+`/loop`로 점검을 스케줄하고 `/goal`로 문제를 푼다:
+
+```
+/loop every 24h "Check GitHub for issues labeled 'bug'. If one exists,
+use /goal to implement a fix until all local tests pass and push the branch."
+```
+
+팀의 composed example은 한 겹 더 간다 — `/schedule`(정기 확인) + `/goal`(완료 정의) + skills(검증 방법) + **[[dynamic-workflows]]**(각 리포트를 triage·수정·리뷰하는 에이전트 조율) + **auto mode**(권한 질문으로 멈추지 않게). 예시 프롬프트에는 *"버그를 고칠 때는 워크플로로 세 가지 해법을 병렬 worktree에서 탐색하고 judge가 적대적으로 리뷰하게 하라"* 까지 들어간다.
+
+> **이것이 이 페이지 서두의 층위 배치를 벤더 쪽에서 확인해준다.** dynamic workflow가 **루프 안에서 호출되는 것**으로 명시된다 — 루프가 위, 워크플로가 아래.
+
+### skill은 저작 포맷, plugin은 배포 수단
 
 ### skill은 저작 포맷, plugin은 배포 수단
 
@@ -122,6 +196,14 @@ maker/checker를 분리하는 이유가 루프의 "끝났다"를 의미 있게 �
 
 그래서 **같은 루프가 사람에 따라 정반대 결과를 낸다** — 한 사람은 깊이 이해하는 일을 더 빨리 하는 데 쓰고, 다른 사람은 그 일을 이해하지 않기 위해 쓴다. *"The loop doesn't know the difference. You do."*
 
+#### 저자 본인의 사례 (2026-08-14)
+
+추상적 경고에 실물이 붙었다. 사용자 피드백에 안 잡힌 빈틈을 찾으려고 경쟁 제품을 조사시키고, 그 격차를 메우는 변경을 **로컬 PR로** 만들게 했다. 그리고 **거의 푸시할 뻔했다.** 리서치는 읽었지만 구현을 충분히 들여다보지 않았기 때문이다. 열어보니 사용자에게 **복잡도만 상당히 늘리고 얻는 건 별로 없는** 변경이었다.
+
+> *"So I delegated the task, but I was close to delegating the judgment as well."* — [[2026-08-14-practical-loop-engineering]]
+
+**이 실패의 형태가 정확하다.** 검증이 실패한 게 아니다 — 코드는 아마 동작했을 것이고 테스트도 통과했을 수 있다. 실패한 것은 **"이게 만들 가치가 있는 변경인가"** 라는 판단이었고, 그건 어떤 정지 조건으로도 표현되지 않는다. 위의 *"루프가 안 맞는 일"* 절(taste·주관적 판단)이 **위임 자체가 아니라 위임의 경계**에도 적용된다는 뜻이다. 규율은 한 문장으로 정리된다 — **task는 위임하고, judgment는 되가져온다.**
+
 ### 그리고 토큰
 
 소스는 첫 문단부터 경고한다 — *"usage patterns can vary wildly if you are token rich or poor."* subagent는 각자 모델·도구 작업을 하므로 비용을 더 쓰고, **두 번째 의견이 값을 하는 자리에만** 쓰라는 것이 처방이다. [[multi-agent-systems]]의 15배 배수와 [[agent-orchestration-patterns]]의 *"loop-until-done은 비용이 가장 예측하기 어려운 패턴"* 이 여기에 그대로 걸린다. 루프는 그 패턴을 **주기적으로** 돌린다는 점에서 비용 예측이 한 겹 더 어렵다.
@@ -152,6 +234,8 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - **외부 소스이지만 독립 검증은 아니다.** 저자는 두 벤더의 제품 문서와 X 포스트를 읽고 정리했지 스스로 측정하지 않았다. **관점**의 외부성이지 **증거**의 외부성이 아니다. → [[anthropic]]
 - **"루프의 시대다"의 근거는 두 사람의 X 발언이다.** 그중 한 명은 Claude Code 책임자, 즉 이해관계자다. 저자 본인도 *"its still early, I'm skeptical"* 이라 쓰고 마지막에 *"프롬프팅도 여전히 효과적이다, 균형의 문제"* 로 돌아온다. 이 페이지도 그 유보를 그대로 들고 간다.
 - **다섯 primitive가 필요조건인지 충분조건인지 불분명하다.** 소스는 *"A loop needs five things"* 라고 단언하지만 왜 다섯인지, 넷으로는 왜 안 되는지의 논증은 없다. 실무 관찰의 정리로 읽는 것이 안전하다.
+- **두 번째 소스도 정량 데이터가 없다.** 80,000 stars, 하루 80~90 PR, 5~10 에이전트, 7일 만료는 사실 진술이지 **효과 측정이 아니다.** 루프 도입 전후 비교는 어느 소스에도 없다.
+- **⚠️ 두 번째 소스는 벤더 원문을 많이 싣는다.** [[2026-08-14-practical-loop-engineering]]의 네 종류 분류·goal/time/proactive 설명·verification skill·composed example은 전부 **Claude Code 팀의 X article 인용**이다. 저자 고유의 기여는 운용 경험 쪽(위임 경계, 실패담, triage 사례, 3회 무변화 신호)이다. 이 페이지를 "외부 소스 2개가 뒷받침한다"고 읽으면 안 된다. → [[anthropic]]
 - **연재의 한 편이다.** comprehension debt, cognitive surrender, intent debt, orchestration tax는 저자의 다른 글에서 전개된 개념이고 여기서는 한 문단씩만 나온다. 이 위키는 그 한 문단씩만 갖고 있다.
 
 ## Related
@@ -165,10 +249,11 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[claude-code]] — `/loop`·`/goal`·worktree·skill·plugin·MCP의 실제 구현
 - [[ai-native-sdlc]] — 커밋된 아티팩트가 다음 단계를 트리거하는 루프. comprehension debt 경계가 빠져 있는 곳
 - [[multi-agent-systems]] — 루프가 주기적으로 지불하게 되는 토큰 비용의 근거
-- [[anthropic]] — 이 위키 최초의 비-Anthropic 소스가 들어온 지점
+- [[anthropic]] — 이 위키 최초의 비-Anthropic 소스가 들어온 지점. 두 번째 소스가 벤더 원문을 실어 나르는 경로이기도 하다
 
 ## Sources
 
-- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 이 페이지 전체의 1차 출처
+- [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 개념 층의 1차 출처 — 층위, 다섯 primitive, 반대급부
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 실무 층의 1차 출처 — 네 종류 루프, evaluator 정정, 위임 경계, 정지 조건 실무 기준, 검증 skill
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 층위 대비와 loop-until-done·판정자 분리의 대조군
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). harness 층위 다이어그램의 출처
