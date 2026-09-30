@@ -136,3 +136,17 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - **[[anthropic]]에 새 경계 (사용자 결정):** 이 소스 내용의 상당 부분이 **Claude Code 팀 X article 인용**이다. 발행처로는 외부 2개지만 내용 출처로는 아니므로 "비-Anthropic 소스 2개 확보"는 착시. 저자 고유 기여는 운용 경험 쪽(위임 경계·실패담·triage·3회 신호). 다만 이 경로가 값을 하나 냈다 — 저자가 벤더 문서를 정확히 읽은 덕에 위키의 오독이 잡혔다.
   - 팀의 composed example(`/schedule` + `/goal` + skills + dynamic workflows + auto mode)이 **루프가 위, 워크플로가 아래**라는 층위 배치를 벤더 쪽에서 확인해준다. 어제 세운 층위 다이어그램의 근거 보강.
   - 정량 데이터 여전히 0. 80k stars·하루 80~90 PR·5~10 에이전트·7일은 사실 진술이지 효과 측정이 아니다.
+
+## [2026-09-30 23:30] ingest | The Loop Is the Product
+- source: [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair 발표; Tech Bridge 한영자막 클리핑)
+- created: [[2026-09-30-loop-is-the-product]] (source), [[agent-recipe]] (concept, stub)
+- updated: [[loop-engineering]], [[agent-evaluation]], [[meta-harness]], [[anthropic]], [[glossary]], [[index]]
+- contradictions:
+  - **⚠️ 모순 1건 (실질적): taste는 루프에 맞는가.** Osmani([[2026-06-07-loop-engineering]], [[2026-08-14-practical-loop-engineering]])는 *"사람의 taste는 루프에 맞지 않는다"*, *"task는 위임하고 judgment는 되가져온다"* 고 했다. Gavrilescu는 *"상위 judge로서의 자신을 자동화하라"* 고 하며 taste를 eval로 코드화하는 것을 루프의 핵심으로 둔다. **부분 화해:** 양쪽 다 사람을 남긴다(매번의 판단 vs judge 보정과 promote). 맥락도 다르다(개인 코드베이스의 일회성 판단 vs 제품의 반복 판단 + A/B 신호). **남는 불일치:** "이 변경이 가치 있는가"를 judge로 표현할 수 있는가. 양쪽 주장 보존, [[loop-engineering]]에 ⚠️ 블록, [[agent-evaluation]] §3b에 교차 참조.
+- notes:
+  - raw 파일명이 규칙에 어긋나(`한영자막 루프 자체가 제품입니다 — …md`) **사용자가 직접** `2026-09-30-loop-is-the-product.md`로 rename했다. 날짜는 클리핑일이고 발표일은 불명이다.
+  - 새 concept 이름은 `agent-recipe`(Claude 추천, 사용자 동의). ingest 도중 사용자 요청으로 **`system-distillation`도 살렸다.** 별도 페이지 대신 한 페이지에 `aliases: [system-distillation]`을 넣고 제목·TL;DR·glossary에 병기했다. 근거: 과정(distillation)과 결과물(recipe)은 같은 것의 두 면이고, 나누면 stub 두 개가 된다. 주 이름을 `system-distillation`으로 바꾸고 싶다면 백링크가 적은 지금이 가장 싸다.
+  - [[loop-engineering]]에 **두 번째 루프** 절 신설. OODA, signal 품질이 성공률을 정하고 verifier 품질이 그 성공을 보정한다는 두 끝의 논리, 산출물 → signal 되먹임. 기존 "검증을 skill로 코드화한다"를 **system distillation 한 단계를 손으로 한 것**으로 재위치했다.
+  - [[agent-evaluation]] §3b 신설. 사람은 eval을 **만들지 않고 보정한다.** eval의 내용물이 공통 기준이 아니라 **제작자의 taste**다. **세 번째 검증 층(프로덕션 A/B)**이 들어왔다. §3의 "SEO 콘텐츠팜" 편향과 이 소스의 "빅테크만" 편향이 같은 모양이다. 차이는 발견 경로(사람 테스터 vs trace 클러스터링)다.
+  - [[anthropic]]: **Anthropic을 발행처로도 인용 경로로도 거치지 않는 첫 소스.** 순환 참조는 풀렸지만 편향의 종류가 스타트업 제품 편향으로 바뀌었을 뿐이다.
+  - 자동 생성 자막이다("Cloud Code" = Claude Code, "Pie Harness" = pi harness). 정량 데이터 0. valued work per watt는 정의되지 않은 구호다.

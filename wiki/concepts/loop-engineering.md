@@ -2,8 +2,8 @@
 title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
-updated: 2026-09-21
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+updated: 2026-09-30
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
 ---
@@ -127,6 +127,19 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 
 사람의 taste, 주관적 디자인, 열린 창작 탐색은 맞지 않는다. 이건 [[agent-orchestration-patterns]] #6의 제약을 실무 판정 기준으로 만든 것이다.
 
+> ⚠️ **Contradiction (2026-09-30): taste는 루프에 맞는가.** 위 문장과 아래 *"task는 위임하고, judgment는 되가져온다"* 는 [[2026-06-07-loop-engineering]]·[[2026-08-14-practical-loop-engineering]](Osmani)의 주장이다. [[2026-09-30-loop-is-the-product]](Gavrilescu)는 정반대를 루프의 **핵심**으로 둔다:
+>
+> > *"You try to automate yourself as the higher level judge and you want to make sure your second-loop agents are able to apply the same judgment."*
+>
+> 그쪽의 처방은 taste를 **eval로 코드화**하는 것이다. trace에서 패턴을 뽑고, judge를 만들고, 사람은 *"이 판단에 동의하는가"* 만 답한다(→ [[agent-evaluation]] §3b). 리크루팅 에이전트의 *"빅테크 대신 숨은 인재"* 가 바로 주관적 판단의 예다.
+>
+> **부분적으로는 화해가 된다. 다만 완전하지는 않다.**
+> - **같은 것:** 양쪽 다 사람을 루프 안에 남긴다. Osmani는 **매번의 판단**에, Gavrilescu는 **judge의 보정과 promote 결정**에 둔다. Gavrilescu도 taste가 맞는지는 프로덕션 A/B로 사용자에게 확인받는다. 사람의 판단을 없애는 것이 아니라 **판단을 하는 빈도와 층위를 옮기는** 설계다.
+> - **다른 것:** Osmani가 "정지 조건으로 표현할 수 없다"고 한 것(*"이 변경이 만들 가치가 있는가"*)을 Gavrilescu는 **judge로 표현할 수 있다**고 본다. 이것이 실질적인 불일치다.
+> - **맥락이 다르다:** Osmani는 **개인 개발자가 자기 코드베이스**에서 도는 루프를, Gavrilescu는 **같은 판단을 수많은 사용자에게 반복 적용하는 제품**을 말한다. 후자는 판단이 반복되고 A/B로 검증할 사용자 신호가 있다. 전자의 *"이 PR이 가치 있는가"* 는 매번 다른 일회성 판단이다.
+>
+> 양쪽 모두 정량 근거가 없다. 어느 쪽이 맞는지보다 **어떤 조건에서 taste를 코드화할 수 있는가**가 남은 질문이다.
+
 그리고 이미 도는 루프를 끊는 신호 하나 — **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
 
 ### 검증을 skill로 코드화한다
@@ -172,6 +185,27 @@ use /goal to implement a fix until all local tests pass and push the branch."
 
 대응표 전체는 [[2026-06-07-loop-engineering]]에 있다. 이 위키에서 의미 있는 건 **[[claude-code]]가 유일한 구현이 아니라는 첫 기록**이라는 점이다.
 
+### 두 번째 루프 — 루프의 산출물이 루프를 고친다 (2026-09-30)
+
+[[2026-09-30-loop-is-the-product]]는 루프를 **OODA**(Observe-Orient-Decide-Act)로 본다. 도구를 호출하고 관측을 받는 것이 곧 그 순환이다. 이 틀에서 루프의 품질은 **두 끝**이 정한다.
+
+> *"the quality of the signal determines the success rate of the loop and the quality of the verifier is able to calibrate if that success is actually correct or not."*
+
+위의 다섯 primitive + state가 **한 루프를 어떻게 돌리는가**라면, 이 소스는 **루프 위에 루프를 하나 더** 얹는다. 첫 루프의 산출물(trace, 실패, 사용자 불만)을 signal로 되먹여 **루프 자체를 고치는** 두 번째 루프다.
+
+```
+두 번째 루프   trace 패턴 → judge/eval 보정 → recipe 후보 → offline eval → A/B → promote
+    ▲    │
+    │    ▼  (recipe: eval·skill·prompt·harness profile)
+첫 번째 루프   observe → orient → decide → act   ← signal ─ verifier
+```
+
+두 번째 루프의 산출물을 버전 관리한 것이 [[agent-recipe]]이고, 이 과정을 **system distillation**이라 부른다. 규칙은 이렇다. 실패 패턴은 judge와 eval이 되고, 반복 행동은 skill과 prompt가 되고, 사용자 불만은 harness 확장과 memory가 된다.
+
+이 위키의 기존 기록과 겹치는 지점이 있다. 위 *"검증을 skill로 코드화한다"* 는 사람이 반복하던 확인을 skill로 옮기는 것이었다. 이것은 **system distillation 한 단계를 손으로 한 것**이다. 새 소스는 그 단계를 루프로 **자동화**하라고 말한다. 단, 사람의 보정은 남긴다.
+
+> ⚠️ 이 소스는 **자사 제품(pi.recipes) 발표**이고 정량 근거가 없다. 두 번째 루프가 실제로 첫 루프를 개선했다는 수치는 제시되지 않는다.
+
 ## 반대급부 — 루프가 좋아질수록 커지는 셋
 
 이 절이 이 소스가 위키에 주는 가장 다른 것이다. 기존 소스들은 대체로 처방을 제시하고 한계를 각주로 달지만, 여기서는 **한계가 결론 자체**다.
@@ -203,6 +237,8 @@ maker/checker를 분리하는 이유가 루프의 "끝났다"를 의미 있게 �
 > *"So I delegated the task, but I was close to delegating the judgment as well."* — [[2026-08-14-practical-loop-engineering]]
 
 **이 실패의 형태가 정확하다.** 검증이 실패한 게 아니다 — 코드는 아마 동작했을 것이고 테스트도 통과했을 수 있다. 실패한 것은 **"이게 만들 가치가 있는 변경인가"** 라는 판단이었고, 그건 어떤 정지 조건으로도 표현되지 않는다. 위의 *"루프가 안 맞는 일"* 절(taste·주관적 판단)이 **위임 자체가 아니라 위임의 경계**에도 적용된다는 뜻이다. 규율은 한 문장으로 정리된다 — **task는 위임하고, judgment는 되가져온다.**
+
+> 이 규율에 정면으로 반대하는 소스가 있다. 위 *"루프가 안 맞는 일"* 절의 ⚠️ Contradiction 참조.
 
 ### 그리고 토큰
 
@@ -236,10 +272,12 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - **다섯 primitive가 필요조건인지 충분조건인지 불분명하다.** 소스는 *"A loop needs five things"* 라고 단언하지만 왜 다섯인지, 넷으로는 왜 안 되는지의 논증은 없다. 실무 관찰의 정리로 읽는 것이 안전하다.
 - **두 번째 소스도 정량 데이터가 없다.** 80,000 stars, 하루 80~90 PR, 5~10 에이전트, 7일 만료는 사실 진술이지 **효과 측정이 아니다.** 루프 도입 전후 비교는 어느 소스에도 없다.
 - **⚠️ 두 번째 소스는 벤더 원문을 많이 싣는다.** [[2026-08-14-practical-loop-engineering]]의 네 종류 분류·goal/time/proactive 설명·verification skill·composed example은 전부 **Claude Code 팀의 X article 인용**이다. 저자 고유의 기여는 운용 경험 쪽(위임 경계, 실패담, triage 사례, 3회 무변화 신호)이다. 이 페이지를 "외부 소스 2개가 뒷받침한다"고 읽으면 안 된다. → [[anthropic]]
+- **세 번째 소스는 제품 발표다 (2026-09-30).** [[2026-09-30-loop-is-the-product]]는 위키 최초로 Anthropic을 발행처로도, 인용 경로로도 거치지 않는다. 대신 **스타트업 제품 편향**이 들어온다. 개념(두 번째 루프, recipe)이 곧바로 자사 제품 소개로 이어진다. 자동 생성 자막이라 문장 단위 인용 정확성도 보장되지 않는다.
 - **연재의 한 편이다.** comprehension debt, cognitive surrender, intent debt, orchestration tax는 저자의 다른 글에서 전개된 개념이고 여기서는 한 문단씩만 나온다. 이 위키는 그 한 문단씩만 갖고 있다.
 
 ## Related
 
+- [[agent-recipe]] — 두 번째 루프의 산출물. system distillation으로 루프가 남기는 누적 판단
 - [[meta-harness]] — 바로 아래 층위. harness들보다 오래 사는 인터페이스를 고정하는 처방
 - [[dynamic-workflows]] — 한 턴 안의 조정을 코드로 내리는 처방. 루프의 한 턴이 이것을 띄울 수 있다
 - [[agent-orchestration-patterns]] — 루프의 한 턴 안에서 쓰이는 여섯 제어 구조. #6 loop-until-done이 `/goal`의 원형
@@ -255,5 +293,6 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 개념 층의 1차 출처 — 층위, 다섯 primitive, 반대급부
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 실무 층의 1차 출처 — 네 종류 루프, evaluator 정정, 위임 경계, 정지 조건 실무 기준, 검증 skill
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). 두 번째 루프 절, taste에 관한 ⚠️ Contradiction
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 층위 대비와 loop-until-done·판정자 분리의 대조군
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). harness 층위 다이어그램의 출처

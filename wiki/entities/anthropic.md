@@ -2,8 +2,8 @@
 title: Anthropic
 type: entity
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
+updated: 2026-09-30
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
@@ -68,6 +68,12 @@ status: draft
 > - 저자 고유의 기여는 **운용 경험** 쪽이다 — 위임 경계(무엇을 완전 위임하고 무엇을 감시하는가), judgment 위임 실패담, PR triage 사례, "3회 무변화면 멈춰라". 이쪽은 벤더가 말하지 않는 것이고, 실제로 벤더 톤과 다르다.
 > - **다만 이 경로가 값을 하나 냈다.** 저자가 벤더 문서를 정확히 읽은 덕에 이 위키의 오독 하나가 잡혔다 — `/goal`의 evaluator를 품질 판정자로 적은 것. → [[agent-evaluation]] §2b의 정정, [[loop-engineering]]
 
+> **처음으로 Anthropic을 전혀 거치지 않는 소스 (2026-09-30).** [[2026-09-30-loop-is-the-product]](Roland Gavrilescu, Introspection)는 발행처도 Anthropic이 아니고, Anthropic 원문을 인용하지도 않는다. Claude Code는 **사용자가 떠나올 경쟁 대상**으로 한 번 언급될 뿐이다.
+>
+> - **메우는 것 — 순환 참조의 해소.** 앞의 두 외부 소스가 가진 문제(내부 권위 인용, 벤더 원문 전달)가 없다.
+> - **못 메우는 것 — 편향의 종류만 바뀌었다.** 벤더 편향 대신 **스타트업 제품 편향**이다. 개념 설명이 곧바로 자사 `pi.recipes` 소개로 이어진다. 정량 데이터는 여전히 0이다.
+> - **값을 낸 것 — 실질적 반론 하나.** Osmani의 *"taste는 루프에 맞지 않는다"* 에 정면으로 반대한다. → [[loop-engineering]]의 Contradiction 절
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -99,3 +105,4 @@ status: draft
 
 - [[2026-06-07-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-06-07). 이 위키 최초의 외부 소스. Codex와 Claude Code를 대칭으로 다룬다.
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-08-14). 앞 글의 실전편. **내용의 상당 부분이 Claude Code 팀 X article의 인용**이므로 순수 외부 소스로 세면 안 된다.
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu, Introspection (AI Engineer World's Fair 발표). **Anthropic을 발행처로도 인용 경로로도 거치지 않는 첫 소스.** 단 자사 제품 발표다.

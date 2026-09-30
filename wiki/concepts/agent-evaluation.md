@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
+updated: 2026-09-30
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -84,6 +84,28 @@ status: draft
 
 > 자동 평가가 아무리 잘 돌아도 수동 테스트는 여전히 필수다.
 
+### 3b. 사람은 eval을 만들지 않고 보정한다 (2026-09-30)
+
+§3은 사람이 **직접 써보며** 사각지대를 찾는다. [[2026-09-30-loop-is-the-product]]는 역할을 바꾼다. 발견도 eval 작성도 에이전트가 하고, 사람은 **판정에 동의하는지만** 답한다.
+
+> *"You don't need the human to actually build the evals. You need them to calibrate the evals."*
+
+리크루팅 에이전트 사례의 절차:
+
+1. **Patterns.** trace에서 공통 행동과 사용자 불만을 클러스터링한다. 발견된 것: 에이전트가 숨은 인재 대신 **빅테크 직원에게만** 연락한다. 아무도 미리 eval로 적을 생각을 못 했을 행동이다.
+2. **Calibrate.** 그 패턴을 잡는 judge를 에이전트가 만든다. 사람은 *"숨은 인재 쪽이 맞다는 이 판단에 동의하는가?"* 에만 답한다.
+3. **Recipe candidates.** 반영할 diff 후보를 offline eval로 거른다.
+4. **Experiments.** 프로덕션 A/B(multi-armed bandit)로 **사용자도 그 판단에 동의하는지** 확인한 뒤 promote한다.
+
+이 페이지에 두 가지가 새로 들어온다.
+
+- **eval의 내용물은 taste다.** 이 페이지의 루브릭(§2)은 사실 정확성처럼 누가 봐도 같은 기준이었다. 이 소스의 eval은 **제작자 고유의 판단**(*"좋은 리크루팅이란 무엇인가"*)을 코드화한 것이다. 소스 표현으로 *"It's not just tests. It's really what is the taste of the creator."*
+- **세 번째 검증 층: 프로덕션 실험.** offline eval은 **제작자가** 만족하는지만 확인한다. A/B는 **사용자가** 그 taste에 동의하는지 확인한다. 이 위키의 기존 소스들은 offline eval과 사람 테스트에서 멈췄다.
+
+§3과 이어지는 부분이 있다. §3의 *"SEO 콘텐츠팜을 고르는 편향"* 과 이 소스의 *"빅테크만 고르는 편향"* 은 같은 모양이다. 둘 다 **아무도 예상하지 못한 선택 편향**이다. 차이는 발견 경로에 있다. §3에서는 사람 테스터가 발견했고, 여기서는 trace 클러스터링이 발견한다.
+
+> ⚠️ 이 절차는 [[loop-engineering]]이 기록한 *"taste는 루프에 맞지 않는다"* 와 부딪힌다. 그 페이지의 Contradiction 절 참조. 이 소스도 결과 수치(응답률, A/B 효과 크기)를 제시하지 않는다.
+
 ### 4. 상태를 바꾸는 에이전트는 end-state로 평가한다
 
 읽기 전용 리서치와 달리, 여러 턴에 걸쳐 영속 상태를 수정하는 에이전트는 각 행동이 다음 스텝의 환경을 바꾼다. 이때는 **턴별 분석 대신 최종 상태(end state)가 옳은가**를 본다. 에이전트가 다른 경로로 같은 목표에 도달할 수 있음을 인정하면서도 의도한 결과는 보장하는 방식이다. 복잡한 워크플로는 모든 중간 단계를 검증하려 들지 말고 **상태 변화가 일어나야 할 지점을 discrete checkpoint로 쪼개** 검사한다.
@@ -107,6 +129,7 @@ status: draft
 - [[claude-code]] — verifier subagent와 OTel export. 이 페이지 원칙들의 도구 구현.
 - [[subagent]] — 오염되지 않은 판정자로서의 subagent.
 - [[anthropic]] — 이 지침을 공개한 주체.
+- [[agent-recipe]] — judge와 eval이 recipe의 핵심 구성물로 누적되는 자리. §3b의 절차가 곧 recipe 개선 절차다
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 
 ## Sources
@@ -115,4 +138,5 @@ status: draft
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). "Effective evaluation of agents" 절과 부록. 이 페이지의 1~5절.
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog (2026-08-21). 6절(eval을 CI에 넣기)만 이 소스에서 왔다.
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 2b절의 "정지 조건도 판정 대상이다"만 이 소스에서 왔다.
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). §3b만 이 소스에서 왔다.
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 같은 절의 ⚠️ 정정 — evaluator는 룰 체커이지 품질 판정자가 아니다.

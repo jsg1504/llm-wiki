@@ -2,7 +2,7 @@
 title: Glossary
 type: meta
 created: 2026-04-28
-updated: 2026-09-21
+updated: 2026-09-30
 status: draft
 ---
 
@@ -30,6 +30,8 @@ status: draft
 - **TTFT** (time-to-first-token) — 작업을 받고 첫 응답 토큰을 내기까지의 지연. 사용자가 가장 예민하게 느끼는 지연 지표.
 - **context anxiety** — 모델이 컨텍스트 한계가 다가오는 것을 감지하고 작업을 조기 종료하는 행동. Sonnet 4.5에서 관측됐고 Opus 4.5에서 사라졌다. harness 가정이 노후화하는 대표 사례.
 - **quarantine** — 신뢰할 수 없는 콘텐츠를 읽는 에이전트에게 고권한 행동을 주지 않고, 행동은 별도 에이전트가 하게 하는 패턴. 무력화가 아니라 트레이드오프다(trust escalation). → [[agentic-governance]]
+- **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]
+- **valued work per watt** — 에이전트 제품의 최적화 점수로 제안된 구호. 작업이 가치 있는가, 그 경제성이 맞는가의 두 단계. 측정 방법은 정의되지 않았다. → [[2026-09-30-loop-is-the-product]]
 
 ## 보안 용어
 

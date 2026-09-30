@@ -2,8 +2,8 @@
 title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
-updated: 2026-09-21
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering]
+updated: 2026-09-30
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -215,6 +215,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 
 - [[managed-agents]] — 이 개념의 유일한 구현 사례이자 1차 출처의 대상
 - [[dynamic-workflows]] — 같은 문제의 반대 방향 처방. 대체재가 아니라 다른 층위
+- [[agent-recipe]] — "harness보다 오래 사는 것"에 대한 또 다른 답. 여기는 **인터페이스**를 고정하고, 그쪽은 **누적된 판단**(eval, skill, harness profile)을 provider-agnostic하게 들고 간다
 - [[loop-engineering]] — 한 칸 위의 층위. harness를 *언제* 기동하고 실행 사이에 무엇을 남길 것인가
 - [[claude-code]] — meta-harness 위에 얹힐 수 있는 harness 중 하나로 위치 지어진다
 - [[agentic-governance]] — 통제 표면의 구체. 이 페이지는 그 위의 판별 기준("이 방어는 모델 능력의 함수인가")을 더한다
@@ -230,4 +231,5 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin, Gabe Cemaj, Michael Cohen (Anthropic Engineering, 2026-04-08). 이 페이지 전체의 1차 출처
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). "dynamic workflow와의 대비" 절
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 보안 경계 절의 실증
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). Related의 agent-recipe 대비만 이 소스에서 왔다
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 층위 다이어그램 맨 위 칸(loop)의 출처
