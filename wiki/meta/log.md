@@ -275,3 +275,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-26 01:27] manual | 모순 카운트 수정 (session-start 훅, wiki-status)
 - touched: `.claude/hooks/session-start.sh`, `.claude/commands/wiki-status.md`, [[log]]
 - notes: 두 곳 모두 `⚠️ Contradiction`을 찾았지만 위키의 실제 마커는 `> ⚠️ **Contradiction`(굵게)이라 늘 0건으로 나왔다. 이제 [[contradictions]] 표의 상태 열(`**미해결`, `**부분 판정`)을 1차 기준으로 세고, 페이지 마커는 `\*{0,2}` 패턴으로 교차 확인용으로만 센다. 현재 출력: 미해결 2, 부분 판정 1, 마커 페이지 6개(synthesis 사본 포함). 사용자 승인.
+
+## [2026-11-26 01:30] manual | frontmatter 검증 훅의 경로 패턴 수정
+- touched: `.claude/hooks/validate-frontmatter.sh`, [[log]]
+- notes: 패턴 `*wiki/*.md`가 프로젝트 폴더명 `llm-wiki/`에도 걸려 `.claude/commands/wiki-status.md` 같은 비-위키 파일까지 검사했다(오탐). `*/wiki/*.md|wiki/*.md`로 좁혔다. 확인: 명령 파일·CLAUDE.md는 통과(0), 정상 위키 페이지는 통과(0), 필드가 빠진 위키 페이지는 차단(2). 사용자 승인.

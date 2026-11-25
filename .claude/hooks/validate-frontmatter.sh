@@ -20,8 +20,10 @@ case "$TOOL_NAME" in
 esac
 
 # wiki/ 안의 .md 파일만 검사
+# `*wiki/*.md`는 프로젝트 폴더명(`llm-wiki/`)에도 걸려 .claude/·CLAUDE.md까지 검사했다.
+# 경로 구분자 바로 뒤의 `wiki/`만 잡는다 (절대 경로 또는 상대 경로).
 case "$FILE_PATH" in
-  *wiki/*.md)
+  */wiki/*.md|wiki/*.md)
     ;;
   *)
     exit 0
