@@ -17,7 +17,7 @@ status: draft
 
 ### 왜 따로 다루는가
 
-이 위키에는 "상태를 context 밖에 둔다"는 처방이 여러 곳에 흩어져 있다. [[loop-engineering]]의 외부 state(*"The agent forgets, the repo doesn't."*), [[meta-harness]]의 durable 세션 로그, [[artifact-chain]]의 커밋된 파일, [[agent-recipe]]의 누적된 판단이 그렇다. 이들은 모두 **무엇을 밖에 둘 것인가**를 말한다. 이 페이지는 그 다음 질문을 다룬다. **밖에 둔 것을 어떻게 구조화하고, 어떻게 갱신하고, 누가 언제 다시 꺼내는가.**
+이 위키에는 "상태를 context 밖에 둔다"는 처방이 여러 곳에 흩어져 있다. [[loop-engineering]]의 외부 state(*"The agent forgets, the repo doesn't."*), [[meta-harness]]의 durable 세션 로그, [[artifact-chain]]의 커밋된 파일, [[agent-recipe]]의 누적된 판단이 그렇다. 이들은 모두 **무엇을 밖에 둘 것인가**를 말한다. 이 페이지는 그 다음 질문을 다룬다. **밖에 둔 것을 어떻게 구조화하고, 어떻게 갱신하고, 누가 언제 다시 꺼내는가.** 이 질문이 한 실행 안의 긴 입력(compaction, RLM)과 만나는 지점, 그리고 "누가 꺼내는가"의 네 주체 비교는 상위 topic [[context-and-memory]]에 있다.
 
 ### 기본 모델: 메모리 계층
 
@@ -216,6 +216,7 @@ MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽�
 
 ## Related
 
+- [[context-and-memory]] — 이 페이지의 상위 topic. 한 실행 안과 실행 사이를 함께 놓고, 누가 가져오나를 네 주체로 비교
 - [[meta-harness]] — 창 밖 durable 세션 로그. 같은 처방을 harness가 관리하는 쪽
 - [[loop-engineering]] — 외부 state와 cadence. memory를 실행 사이의 연속성으로 쓰는 쪽
 - [[artifact-chain]] — 산출물을 파일로 밖에 둔다. 리뷰를 거치는 쓰기 경로

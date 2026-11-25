@@ -279,3 +279,12 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-26 01:30] manual | frontmatter 검증 훅의 경로 패턴 수정
 - touched: `.claude/hooks/validate-frontmatter.sh`, [[log]]
 - notes: 패턴 `*wiki/*.md`가 프로젝트 폴더명 `llm-wiki/`에도 걸려 `.claude/commands/wiki-status.md` 같은 비-위키 파일까지 검사했다(오탐). `*/wiki/*.md|wiki/*.md`로 좁혔다. 확인: 명령 파일·CLAUDE.md는 통과(0), 정상 위키 페이지는 통과(0), 필드가 빠진 위키 페이지는 차단(2). 사용자 승인.
+
+## [2026-11-26 01:40] lint | 44페이지 점검 — 기계적 0건, memory·context 클러스터 topic 공백 High, 모순 목록·마커 일치
+- touched: [[lint-2026-11-26]], [[index]]
+- notes: 깨진 링크·고아·frontmatter 오류 0. 모순 미해결 2(taste, RLM), 부분 판정 1. [[contradictions]]와 페이지 마커 일치 확인. topic 2개 모두 [[agent-memory]]·[[prompt-optimization]]을 링크하지 않아 세 번째 "topic과 끊긴 클러스터"가 됐다. 이번엔 기존 topic 보강 대신 topic 신설을 권장했다. stale 5(orchestrator-worker 두 lint 연속, agent-containment·managed-agents·glossary는 RLM ingest 누락분, what-to-accumulate synthesis). 지난 lint 액션 #3·#4·#5 미처리. 지난 보고에서 RLM 모순 판정 후보로 든 arXiv 2609.20831이 이론 논문이라 후보에서 정정했다. ingest 후보 5개를 arXiv에서 찾아 제시(읽지 않음). 자동 수정 없음.
+
+## [2026-11-26 01:52] curate | lint 2026-11-26 액션 #1 — topic 신설: context-and-memory
+- created: [[context-and-memory]]
+- updated: [[agent-memory]], [[meta-harness]], [[recursive-language-model]], [[prompt-optimization]], [[multi-agent-systems]], [[index]]
+- notes: 사용자 승인한 계획대로 진행. memory·context 클러스터(소스 8개, concept 3개)가 어느 topic에서도 들어오지 않던 문제를 기존 topic 보강 대신 새 topic으로 풀었다. 이름은 `context-management` 대신 실행 사이의 기억까지 포함하는 `context-and-memory`. hub 역할만 하도록 내용은 요약·링크로 두고, 새로 쓴 것은 "누가 가져오나" 네 주체 표(모델 / harness / 고정 검색 + LLM 추출 / 모델이 쓴 코드) 하나다. *(정리)* 표시. 두 시간 척도(실행 안/사이)와 "재현된 주장 2건" 표를 더했다. compaction 단독 concept은 만들지 않고 흡수했다. 역링크 5개는 본문 문장으로 넣었다. prompt-optimization에는 "밖에 쌓기 vs 가중치에 넣기" 소절을 넣으며 RLM을 sources에 추가했다. topic이 링크하는 나머지 concept 8개(agent-containment, agent-evaluation, agent-recipe, artifact-chain, dynamic-workflows, loop-engineering, prompt-injection, subagent)의 역방향은 승인 범위 밖이라 생략했다. status draft (네 주체를 직접 비교한 데이터 없음).

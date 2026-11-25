@@ -15,6 +15,8 @@ status: draft
 
 ## Overview
 
+이 개념은 [[context-and-memory]]의 처방 지도에서 (d) "애초에 넣지 않는다"에 해당하고, "누가 가져오나" 표에서 **모델이 쓴 코드**가 정하는 주체다.
+
 ### 무엇을 푸는가: context rot는 과제에 따라 다르게 온다
 
 frontier 모델도 prompt가 길어지면 품질이 떨어진다(context rot). [[2025-12-31-recursive-language-models]]는 그 열화 속도가 **과제가 요구하는 처리량**에 달렸다고 본다.
@@ -131,6 +133,7 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 
 ## Related
 
+- [[context-and-memory]] — 상위 topic. compaction 처방 지도와 누가 가져오나의 네 주체
 - [[meta-harness]] — compaction 처방 표의 (d) 행. Managed Agents가 이 논문을 선행 연구로 인용한다. 학습으로 scaffold를 가중치에 넣는 반대 방향 사례
 - [[dynamic-workflows]] — 조정을 프로그램 변수에 두는 같은 원리. 한 번 쓰는 코드 vs 계속 고치는 코드
 - [[subagent]] — 말로 하는 위임 vs 코드로 하는 위임. 표현력 비판의 대상

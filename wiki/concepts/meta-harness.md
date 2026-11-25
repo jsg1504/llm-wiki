@@ -145,6 +145,8 @@ Managed Agents에서 **session이 그 객체 역할을 한다.** 단 sandbox나 
 | **(c) 되돌릴 수 있게 한다** — 창 밖 durable 로그 | 폐기가 아니라 **탈거(eviction)**. 필요하면 슬라이스해 다시 가져옴 | 저장 비용, 재조회의 지연·토큰 비용. 무엇을 다시 읽을지는 여전히 판단 문제 | [[2026-04-08-scaling-managed-agents]] |
 | **(d) 애초에 넣지 않는다** — REPL 변수 + 코드 안 재귀 (2026-11-26) | 입력을 창에 한 번도 통째로 넣지 않는다. 모델은 메타데이터만 보고 코드로 잘라 읽고, 조각마다 자기를 재귀 호출한다 | 모델의 코딩 능력에 묶인다. sub-call 비용의 꼬리가 길다. 모델이 쓴 코드를 실행하므로 격리가 필요하다 | [[2025-12-31-recursive-language-models]] |
 
+네 처방을 memory(실행 사이)와 함께 놓은 지도는 [[context-and-memory]]에 있다.
+
 **넷은 배타적이지 않다.** (c)는 (a)를 안전하게 만든다 — 원본이 로그에 남아 있으면 compaction의 되돌릴 수 없음이 되돌릴 수 있음이 된다.
 
 > **(d)는 (c)와 같은 줄기다 (2026-11-26).** Managed Agents 원문이 세션 로그를 *"this same benefit"* 을 다른 저장 위치(REPL 대신 durable 로그)로 얻는 것이라 설명한다. 둘 다 원본을 창 밖에 둔다. 갈리는 점은 둘이다. (c)는 창에 들어왔던 것을 **밀어냈다가** 되가져오고, (d)는 처음부터 넣지 않는다. (c)는 *무엇을 다시 읽을지*가 판단 문제로 남고, (d)는 그 판단을 모델이 쓰는 코드에 맡기는 대신 **모델의 코딩 능력**이 상한이 된다. 측정도 (d) 쪽에만 있다. compaction agent는 OOLONG-Pairs에서 F1 0.1, RLM은 58~76이었다 ([[2025-12-31-recursive-language-models]]). 행을 나눈 것은 약점이 달라서다. *(구분은 이 위키의 정리다.)*
@@ -242,6 +244,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[prompt-injection]] — 그 경계를 넘는 공격들. capability grant 재개념화
 - [[multi-agent-systems]] — 많은 brain으로 스케일할 때의 경제성
 - [[agent-memory]] — 창 밖 저장소를 **모델**이 관리하는 반대편 설계(MemGPT). context 한계 경고가 기능이었던 사례
+- [[context-and-memory]] — compaction 처방 (a)~(d)와 memory를 묶은 상위 topic. 누가 가져오나의 네 주체
 - [[recursive-language-model]] — compaction 처방 (d). Managed Agents가 인용한 "창 밖 객체" 선행 연구. scaffold를 가중치로 옮기는 반대 방향
 
 ## Sources

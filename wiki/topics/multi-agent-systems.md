@@ -96,6 +96,8 @@ status: draft
 이 프레이밍은 앞 절의 토큰 논변과 다른 층위다. 토큰이 *"왜 여럿이 더 잘하는가"*를 설명한다면, 이쪽은 *"왜 하나가 오래 하면 못하는가"*를 설명한다. 둘 다 참일 수 있고, 실제로 같은 처방(독립 context window로 나누기)으로 수렴한다. 구조로 막는 방법은 [[dynamic-workflows]]와 [[agent-orchestration-patterns]].
 
 > **열화를 처음으로 잰 소스 (2026-11-26).** 위 세 실패 모드는 경험 보고다. [[2025-12-31-recursive-language-models]]가 그 바탕(context rot)을 측정한다. 열화 속도는 과제의 처리량에 달렸다. 바늘 하나 찾기는 1M token에서도 버티지만, 쌍마다 집계하는 과제에서 GPT-5는 창 안에서도 F1 0.1이고 compaction agent도 0.1이다. 같은 논문은 "독립 context window로 나누기"를 다른 방식으로 한다. 입력을 REPL 변수로 두고 **코드 안에서** 수백 번 LM을 부른다(58~76). subagent를 말로 몇 개 띄우는 방식은 위임 수가 부모의 출력 길이에 묶인다는 것이 저자들의 비판이다. 이 주제의 경제성 질문(*15배 토큰을 낼 가치가 있는가*)도 그대로 걸린다. RLM은 중앙값 비용이 base 모델과 비슷하지만 꼬리가 길다. → [[recursive-language-model]], [[subagent]]
+>
+> 독립 context window로 나누는 것은 compaction 처방 네 갈래 중 하나((b) 도달하지 않는다)다. 나머지 셋(요약, 되돌릴 수 있는 로그, 창에 넣지 않기)과의 비교는 [[context-and-memory]]에 있다.
 
 ### 창발적 행동을 전제로 설계한다
 
@@ -179,6 +181,7 @@ status: draft
 - [[managed-agents]] — TTFT 수치가 나온 실제 시스템.
 - [[agent-containment]] — 에이전트를 여럿 굴릴 때 blast radius가 곱해지는 문제.
 - [[prompt-injection]] — 신뢰 경계가 늘어날 때 생기는 trust escalation.
+- [[context-and-memory]] — 이웃 topic. 단일 에이전트가 길어질 때의 처방을 compaction 네 갈래와 memory로 넓힌다.
 - [[recursive-language-model]] — 단일 에이전트의 context rot을 잰 소스. 위임을 말이 아니라 코드로 내는 반대편 설계.
 - [[loop-engineering]] — 다섯 번째 축(시간). 사람이 조종하는 병렬의 운용 사례와 위임 경계. Contradiction 가설 ①의 추가 증거.
 

@@ -4,7 +4,7 @@ aliases: [prompt-optimizer, reflective-prompt-evolution, GEPA]
 type: concept
 created: 2026-11-25
 updated: 2026-11-26
-sources: [2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion]
+sources: [2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2025-12-31-recursive-language-models]
 tags: [prompt-optimization, gepa, dspy, mipro, textgrad, reflection, compound-ai-systems, evolutionary-search, pareto]
 status: draft
 ---
@@ -119,6 +119,10 @@ Qwen3 8B로 최적화한 prompt를 **GPT-4.1 Mini에 그대로** 쓰면 +9.00%�
 
 [[loop-engineering]]의 두 번째 루프 절은 Gavrilescu의 말을 싣는다. *"signal의 품질이 루프의 성공률을 정한다."* GEPA는 그 signal을 구체적으로 무엇으로 할지에 대한 하나의 답이다. 점수 하나가 아니라 **점수로 접히기 전의 텍스트**다. 그리고 그 signal을 몇 번 받으면 되는지에 대한 숫자를 처음으로 준다.
 
+### 밖에 쌓기 vs 가중치에 넣기
+
+GEPA는 trace에서 배운 것을 **창 밖의 지시문**으로 남긴다. 같은 시기 RLM 연구는 scaffold의 행동을 SFT로 **가중치에** 넣었다 ([[2025-12-31-recursive-language-models]]). 둘을 한 축에 놓은 정리는 [[context-and-memory]]에 있다. *(대비는 이 위키의 정리다.)*
+
 ### taste 모순과의 관계
 
 [[loop-engineering]]의 Contradiction(*taste는 루프에 맞는가*)을 판정하지는 못한다. GEPA의 모든 실험은 **정답이 있는 과제**(exact match, F1, pass rate)다. taste처럼 채점 함수 자체가 논쟁거리인 영역은 다루지 않는다. 다만 하나는 말해 준다. **채점 함수와 텍스트 피드백이 있으면 증류는 적은 시도로 자동화된다.** 남는 질문은 여전히 "taste를 채점 함수로 쓸 수 있는가"이다. 사람이 쓴 채점 근거를 feedback_text로 넣을 수 있다는 설계는 Gavrilescu 쪽(사람은 eval을 보정한다)과 같은 방향이다.
@@ -139,8 +143,10 @@ Qwen3 8B로 최적화한 prompt를 **GPT-4.1 Mini에 그대로** 쓰면 +9.00%�
 - [[meta-harness]] — prompt가 층위 그림의 가장 빠르게 변하는 층인 이유
 - [[prompt-injection]] — adversarial prompt search와 위협 모델이 다른 이웃
 - [[agent-memory]] — 반성의 결과를 지시문이 아니라 episodic memory에 두는 쪽(Reflexion)
+- [[context-and-memory]] — 밖에 쌓기 vs 가중치에 넣기 축. 이 페이지는 밖에 쌓는 쪽
 
 ## Sources
 
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (UC Berkeley·Stanford·Databricks·MIT 등, ICLR 2026 Oral). 이 페이지 전체의 출처
 - [[2023-03-20-reflexion]] — Shinn 외 5인 (Northeastern·MIT·Princeton, arXiv 2303.11366). 계보의 Reflexion 항목과 §1의 직접 비교 노트 (2026-11-26)
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). "밖에 쌓기 vs 가중치에 넣기" 대비의 반대편 (2026-11-26)
