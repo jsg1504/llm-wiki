@@ -2,15 +2,15 @@
 title: Anthropic
 type: entity
 created: 2026-09-11
-updated: 2026-11-25
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+updated: 2026-11-26
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **7개 중 5개**가 Anthropic 발행이고, 나머지 둘도 벤더 원문을 실어 나르므로, **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **10개 중 5개**가 Anthropic 발행이다. 비-Anthropic 5개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -81,6 +81,13 @@ status: draft
 > - **편향의 종류가 또 바뀐다.** 벤더나 스타트업 제품이 아니라 **자기 도구 편향**이다. 주요 비교 대상(MIPROv2)의 저자와 DSPy 창시자가 공저자이고, 벤치마크도 같은 연구 계열에서 왔다.
 > - **세는 법:** 소스 9개 중 Anthropic 발행 5개, 비-Anthropic 4개. 비-Anthropic 중 **스스로 측정한 소스는 이것 하나**다.
 
+> **두 번째 독립 측정 소스, 그러나 같은 연구실 계열 (2026-11-26).** [[2023-10-12-memgpt]](UC Berkeley, arXiv preprint)도 Anthropic을 발행처로도 인용 경로로도 거치지 않는다. 실험 모델은 GPT-3.5/GPT-4/GPT-4 Turbo이고 Claude는 없다.
+>
+> - **메우는 것 — 장기 memory.** 이 위키가 비어 있다고 적어 온 칸이다. 스스로 만든 과제 네 개에서 수치를 낸다. → [[agent-memory]]
+> - **못 메우는 것 — 동료 심사와 공정한 비교.** preprint이고, baseline은 원본 대화 대신 손실 요약을 받았으며, 판정자에게 후하게 채점하라고 했다. 2023년 모델만 실험했다.
+> - **외부 소스끼리의 독립성.** Ion Stoica가 GEPA와 MemGPT 양쪽의 공저자다. 둘 다 UC Berkeley 계열이다. 비-Anthropic 소스가 늘었지만 **학술 소스 두 개는 같은 연구 그룹에서 나왔다.** 서로를 독립적인 확인으로 세면 안 된다.
+> - **세는 법:** 소스 10개 중 Anthropic 발행 5개, 비-Anthropic 5개. 비-Anthropic 중 스스로 측정한 소스는 GEPA와 MemGPT 둘이다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -100,6 +107,7 @@ status: draft
 - [[prompt-injection]] — 같은 소스가 보고한 공격면과 실패 사례.
 - [[loop-engineering]] — 이 위키 최초의 비-Anthropic 소스가 들어온 개념. 편향 추적의 대조군.
 - [[prompt-optimization]] — 최초의 학술·정량 독립 소스가 들어온 개념. 실험에 Claude가 없다.
+- [[agent-memory]] — 두 번째 학술·정량 독립 소스(MemGPT)가 들어온 개념. GEPA와 같은 연구 그룹 계열이다.
 
 ## Sources
 
@@ -115,3 +123,4 @@ status: draft
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-08-14). 앞 글의 실전편. **내용의 상당 부분이 Claude Code 팀 X article의 인용**이므로 순수 외부 소스로 세면 안 된다.
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu, Introspection (AI Engineer World's Fair 발표). **Anthropic을 발행처로도 인용 경로로도 거치지 않는 첫 소스.** 단 자사 제품 발표다.
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 편향 노트: 최초의 학술·정량 독립 소스 (2026-11-25)
+- [[2023-10-12-memgpt]] — Packer 외 6인 (UC Berkeley, arXiv preprint). 편향 노트: 두 번째 독립 측정 소스, GEPA와 Stoica 공저 (2026-11-26)

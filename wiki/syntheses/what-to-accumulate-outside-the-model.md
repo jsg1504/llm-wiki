@@ -3,7 +3,7 @@ title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않�
 type: synthesis
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system]
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt]
 question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
 aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
 tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
@@ -22,6 +22,8 @@ status: draft
 
 [[meta-harness]]는 이 둘을 모순이 아니라 판별 기준으로 정리한다. **능력 가정은 썩고, 과제 규칙은 남는다.** *(이 기준은 위키의 추론이다. 두 소스 모두 이렇게 말하지는 않는다.)*
 
+> **썩는 방향은 한쪽이 아니다 (2026-11-26).** [[2023-10-12-memgpt]]에서는 memory를 모델이 스스로 관리하게 했더니 **더 새로운** GPT-4 Turbo가 GPT-4보다 다단계 조회를 못 했다. context 한계를 경고하는 정책도 GPT-4 계열에서는 기능이었지만 Sonnet 4.5에서는 조기 종료를 불렀다. 능력 가정은 모델이 좋아지면 쓸모없어질 뿐 아니라 **새 모델에서 오히려 해가 될 수도 있다.** 그래서 아래 4번의 재검증은 "아직 필요한가"만이 아니라 "아직 맞는가"도 묻는다. → [[agent-memory]] *(추론)*
+
 ## 무엇을 쌓는가: 수명 순서
 
 | 쌓을 것 | 무엇을 담나 | 왜 모델보다 오래 사나 | 근거 |
@@ -29,6 +31,7 @@ status: draft
 | **Eval / judge** | 실패 패턴, 제작자의 taste를 코드화한 것 | "좋은 결과란 무엇인가"는 모델이 바뀌어도 그대로다. 오히려 새 모델을 검증하는 도구가 된다 *(추론)* | [[agent-recipe]], [[agent-evaluation]] §3b |
 | **Skill / prompt** | 반복 행동, 에이전트가 짐작해야 했을 프로젝트 지식 | trace에서 증류한 지시문이 모델 간에 전이됐다 (+9%) | [[prompt-optimization]] §5, [[loop-engineering]] |
 | **외부 state / artifact** | 무엇이 끝났고 무엇이 남았는가, 단계별 산출물 | *"The agent forgets, the repo doesn't."* 메모리는 컨텍스트가 아니라 디스크에 둔다 | [[loop-engineering]], [[artifact-chain]] |
+| **Memory 내용** | 사용자에 대한 사실, 과거 대화 원본 | 모델과 무관한 사실이다. 단 그것을 **언제 넣고 뺄지 정하는 정책**은 능력 가정이라 수명이 짧다 *(추론)* | [[agent-memory]] |
 | **Trace / session log (원본)** | 실행 기록 전체 | 두 번째 루프의 signal이 된다. compaction은 되돌릴 수 없으니 원본을 창 밖에 둔다 | [[meta-harness]], [[agent-evaluation]] §5 |
 | **인터페이스** | session / harness / sandbox 경계 | harness는 갈아 끼우고 경계선만 고정한다 | [[meta-harness]] |
 | **Harness profile / memory** | 사용자 불만에서 나온 harness 확장 | 가장 빨리 낡는다. 모델별로 따로 둔다 | [[agent-recipe]] |
@@ -78,7 +81,7 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 
 ## 빈틈
 
-- **장기 memory 시스템** 자체를 다룬 소스가 없다. 무엇을 기억하고 언제 잊는지, 검색은 어떻게 하는지가 비어 있다.
+- ~~**장기 memory 시스템** 자체를 다룬 소스가 없다.~~ **부분적으로 채워짐 (2026-11-26):** [[2023-10-12-memgpt]]가 들어와 [[agent-memory]]가 생겼다. 무엇을 어떻게 저장하고 다시 가져오는가는 다룬다. **무엇을 잊어야 하는가**(삭제, 갱신, 모순된 사실)와 memory 검색 품질의 측정은 여전히 비어 있다.
 - **모델 간 전이의 근거가 얇다.** prompt 하나, 모델 두 개, 약한 모델에서 강한 모델 방향만 확인됐다. skill·harness profile·eval의 전이와 Claude 계열 데이터는 없다 ([[agent-recipe]]).
 - **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다.
 - 채울 만한 소스 후보: agent memory 관련 논문이나 글, eval suite를 모델 교체에 걸쳐 유지한 실무 회고.
@@ -93,6 +96,7 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[artifact-chain]] — 산출물을 파일로 빼는 처방. 지속성은 공격 표면이기도 하다
 - [[inner-outer-loop-verification]] — 바깥쪽 loop가 판단 기준을 검증하는 방식
 - [[prompt-injection]] — 쌓인 state를 노리는 memory poisoning
+- [[agent-memory]] — memory 내용과 memory 정책의 수명 차이. 능력 가정이 새 모델에서 해가 된 사례
 
 ## Sources
 
@@ -104,3 +108,4 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — incident 하나당 eval 하나, eval을 CI에
 - [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning
 - [[2025-06-13-multi-agent-research-system]] — production tracing과 관측성
+- [[2023-10-12-memgpt]] — memory 계층, 능력 가정이 새 모델에서 거꾸로 작용한 사례 (2026-11-26)

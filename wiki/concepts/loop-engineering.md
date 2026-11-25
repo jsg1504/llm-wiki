@@ -2,8 +2,8 @@
 title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
-updated: 2026-11-25
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+updated: 2026-11-26
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
 aliases: [inner loop, outer loop, 두 번째 루프]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
@@ -69,6 +69,8 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 - **연속성** — 이번 실행이 남긴 것을 다음 실행이 어떻게 집어드는가. 외부 state 파일.
 
 [[agent-orchestration-patterns]]의 "무엇이 이 카탈로그에 없는가"에 적힌 세 공백 중 하나(사람이 루프 안에 있는 패턴)가 여기서 부분적으로 답을 얻는다 — 소스의 예시 루프에서 **루프가 처리 못 한 것만 triage inbox로 사람에게 간다.** 사람은 매 턴이 아니라 **예외 경로**에 있다.
+
+> **cadence의 선행 사례 (2026-11-26).** [[2023-10-12-memgpt]]는 2023년에 이미 사용자 메시지 말고도 시스템 경고, 사용자 행동(로그인, 업로드 완료), **정해진 일정의 timed event**로 추론을 깨웠다. 사용자 개입 없이 "unprompted"로 돈다. 함수에 `request_heartbeat=true`를 주면 결과를 받은 즉시 다시 추론해 여러 단계를 잇는다. 연속성 축도 갖췄다. 실행 사이의 기억이 recall/archival storage에 남는다. 차이는 목적이다. MemGPT의 루프는 **한 사용자와의 장기 대화**를 이어가려는 것이고, 여기서의 루프는 **일을 찾아 나눠주는 것**이다. → [[agent-memory]] *(대응은 이 위키의 해석이다.)*
 
 ### 네 종류의 루프
 
@@ -288,6 +290,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 
 ## Related
 
+- [[agent-memory]] — 실행 사이에 남는 state를 구조화하는 쪽. MemGPT의 timed event는 cadence의 선행 사례
 - [[agent-recipe]] — 두 번째 루프의 산출물. system distillation으로 루프가 남기는 누적 판단
 - [[inner-outer-loop-verification]] — 첫 번째/두 번째 루프를 inner/outer loop로 읽고, 각 층위가 무엇을 검증하는지 정리한 synthesis
 - [[prompt-optimization]] — 두 번째 루프의 한 조각(prompt 증류)을 자동화하고 측정한 방법. signal을 텍스트로 줄 때의 표본 효율
@@ -304,6 +307,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 
 ## Sources
 
+- [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). cadence 절의 선행 사례 노트 (2026-11-26)
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 개념 층의 1차 출처 — 층위, 다섯 primitive, 반대급부
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 실무 층의 1차 출처 — 네 종류 루프, evaluator 정정, 위임 경계, 정지 조건 실무 기준, 검증 skill
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). 두 번째 루프 절, taste에 관한 ⚠️ Contradiction

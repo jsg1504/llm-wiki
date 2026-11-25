@@ -225,3 +225,14 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-26 00:09] curate | 로컬 자산 synthesis 후속 — glossary 항목 추가, agent-recipe에 수명 기준 연결
 - touched: [[glossary]], [[agent-recipe]]
 - notes: 직전 query 답변의 개선 후보 두 건을 사용자 승인으로 반영했다. glossary 에이전트 용어 절에 "능력 가정 / 과제 규칙" 항목을 넣었다. 위키가 붙인 구분임을 명시했다. agent-recipe "오래 사는 것" 대비표 아래에 recipe 부품별 수명 차이 노트를 *(추론)*으로 추가하고 synthesis로 연결했다.
+
+## [2026-11-26 00:22] ingest | MemGPT: Towards LLMs as Operating Systems
+- source: [[wiki/sources/2023-10-12-memgpt|MemGPT (Packer 외, arXiv 2310.08560)]]
+- created: [[2023-10-12-memgpt]], [[agent-memory]]
+- updated: [[meta-harness]], [[loop-engineering]], [[prompt-injection]], [[what-to-accumulate-outside-the-model]], [[glossary]], [[index]]
+- contradictions: 없음. context 한계 경고(MemGPT에서는 기능) vs context anxiety(Sonnet 4.5에서는 조기 종료)는 사용자 합의에 따라 ⚠️ 모순이 아니라 "능력 가정이 썩는 두 번째 사례"로 meta-harness·agent-memory에 기록했다.
+- notes: raw 원문은 사용자 승인을 받아 arXiv에서 v2 PDF를 내려받았다(`raw/papers/2023-10-12-memgpt.pdf`, 파일명 날짜는 v1 공개일 기준). 위키의 첫 장기 memory 소스다. memory를 모델이 관리하느냐 harness가 관리하느냐의 대비, MemGPT 위에서 GPT-4 Turbo가 GPT-4보다 못했다는 결과(능력 가정은 새 모델에서 해가 될 수도 있다)를 추가했다. 역링크 점검: source 페이지와 entity(anthropic)는 의도적으로 생략했다. agent-recipe·artifact-chain·orchestrator-worker로 가는 역링크는 사용자 확인 대기.
+
+## [2026-11-26 00:25] curate | MemGPT ingest 후속 — agent-memory 역링크, Anthropic 편향 집계 갱신
+- touched: [[agent-recipe]], [[artifact-chain]], [[anthropic]], [[index]]
+- notes: 직전 ingest 보고의 후속 1·2번을 사용자 승인으로 반영했다. (1) agent-recipe "오래 사는 것" 대비표에 agent-memory 행과 "사실 vs 판단" 노트를 추가했다. artifact-chain 공격 표면 노트에 "리뷰를 거치는 쓰기 vs 모델이 스스로 쓰는 memory"의 대비를 *(추론)*으로 넣었다. orchestrator-worker 역링크는 단순 언급이라 생략했다. (2) anthropic의 소스 집계를 10개 중 5개로 고쳤다. TL;DR은 이미 "7개 중 5개"로 낡아 있었는데 함께 고쳤다. MemGPT 편향 노트를 추가했다. Ion Stoica가 GEPA·MemGPT 공저자라 두 학술 소스를 독립적 확인으로 세면 안 된다는 점을 적었다.

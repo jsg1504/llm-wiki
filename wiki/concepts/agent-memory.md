@@ -1,0 +1,107 @@
+---
+title: Agent Memory (에이전트 장기 기억)
+type: concept
+created: 2026-11-26
+updated: 2026-11-26
+sources: [2023-10-12-memgpt, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2026-05-25-how-we-contain-claude]
+aliases: [long-term memory, 장기 memory, virtual context management, main context, external context]
+tags: [agent-memory, virtual-context-management, memory-hierarchy, context-engineering, memory-poisoning]
+status: draft
+---
+
+# Agent Memory (에이전트 장기 기억)
+
+> 모델은 실행이 끝나면 전부 잊는다. **agent memory는 context window 밖에 무엇을 남기고, 언제 무엇을 다시 창 안으로 가져올지를 정하는 설계**다. 이 위키의 첫 정면 소스인 MemGPT는 이를 운영체제의 메모리 계층으로 풀고, 옮기는 결정을 **모델 자신**에게 맡긴다.
+
+## Overview
+
+### 왜 따로 다루는가
+
+이 위키에는 "상태를 context 밖에 둔다"는 처방이 여러 곳에 흩어져 있다. [[loop-engineering]]의 외부 state(*"The agent forgets, the repo doesn't."*), [[meta-harness]]의 durable 세션 로그, [[artifact-chain]]의 커밋된 파일, [[agent-recipe]]의 누적된 판단이 그렇다. 이들은 모두 **무엇을 밖에 둘 것인가**를 말한다. 이 페이지는 그 다음 질문을 다룬다. **밖에 둔 것을 어떻게 구조화하고, 누가 언제 다시 꺼내는가.**
+
+### 기본 모델: 메모리 계층
+
+[[2023-10-12-memgpt]]는 context window를 RAM으로, 외부 저장소를 디스크로 본다. 이것을 **virtual context management**라고 부른다.
+
+```
+┌─ main context (prompt token = RAM) ──────────────────────────┐
+│  system instructions   읽기 전용. 계층의 용도, 함수 사용법     │
+│  working context       고정 크기. 함수로만 씀. 사용자 사실·persona │
+│  FIFO queue            메시지 이력 + 첫 칸에 재귀 요약          │
+└──────────────────────────────────────────────────────────────┘
+        ▲ 검색 결과를 페이지 단위로 가져옴     │ 밀어냄 (eviction)
+        │                                      ▼
+┌─ external context (디스크) ──────────────────────────────────┐
+│  recall storage    모든 메시지를 영구 저장                    │
+│  archival storage  임의 텍스트 DB (벡터 검색)                  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+([[2023-10-12-memgpt]])
+
+핵심은 밀려난 것이 **사라지지 않는다**는 점이다. FIFO queue에서 밀려난 메시지는 요약으로 압축되지만 원본은 recall storage에 무기한 남는다. 필요하면 다시 검색해 창으로 가져온다.
+
+## Key Points
+
+### 1. 원본은 창 밖에 남긴다 — 두 소스가 같은 결론
+
+[[meta-harness]]는 compaction 처방을 셋으로 정리했다. (a) 잘 요약한다, (b) 애초에 도달하지 않는다, (c) 되돌릴 수 있게 한다. Managed Agents의 세션 로그가 (c)였다 ([[2026-04-08-scaling-managed-agents]]).
+
+MemGPT는 2023년에 이미 (a)와 (c)를 함께 썼다. FIFO queue 첫 칸의 재귀 요약이 (a)이고, recall storage가 (c)다 ([[2023-10-12-memgpt]]). [[meta-harness]]의 문장 *"(c)는 (a)를 안전하게 만든다"* 의 구체적 구현이다. *(대응은 이 위키의 해석이다.)*
+
+### 2. 누가 memory를 옮기는가 — 모델 vs harness
+
+두 소스는 같은 구조를 두고 결정 주체를 반대로 둔다.
+
+| | MemGPT | Managed Agents |
+|---|---|---|
+| 창 밖 저장소 | recall / archival storage | session 이벤트 로그 |
+| 무엇을 가져올지 | **모델**이 function call로 정한다 | **harness**가 정한다. 인터페이스는 "durable하고 interrogable하다"만 보장 |
+| 근거 | 모델이 현재 목표를 가장 잘 안다 | 미래 모델에 어떤 context engineering이 필요할지 예측할 수 없다 |
+| 출처 | [[2023-10-12-memgpt]] | [[2026-04-08-scaling-managed-agents]], [[meta-harness]] |
+
+*(이 대비는 이 위키의 정리다. 두 소스는 서로를 언급하지 않는다.)*
+
+모델에게 맡기면 harness가 단순해진다. 대신 성능이 **모델의 function calling 능력**에 묶인다. MemGPT는 GPT-3.5에서 function calling이 약해 문서 QA 성능이 크게 떨어졌다 ([[2023-10-12-memgpt]]). 다음 절의 사례도 같은 이유다.
+
+### 3. memory 정책은 능력 가정이다
+
+MemGPT의 정책에는 모델에 대한 가정이 들어 있다. 그 가정은 모델이 바뀌면 어느 방향으로든 틀릴 수 있다.
+
+- **새 모델이 더 나빴다.** nested KV 과제에서 baseline으로는 GPT-4 Turbo가 GPT-4보다 나았다. 그런데 MemGPT에 올리자 GPT-4 Turbo가 GPT-4보다 나빴다. 조회를 충분히 하지 않았다 ([[2023-10-12-memgpt]]).
+- **context 한계 경고가 반대로 작용했다.** MemGPT는 window의 70%에서 "memory pressure" 경고를 넣고, *"context 한계를 의식하는 것이 자기 편집이 작동하는 핵심"* 이라고 쓴다 ([[2023-10-12-memgpt]]). 반면 Claude Sonnet 4.5는 context 한계가 다가오는 것을 감지하자 작업을 일찍 끝냈다(context anxiety). harness에 넣은 reset은 Opus 4.5에서 쓸모가 없어졌다 ([[meta-harness]], [[2026-04-08-scaling-managed-agents]]).
+
+같은 신호(context가 차고 있다)가 한 설계에서는 핵심 기능이고 다른 모델에서는 실패 원인이었다. 정면 모순은 아니다. 실험한 모델과 과제가 다르다. 대신 **"모델은 한계를 알려 주면 잘 대처한다"는 것도 능력 가정**이라는 사례로 읽는다. [[what-to-accumulate-outside-the-model]]의 기준(능력 가정은 썩고 과제 규칙은 남는다)에 따르면, memory **정책**(언제 경고하고 언제 밀어낼지)은 모델이 바뀔 때마다 다시 검증할 대상이다. 반면 memory **내용**(사용자에 대한 사실, 과거 대화 원본)은 모델과 무관하게 남는다. *(추론)*
+
+### 4. 이벤트와 cadence
+
+MemGPT는 사용자 메시지만이 아니라 시스템 경고, 사용자 행동(로그인, 업로드 완료), **정해진 일정의 timed event**로도 추론을 깨운다. 함수에 `request_heartbeat=true`를 주면 결과를 받은 즉시 다시 추론해 여러 함수를 이어 부른다 ([[2023-10-12-memgpt]]). [[loop-engineering]]의 automations(cadence)와 loop-until-done을 memory 시스템 안에 넣은 형태다. *(대응은 이 위키의 해석이다.)*
+
+### 5. 쓰기 경로는 공격 경로다
+
+[[prompt-injection]]은 persistent memory poisoning을 앞으로 커질 위험으로 꼽는다. product memory, `CLAUDE.md`, 장기 실행 에이전트의 state 디렉토리에 들어간 injection은 매 시작마다 다시 로드된다 ([[2026-05-25-how-we-contain-claude]]).
+
+MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽고 스스로** working context와 archival storage에 쓴다. 사람이 리뷰하는 단계가 없다. 그래서 대화나 문서에 섞인 지시문이 영구 memory로 옮겨갈 수 있다. 논문은 보안을 다루지 않는다. *(추론)* [[artifact-chain]]이 기대는 방어(커밋과 PR 리뷰)는 이런 자동 쓰기 경로에는 없다.
+
+## 한계와 읽을 때의 주의
+
+- **중심 소스가 하나다.** MemGPT는 preprint이고 2023년 모델(GPT-3.5/4)만 실험했다. 나머지 소스는 memory를 정면으로 다루지 않고 인접한 처방을 준다.
+- **MemGPT의 비교는 MemGPT 쪽에 유리하다.** DMR baseline은 원본 대화 대신 손실 요약만 받았다. 판정자에게 "후하게 채점하라"고 했다. → [[2023-10-12-memgpt]] My Notes
+- **비어 있는 질문.** 무엇을 **잊어야** 하는가(삭제, 갱신, 모순된 사실 처리), memory 검색의 품질을 어떻게 재는가, 여러 에이전트가 memory를 공유할 때의 문제는 아직 소스가 없다. 후보: Generative Agents(reflection), Reflexion(episodic memory), A-MEM, LongMemEval(knowledge update, abstention), memory poisoning 연구.
+
+## Related
+
+- [[meta-harness]] — 창 밖 durable 세션 로그. 같은 처방을 harness가 관리하는 쪽
+- [[loop-engineering]] — 외부 state와 cadence. memory를 실행 사이의 연속성으로 쓰는 쪽
+- [[artifact-chain]] — 산출물을 파일로 밖에 둔다. 리뷰를 거치는 쓰기 경로
+- [[agent-recipe]] — 판단을 밖에 둔다. memory가 "무엇을 아는가"라면 recipe는 "어떻게 판단하는가"
+- [[what-to-accumulate-outside-the-model]] — 모델 밖에 쌓을 자산의 수명 순서. memory 정책과 내용의 수명 차이
+- [[prompt-injection]] — memory poisoning
+- [[orchestrator-worker]] — 조정 상태가 lead의 context window에 사는 구조. memory를 밖에 두지 않을 때의 비용
+
+## Sources
+
+- [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley), arXiv 2310.08560. 메모리 계층, self-directed memory, 이벤트 트리거, 결과 수치, 모델 의존성
+- [[2026-04-08-scaling-managed-agents]] — 세션 로그, harness가 context를 관리하는 쪽의 근거, context anxiety
+- [[2026-06-07-loop-engineering]] — 외부 state, *"The agent forgets, the repo doesn't."*
+- [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning

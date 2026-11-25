@@ -4,7 +4,7 @@ aliases: [system-distillation, System Distillation]
 type: concept
 created: 2026-09-30
 updated: 2026-11-26
-sources: [2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+sources: [2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
 tags: [agent-recipe, system-distillation, loop-engineering, evaluation, taste, versioning, provider-agnostic, prompt-optimization]
 status: draft
 ---
@@ -70,8 +70,11 @@ recipe의 핵심 내용물은 **제작자의 taste**다. 남의 recipe를 받아
 | [[meta-harness]] | 인터페이스 (session / harness / sandbox) | harness의 가정이 모델 발전으로 썩는 것 |
 | [[artifact-chain]] | 단계별 커밋된 파일 | 단계 간 결합, 감사 불가능성 |
 | **agent recipe** | **누적된 판단 (eval, skill, profile)** | **모델이나 제공자 교체 시 노하우 유실** |
+| [[agent-memory]] | 사용자에 대한 사실, 과거 대화 원본 (MemGPT의 working context, recall/archival storage) | 실행이 끝나면 모델이 전부 잊는 것 |
 
 셋 다 상태를 모델과 context window **밖**에 두는 처방이다. 무엇을 밖에 두는지가 다르다. meta-harness는 경계선을, artifact-chain은 산출물을, recipe는 **판단**을 밖에 둔다.
+
+> **네 번째 행 (2026-11-26).** [[agent-memory]]는 **사실**을 밖에 둔다. memory가 "무엇을 아는가"라면 recipe는 "어떻게 판단하는가"다. 쓰는 방식도 다르다. [[2023-10-12-memgpt]]에서는 모델이 실행 중에 혼자 memory에 쓴다. recipe는 offline eval과 A/B를 거쳐 promote된다. *(대비는 이 위키의 정리다.)*
 
 > **recipe 안에서도 수명이 다르다 (2026-11-26).** [[meta-harness]]가 세운 기준을 recipe 부품에 적용하면 순서가 생긴다. *"모델은 X를 못 한다"* 는 **능력 가정**은 모델이 좋아지면 썩고, **과제 규칙**은 모델을 바꿔도 남는다. eval과 judge는 과제 규칙에 가깝고 오래 산다. 사용자 불만에서 나온 harness profile은 능력 가정을 담기 쉬워 가장 빨리 낡는다. 그래서 harness profile을 모델별로 따로 두는 것이다. 부품별 수명 표와 능력 가정에 유효기간을 다는 방법은 [[what-to-accumulate-outside-the-model]]에 있다. *(추론)*
 
@@ -88,10 +91,12 @@ recipe의 핵심 내용물은 **제작자의 taste**다. 남의 recipe를 받아
 - [[meta-harness]] — 모델보다 오래 사는 것에 대한 또 다른 답(인터페이스)
 - [[artifact-chain]] — 상태를 커밋된 파일로 빼는 같은 계열의 처방
 - [[claude-code]] — skill, CLAUDE.md, hook 같은 recipe 부품의 한 구현
+- [[agent-memory]] — 판단이 아니라 사실을 밖에 두는 처방. 검증 없이 실행 중에 쓰인다는 점이 recipe와 다르다
 - [[prompt-optimization]] — recipe 부품 중 prompt를 trace에서 자동으로 증류하는 방법들. GEPA가 대표
 - [[what-to-accumulate-outside-the-model]] — recipe 부품을 수명 순으로 정렬한 synthesis. 무엇을 로컬에 쌓고 무엇에 유효기간을 다는가
 
 ## Sources
 
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair 발표). recipe와 system distillation 개념의 출처
+- [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). 대비표의 memory 행만 이 소스에서 왔다 (2026-11-26)
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). prompt 증류의 자동화, 모델 간 전이 수치, "그릇이 없다"에 대한 반례 (2026-11-25)

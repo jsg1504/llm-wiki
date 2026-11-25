@@ -2,8 +2,8 @@
 title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
-updated: 2026-11-25
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+updated: 2026-11-26
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -36,6 +36,8 @@ Claude Opus 4.5
 ```
 
 harness의 코드는 그대로인데 그것이 방어하던 실패가 사라졌다. 저자들은 이것을 [Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)의 사례로 제시한다 — **모델의 부족분을 메우려고 넣은 구조는, 모델이 그 부족분을 없애는 순간 순비용이 된다.**
+
+> **같은 신호의 반대 사례 (2026-11-26).** [[2023-10-12-memgpt]]는 window의 70%에서 "memory pressure" 경고를 넣고, *"context 한계를 의식하는 것이 자기 편집이 작동하는 핵심"* 이라고 쓴다. GPT-4 계열에서는 이 경고가 기능이었다. Sonnet 4.5에서는 같은 인식이 조기 종료를 불렀다. 정면 모순은 아니다(모델과 과제가 다르다). **"한계를 알려 주면 모델이 잘 대처한다"는 것도 능력 가정**이라는 두 번째 사례다. 같은 소스에는 하나가 더 있다. MemGPT 위에서는 더 새로운 GPT-4 Turbo가 GPT-4보다 nested KV를 못 했다. 가정은 모델이 좋아지는 방향으로만 썩지 않는다. → [[agent-memory]] *(추론)*
 
 여기서 나오는 결론이 meta-harness의 출발점이다. harness가 계속 바뀔 것을 전제하고, **바뀌지 않을 것이 무엇인지를 따로 고른다.**
 
@@ -144,6 +146,8 @@ Managed Agents에서 **session이 그 객체 역할을 한다.** 단 sandbox나 
 
 **셋은 배타적이지 않다.** (c)는 (a)를 안전하게 만든다 — 원본이 로그에 남아 있으면 compaction의 되돌릴 수 없음이 되돌릴 수 있음이 된다.
 
+> **선행 사례: MemGPT (2023, 2026-11-26 추가).** [[2023-10-12-memgpt]]는 (a)와 (c)를 이미 함께 썼다. FIFO queue에서 밀려난 메시지는 재귀 요약으로 압축되고(a), 원본은 recall storage에 무기한 남아 함수로 다시 검색된다(c). 차이는 **누가 다시 가져오는가**다. Managed Agents는 그 결정을 harness로 밀어내고 인터페이스에는 "durable하고 interrogable하다"만 남긴다. MemGPT는 결정을 **모델**에게 맡긴다. 그 대가로 성능이 모델의 function calling 능력에 묶였다. 비교는 [[agent-memory]]에 있다. *(대응은 이 위키의 해석이다.)*
+
 ### Many brains — 스케일의 병목은 인텔리전스가 아니라 provisioning이었다
 
 brain을 컨테이너에 두면 brain 수만큼 컨테이너가 필요하고, 그것이 provision될 때까지 추론이 시작되지 못한다. **sandbox를 영영 쓰지 않을 세션도** repo clone·프로세스 부팅·대기 이벤트 fetch를 선불했다.
@@ -228,6 +232,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[agent-containment]] — "도달 불가" 원칙이 제품 세 개에서 실제로 어떻게 구현되고 깨졌는가
 - [[prompt-injection]] — 그 경계를 넘는 공격들. capability grant 재개념화
 - [[multi-agent-systems]] — 많은 brain으로 스케일할 때의 경제성
+- [[agent-memory]] — 창 밖 저장소를 **모델**이 관리하는 반대편 설계(MemGPT). context 한계 경고가 기능이었던 사례
 
 ## Sources
 
@@ -237,3 +242,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). Related의 agent-recipe 대비만 이 소스에서 왔다
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 층위 다이어그램 맨 위 칸(loop)의 출처
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). prompt 층 자동화와 모델 간 전이 (2026-11-25)
+- [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). compaction 처방 (a)+(c)의 선행 사례, context 한계 경고가 기능이었던 사례 (2026-11-26)

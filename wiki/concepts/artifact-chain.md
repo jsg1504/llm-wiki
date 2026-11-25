@@ -2,8 +2,8 @@
 title: Artifact Chain
 type: concept
 created: 2026-09-11
-updated: 2026-11-25
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product]
+updated: 2026-11-26
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2023-10-12-memgpt]
 tags: [sdlc, agentic-coding, audit-trail, version-control, ai-native]
 status: draft
 ---
@@ -76,6 +76,8 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 > 즉 **"세션 사이에 살아남는다"는 이 패턴의 장점이 그대로 지속성 메커니즘의 정의**다. 실제로 [[claude-code]]에서 보고된 취약점 3건이 `.claude/settings.json`을 노렸다.
 >
 > **모순은 아니고, 오히려 이 페이지의 처방이 방어의 일부다** — 아티팩트가 커밋되고 리뷰되므로 악성 변경이 PR에서 보인다. 위 "동기화 문제" 절의 hook·리뷰 pass가 여기서도 작동한다. 다만 저자들의 전망은 그것으로 부족하다는 쪽이다: *"세션 시작 시의 좋은 classifier가 더 일반화되어야 한다."* → [[prompt-injection]]
+>
+> **리뷰를 거치는 쓰기와 거치지 않는 쓰기 (2026-11-26).** 이 방어는 아티팩트가 **커밋을 거쳐** 쓰일 때만 작동한다. [[2023-10-12-memgpt]] 같은 memory 시스템에서는 모델이 실행 중에 사용자 메시지와 검색 결과를 읽고 **스스로** memory에 쓴다. PR도 리뷰도 없다. 같은 "세션 사이에 살아남는 상태"라도 쓰기 경로에 사람이 있느냐에 따라 방어가 달라진다. 이 페이지의 처방이 memory poisoning에 강한 이유가 바로 그 쓰기 경로다. *(추론)* → [[agent-memory]]
 
 ## 동기화 문제
 
@@ -126,6 +128,7 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - [[subagent]] — 그 처방이 적용되는 단위
 - [[loop-engineering]] — 같은 처방의 시간 축 판본. 외부 state가 "루프의 척추"인 이유
 - [[agent-recipe]] — 산출물이 아니라 **판단**을 커밋하는 같은 계열의 처방
+- [[agent-memory]] — 세션 사이에 상태를 남기지만 커밋과 리뷰를 거치지 않는 쓰기 경로
 
 ## Sources
 
@@ -133,3 +136,4 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 지속 아티팩트의 공격 표면
 - [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). 실행 사이의 외부 state (2026-11-25)
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). 판단을 커밋하는 agent recipe (2026-11-25)
+- [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). 리뷰를 거치지 않는 memory 쓰기 경로와의 대비 (2026-11-26)

@@ -29,6 +29,9 @@ status: draft
 - **pets vs cattle** — 인프라 유비. pet은 이름 붙여 손으로 돌보는, 잃으면 안 되는 개체. cattle은 교체 가능한 개체. 판별법: *그것이 죽으면 무엇이 같이 사라지는가.*
 - **TTFT** (time-to-first-token) — 작업을 받고 첫 응답 토큰을 내기까지의 지연. 사용자가 가장 예민하게 느끼는 지연 지표.
 - **context anxiety** — 모델이 컨텍스트 한계가 다가오는 것을 감지하고 작업을 조기 종료하는 행동. Sonnet 4.5에서 관측됐고 Opus 4.5에서 사라졌다. harness 가정이 노후화하는 대표 사례.
+- **virtual context management** — context window를 운영체제의 RAM으로, 외부 저장소를 디스크로 보고 정보를 페이지처럼 넣고 빼서 고정 길이 context로 더 긴 context의 환상을 만드는 기법. MemGPT의 용어. → [[agent-memory]]
+- **main context / external context** — MemGPT의 두 메모리 층. main context는 prompt token(system instructions, working context, FIFO queue)이라 모델이 바로 본다. external context(recall storage, archival storage)는 context 밖이라 함수로 가져와야 보인다.
+- **memory pressure** — prompt가 context window의 일정 비율(MemGPT 예시 70%)을 넘을 때 모델에게 보내는 경고. 모델이 중요한 정보를 밖에 저장하도록 유도한다. context anxiety와 같은 신호를 반대로 쓴 사례다.
 - **능력 가정 / 과제 규칙** — harness나 prompt에 들어간 규칙을 가르는 두 종류. 능력 가정은 *"모델은 X를 못 한다"* 는 진술이라 모델이 좋아지면 썩는다(예: context anxiety를 막는 reset). 과제 규칙은 과제 자체에 대한 지시라 모델을 바꿔도 남는다(예: GEPA prompt의 모델 간 전이 +9%). 모델 밖에 무엇을 쌓을지 고르는 기준이다. 이 구분은 위키가 붙인 것이고 소스의 용어가 아니다. → [[meta-harness]], [[what-to-accumulate-outside-the-model]]
 - **quarantine** — 신뢰할 수 없는 콘텐츠를 읽는 에이전트에게 고권한 행동을 주지 않고, 행동은 별도 에이전트가 하게 하는 패턴. 무력화가 아니라 트레이드오프다(trust escalation). → [[agentic-governance]]
 - **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]
