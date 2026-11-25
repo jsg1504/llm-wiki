@@ -3,7 +3,7 @@ title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
 updated: 2026-11-26
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion]
 aliases: [inner loop, outer loop, 두 번째 루프]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
@@ -147,6 +147,8 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 
 그리고 이미 도는 루프를 끊는 신호 하나 — **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
 
+> **같은 신호의 2023년판 (2026-11-26).** [[2023-03-20-reflexion]]의 ALFWorld 에이전트는 *"같은 행동을 하고 같은 응답을 3회 넘게 받으면"* 반성을 시작한다. 행동이 30개를 넘어도 마찬가지다. 용도는 다르다. 여기서는 사람이 루프를 **멈추는** 신호이고, Reflexion에서는 에이전트가 **반성하고 다시 시도하는** 신호다. *(대응은 이 위키의 해석이다.)*
+
 ### 검증을 skill로 코드화한다
 
 수동 확인을 Claude가 스스로 적용하는 것으로 옮기는 방법. 팀이 제시한 `verify-frontend-change` SKILL.md의 요지 — **편집이 성공했다는 것만으로 UI 변경을 완료 보고하지 말고, 사람 리뷰어가 하듯 확인하라:**
@@ -195,6 +197,8 @@ use /goal to implement a fix until all local tests pass and push the branch."
 > *"the quality of the signal determines the success rate of the loop and the quality of the verifier is able to calibrate if that success is actually correct or not."*
 
 위의 다섯 primitive + state가 **한 루프를 어떻게 돌리는가**라면, 이 소스는 **루프 위에 루프를 하나 더** 얹는다. 첫 루프의 산출물(trace, 실패, 사용자 불만)을 signal로 되먹여 **루프 자체를 고치는** 두 번째 루프다.
+
+> **헷갈리기 쉬운 이웃: 재시도 루프 (2026-11-26).** [[2023-03-20-reflexion]]도 실패를 반성해 되먹인다. 그러나 고치는 대상이 다르다. Reflexion은 **같은 과제를 다시 시도**하며 반성문을 그 시도의 memory에 넣는다. 과제가 끝나면 교훈도 끝난다. 두 번째 루프는 **시스템**(eval, skill, prompt)을 고쳐 다음 과제 전부에 쓴다. 굳이 층위로 놓으면 Reflexion은 첫 번째 루프 **안쪽**의 재시도다. 반성을 과제 규칙으로 옮겨 두 번째 루프에 가까워진 것이 GEPA다. → [[prompt-optimization]], [[agent-memory]] *(대응은 이 위키의 해석이다.)*
 
 원문은 첫 번째 루프를 **inner loop**라고 부른다. 바깥 루프의 일을 taste로 정의한다.
 
@@ -307,6 +311,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 
 ## Sources
 
+- [[2023-03-20-reflexion]] — Shinn 외 5인 (arXiv 2303.11366). 재시도 루프와 두 번째 루프의 구분, 3회 무변화 신호의 선례 (2026-11-26)
 - [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). cadence 절의 선행 사례 노트 (2026-11-26)
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 개념 층의 1차 출처 — 층위, 다섯 primitive, 반대급부
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 실무 층의 1차 출처 — 네 종류 루프, evaluator 정정, 위임 경계, 정지 조건 실무 기준, 검증 skill

@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-11-25
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+updated: 2026-11-26
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -55,6 +55,13 @@ status: draft
 - **adversarial verification** — 산출물마다 별도 에이전트가 루브릭에 비추어 적대적으로 검증한다. [[claude-code]]의 verifier subagent가 *"신선한 컨텍스트 윈도로 한 번"* 도는 것을 모든 산출물로 체계화한 형태.
 - **skeptic 페르소나** — 검증자를 촘촘히 걸면 false positive가 늘어난다. 규칙·판정 자체가 타당한지 되묻는 에이전트를 두어 과잉 지적을 억제한다.
 - **disjoint 증거원** — 근본원인 조사에서 로그·파일·데이터 담당 에이전트를 나눠 가설이 서로 오염되지 않게 한다.
+
+> **분리하지 않았을 때의 수치 (2026-11-26).** [[2023-03-20-reflexion]]의 코딩 에이전트는 **같은 모델이 만든 unit test**로 자기 코드를 채점한다. 이 절이 경고하는 구성 그대로다.
+>
+> - **false positive**(테스트는 통과, 실제로는 틀림)가 MBPP Python에서 **16.3%**, HumanEval Python에서 1.4%였다. MBPP에서는 이 때문에 Reflexion(77.1%)이 GPT-4 단독(80.1%)보다 낮았다. false positive가 나면 에이전트는 틀린 답을 일찍 제출한다.
+> - **검증 없이 반성만 하면 더 나빠진다.** HumanEval Rust 최난도 50문제에서 테스트 생성을 빼면 0.52로 baseline 0.60보다 낮았다. 지금 코드가 맞는지 판단하지 못해 멈추지 못하고 해로운 수정을 한다.
+>
+> 두 수치는 self-preferential bias를 직접 잰 것이 아니다. 판정자를 분리하지 않은 구성에서 **판정자의 품질이 성능 상한을 정한다**는 것을 보여준다. 루프가 "done"을 선언하는 근거가 그 판정자뿐이라면 그 오류율이 곧 루프의 오류율이다. → [[loop-engineering]] *(뒤 문장은 추론이다.)*
 
 #### 정지 조건도 판정 대상이다 (2026-09-21)
 
@@ -142,6 +149,7 @@ status: draft
 - [[agent-recipe]] — judge와 eval이 recipe의 핵심 구성물로 누적되는 자리. §3b의 절차가 곧 recipe 개선 절차다
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 - [[prompt-optimization]] — eval 출력을 판정이 아니라 개선 재료로 쓰는 방법. §7의 feedback_text와 adversarial 회귀 suite
+- [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory
 
 ## Sources
 
@@ -152,3 +160,4 @@ status: draft
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). §3b만 이 소스에서 왔다.
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 같은 절의 ⚠️ 정정 — evaluator는 룰 체커이지 품질 판정자가 아니다.
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). §7만 이 소스에서 왔다 (2026-11-25)
+- [[2023-03-20-reflexion]] — Shinn 외 5인 (arXiv 2303.11366). §2b의 "분리하지 않았을 때의 수치" 노트만 이 소스에서 왔다 (2026-11-26)

@@ -3,7 +3,7 @@ title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않�
 type: synthesis
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt]
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion]
 question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
 aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
 tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
@@ -23,6 +23,10 @@ status: draft
 [[meta-harness]]는 이 둘을 모순이 아니라 판별 기준으로 정리한다. **능력 가정은 썩고, 과제 규칙은 남는다.** *(이 기준은 위키의 추론이다. 두 소스 모두 이렇게 말하지는 않는다.)*
 
 > **썩는 방향은 한쪽이 아니다 (2026-11-26).** [[2023-10-12-memgpt]]에서는 memory를 모델이 스스로 관리하게 했더니 **더 새로운** GPT-4 Turbo가 GPT-4보다 다단계 조회를 못 했다. context 한계를 경고하는 정책도 GPT-4 계열에서는 기능이었지만 Sonnet 4.5에서는 조기 종료를 불렀다. 능력 가정은 모델이 좋아지면 쓸모없어질 뿐 아니라 **새 모델에서 오히려 해가 될 수도 있다.** 그래서 아래 4번의 재검증은 "아직 필요한가"만이 아니라 "아직 맞는가"도 묻는다. → [[agent-memory]] *(추론)*
+
+> **썩는 구조와 올라타는 구조 (2026-11-26).** 지금까지의 썩는 사례(context reset)는 모델의 **부족분을 메우는** 구조였다. [[2023-03-20-reflexion]]의 반성 루프는 반대로 모델의 **강점에 올라타는** 구조다. starchat-beta에서는 개선이 0이었고(0.26 → 0.26), 저자들은 자기 수정을 *"더 강하고 큰 모델의 emergent quality"* 로 본다. 그래서 *"LLM 능력이 좋아질수록 이 패러다임은 더 좋아질 것"* 이라고 전망한다.
+>
+> **전망과 관측을 나란히 둔다.** 이 전망은 측정이 아니다. 같은 "모델에게 맡기는" 설계인 MemGPT에서는 더 새로운 GPT-4 Turbo가 GPT-4보다 나빴다(위 노트). 모델의 강점에 올라타는 구조라도 **그 강점이 다음 모델에서 유지된다는 것 자체가 가정**이다. 따라서 올라타는 구조도 썩는 구조처럼 모델을 바꿀 때 eval로 재검증한다. 다른 점은 기대하는 방향뿐이다. 썩는 구조는 "이제 빼도 되는가"를 묻고, 올라타는 구조는 "여전히 이득인가"를 묻는다. *(추론)*
 
 ## 무엇을 쌓는가: 수명 순서
 
@@ -52,6 +56,8 @@ status: draft
 ### 2. 반복하던 확인은 skill로 옮긴다
 
 사람이 반복하던 확인을 skill로 코드화하는 것은 system distillation 한 단계를 손으로 하는 것이다 ([[loop-engineering]]). prompt 층은 GEPA 같은 optimizer로 자동화할 수 있다. 다만 채점 함수가 먼저 있어야 돈다 ([[prompt-optimization]], [[agent-recipe]]).
+
+**반성문은 그대로는 자산이 아니다.** [[2023-03-20-reflexion]]의 반성문은 과제 하나를 다시 시도할 때만 쓰이고, 최근 1~3개만 남는다. 쌓을 자산이 되려면 GEPA처럼 여러 인스턴스의 반성을 **과제 규칙**(지시문, skill)으로 증류해야 한다 ([[prompt-optimization]]). *(추론)*
 
 ### 3. trace를 버리지 않는다
 
@@ -109,3 +115,4 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning
 - [[2025-06-13-multi-agent-research-system]] — production tracing과 관측성
 - [[2023-10-12-memgpt]] — memory 계층, 능력 가정이 새 모델에서 거꾸로 작용한 사례 (2026-11-26)
+- [[2023-03-20-reflexion]] — 모델의 강점에 올라타는 구조, 인스턴스용 반성문 (2026-11-26)

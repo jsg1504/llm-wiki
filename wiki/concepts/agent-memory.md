@@ -3,7 +3,7 @@ title: Agent Memory (에이전트 장기 기억)
 type: concept
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2023-10-12-memgpt, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2026-05-25-how-we-contain-claude]
+sources: [2023-10-12-memgpt, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2026-05-25-how-we-contain-claude, 2023-03-20-reflexion]
 aliases: [long-term memory, 장기 memory, virtual context management, main context, external context]
 tags: [agent-memory, virtual-context-management, memory-hierarchy, context-engineering, memory-poisoning]
 status: draft
@@ -11,7 +11,7 @@ status: draft
 
 # Agent Memory (에이전트 장기 기억)
 
-> 모델은 실행이 끝나면 전부 잊는다. **agent memory는 context window 밖에 무엇을 남기고, 언제 무엇을 다시 창 안으로 가져올지를 정하는 설계**다. 이 위키의 첫 정면 소스인 MemGPT는 이를 운영체제의 메모리 계층으로 풀고, 옮기는 결정을 **모델 자신**에게 맡긴다.
+> 모델은 실행이 끝나면 전부 잊는다. **agent memory는 context window 밖에 무엇을 남기고, 언제 무엇을 다시 창 안으로 가져올지를 정하는 설계**다. MemGPT는 이를 운영체제의 메모리 계층으로 풀고, 옮기는 결정을 **모델 자신**에게 맡긴다. Reflexion은 사실 대신 실패에서 얻은 **교훈**을 memory에 담는다.
 
 ## Overview
 
@@ -49,6 +49,21 @@ status: draft
 
 MemGPT는 2023년에 이미 (a)와 (c)를 함께 썼다. FIFO queue 첫 칸의 재귀 요약이 (a)이고, recall storage가 (c)다 ([[2023-10-12-memgpt]]). [[meta-harness]]의 문장 *"(c)는 (a)를 안전하게 만든다"* 의 구체적 구현이다. *(대응은 이 위키의 해석이다.)*
 
+### 1b. 무엇을 담는가 — 사실과 교훈
+
+MemGPT의 memory는 **사실**을 담는다. 사용자의 생일, 남자친구 이름, 과거 대화 원본이다 ([[2023-10-12-memgpt]]). [[2023-03-20-reflexion]]의 memory는 **교훈**을 담는다. 과제에 실패할 때마다 LLM이 반성문을 쓰고 다음 시도에 넣는다. 논문의 ALFWorld 예시는 *"냄비를 스토브 버너에서 집으려 했지만 냄비는 거기 없었다"* 는 취지다(Figure 1). 실패한 trajectory는 단기 기억이고 반성문은 장기 기억이다.
+
+| | 담는 것 | 언제 쓰나 | 무엇을 잊나 |
+|---|---|---|---|
+| MemGPT | 사실 (working context), 원본 (recall storage) | 같은 사용자와의 다음 대화 | 원본은 잊지 않는다. 요약만 밀려난다 |
+| Reflexion | 교훈 (반성문) | **같은 과제**의 다음 시도 | 최근 1~3개만 남긴다 (sliding window) |
+
+([[2023-10-12-memgpt]], [[2023-03-20-reflexion]])
+
+Reflexion의 sliding window는 "무엇을 잊는가"에 대한 가장 단순한 답이다. 오래된 것부터 잊는다. 근거는 context 한계뿐이고, 어떤 교훈이 더 중요한지는 따지지 않는다. 저자들 스스로 vector DB나 SQL DB로 확장하라고 권한다 ([[2023-03-20-reflexion]]).
+
+교훈을 담는 memory는 [[prompt-optimization]]과 맞닿는다. 같은 반성 엔진의 결과를 GEPA는 **지시문**으로 증류해 과제 전체에 쓰고, Reflexion은 **인스턴스 하나의 memory**로 쓴다. *(대응은 이 위키의 해석이다.)*
+
 ### 2. 누가 memory를 옮기는가 — 모델 vs harness
 
 두 소스는 같은 구조를 두고 결정 주체를 반대로 둔다.
@@ -85,9 +100,10 @@ MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽�
 
 ## 한계와 읽을 때의 주의
 
-- **중심 소스가 하나다.** MemGPT는 preprint이고 2023년 모델(GPT-3.5/4)만 실험했다. 나머지 소스는 memory를 정면으로 다루지 않고 인접한 처방을 준다.
+- **정면 소스가 둘이다.** MemGPT(preprint)와 Reflexion이다. 나머지 소스는 memory를 정면으로 다루지 않고 인접한 처방을 준다.
 - **MemGPT의 비교는 MemGPT 쪽에 유리하다.** DMR baseline은 원본 대화 대신 손실 요약만 받았다. 판정자에게 "후하게 채점하라"고 했다. → [[2023-10-12-memgpt]] My Notes
-- **비어 있는 질문.** 무엇을 **잊어야** 하는가(삭제, 갱신, 모순된 사실 처리), memory 검색의 품질을 어떻게 재는가, 여러 에이전트가 memory를 공유할 때의 문제는 아직 소스가 없다. 후보: Generative Agents(reflection), Reflexion(episodic memory), A-MEM, LongMemEval(knowledge update, abstention), memory poisoning 연구.
+- **비어 있는 질문.** 무엇을 **잊어야** 하는가는 Reflexion의 sliding window(오래된 것부터)가 유일한 답이다. 중요도에 따른 삭제, 사실의 갱신, 모순된 사실 처리는 아직 소스가 없다. memory 검색의 품질을 어떻게 재는가, 여러 에이전트가 memory를 공유할 때의 문제도 비어 있다. 후보: Generative Agents(reflection), A-MEM, LongMemEval(knowledge update, abstention), memory poisoning 연구.
+- **두 소스 모두 2023년 모델만 실험했다.** MemGPT와 Reflexion 모두 GPT-3.5/4 세대다.
 
 ## Related
 
@@ -97,11 +113,13 @@ MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽�
 - [[agent-recipe]] — 판단을 밖에 둔다. memory가 "무엇을 아는가"라면 recipe는 "어떻게 판단하는가"
 - [[what-to-accumulate-outside-the-model]] — 모델 밖에 쌓을 자산의 수명 순서. memory 정책과 내용의 수명 차이
 - [[prompt-injection]] — memory poisoning
+- [[prompt-optimization]] — 같은 반성 엔진의 결과를 memory가 아니라 지시문에 두는 쪽(GEPA)
 - [[orchestrator-worker]] — 조정 상태가 lead의 context window에 사는 구조. memory를 밖에 두지 않을 때의 비용
 
 ## Sources
 
 - [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley), arXiv 2310.08560. 메모리 계층, self-directed memory, 이벤트 트리거, 결과 수치, 모델 의존성
+- [[2023-03-20-reflexion]] — Shinn 외 (Northeastern·MIT·Princeton), arXiv 2303.11366. 교훈을 담는 episodic memory, sliding window (2026-11-26)
 - [[2026-04-08-scaling-managed-agents]] — 세션 로그, harness가 context를 관리하는 쪽의 근거, context anxiety
 - [[2026-06-07-loop-engineering]] — 외부 state, *"The agent forgets, the repo doesn't."*
 - [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning

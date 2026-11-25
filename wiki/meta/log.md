@@ -236,3 +236,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-26 00:25] curate | MemGPT ingest 후속 — agent-memory 역링크, Anthropic 편향 집계 갱신
 - touched: [[agent-recipe]], [[artifact-chain]], [[anthropic]], [[index]]
 - notes: 직전 ingest 보고의 후속 1·2번을 사용자 승인으로 반영했다. (1) agent-recipe "오래 사는 것" 대비표에 agent-memory 행과 "사실 vs 판단" 노트를 추가했다. artifact-chain 공격 표면 노트에 "리뷰를 거치는 쓰기 vs 모델이 스스로 쓰는 memory"의 대비를 *(추론)*으로 넣었다. orchestrator-worker 역링크는 단순 언급이라 생략했다. (2) anthropic의 소스 집계를 10개 중 5개로 고쳤다. TL;DR은 이미 "7개 중 5개"로 낡아 있었는데 함께 고쳤다. MemGPT 편향 노트를 추가했다. Ion Stoica가 GEPA·MemGPT 공저자라 두 학술 소스를 독립적 확인으로 세면 안 된다는 점을 적었다.
+
+## [2026-11-26 00:53] ingest | Reflexion: Language Agents with Verbal Reinforcement Learning
+- source: [[wiki/sources/2023-03-20-reflexion|Reflexion (Shinn 외, arXiv 2303.11366)]]
+- created: [[2023-03-20-reflexion]]
+- updated: [[prompt-optimization]], [[agent-memory]], [[agent-evaluation]], [[loop-engineering]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
+- contradictions: 없음. 저자들의 전망("모델이 좋아질수록 더 좋아진다")과 MemGPT의 관측(새 모델이 더 나빴다)은 사용자 합의에 따라 모순이 아니라 "전망 vs 관측"으로 synthesis에 나란히 기록했다.
+- notes: raw는 arXiv v4 PDF를 내려받았다(파일명 날짜는 v1 기준). 새 concept 페이지 없이 흡수했다. 반성 엔진의 결과를 어디에 두는가(Reflexion은 episodic memory, GEPA는 지시문)로 agent-memory와 prompt-optimization을 이었다. self-generated test의 false positive 16.3%와 테스트 없는 반성의 역효과(0.52 < 0.60)를 agent-evaluation §2b에 정량 사례로 넣었다. 재시도 루프와 두 번째 루프를 구분했다. agent-memory 초안에 원문에 없는 반성문 예시를 썼다가 원문 Figure 1 예시로 바로잡았다. 역링크 점검: agent-containment는 source 페이지의 단순 언급(격리 실행 권고)이라 생략했다.

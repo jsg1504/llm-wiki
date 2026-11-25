@@ -3,8 +3,8 @@ title: Prompt Optimization (프롬프트 최적화)
 aliases: [prompt-optimizer, reflective-prompt-evolution, GEPA]
 type: concept
 created: 2026-11-25
-updated: 2026-11-25
-sources: [2025-07-25-gepa-reflective-prompt-evolution]
+updated: 2026-11-26
+sources: [2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion]
 tags: [prompt-optimization, gepa, dspy, mipro, textgrad, reflection, compound-ai-systems, evolutionary-search, pareto]
 status: draft
 ---
@@ -30,6 +30,7 @@ status: draft
 
 ### 계보
 
+- **Reflexion** (2023): 실패할 때마다 LLM이 자연어로 반성하고, 반성문을 memory에 쌓아 **같은 과제를 다시 시도**할 때 넣는다. 가중치도 prompt 지시문도 바꾸지 않는다. 교훈이 그 인스턴스 하나에만 쓰인다 ([[2023-03-20-reflexion]]). GEPA는 이 계열을 "in-context self-bootstrapping"으로 묶고, 자신은 예시로 **과제별 규칙**을 만든다고 차별화한다 ([[2025-07-25-gepa-reflective-prompt-evolution]]). 반성이라는 엔진은 같고, 결과를 어디에 두느냐가 다르다. Reflexion은 episodic memory에, GEPA는 지시문에 둔다. → [[agent-memory]] *(대응은 이 위키의 해석이다.)*
 - **DSPy** 계열: few-shot 예시를 탐색하거나 bootstrap한다.
 - **MIPROv2:** 지시문과 few-shot 예시를 Bayesian optimization으로 함께 맞춘다. GEPA 이전의 최고 성능 기준점이다.
 - **TextGrad:** 텍스트 피드백을 "역전파"한다. 항상 최고 후보 하나를 고친다.
@@ -47,6 +48,8 @@ GEPA의 출발 관찰은 이렇다. rollout은 결국 **자연어 trace**다. �
 그래서 GEPA는 채점 함수 µ를 **feedback function µf**로 넓힌다. 점수와 함께 `feedback_text`를 돌려준다. 멀티홉 검색이면 "아직 못 찾은 문서", 커널 생성이면 컴파일러 에러와 프로파일링 결과다. 사람이 채점할 수 있는 도메인이라면 **사람이 쓴 채점 근거**도 넣는다.
 
 > ⚠️ 이 주장 자체를 직접 검증한 비교는 본문에 없다. feedback_text를 끄고 돌린 실험이 없다. GRPO와의 비교는 prompt 공간과 가중치 공간이라는 다른 파라미터 공간끼리의 비교다.
+>
+> **다른 설정에서의 직접 비교 (2026-11-26).** [[2023-03-20-reflexion]]에는 텍스트 반성을 끈 ablation이 둘 있다. (1) HotPotQA(정답 context가 주어진 CoT, 100문항)에서 최근 trajectory만 다시 넣은 경우보다 **반성문을 넣은 경우가 +8%p** 높았다. (2) HumanEval Rust 최난도 50문제에서 테스트는 돌리되 반성을 빼면 baseline(0.60)과 같았고, 둘 다 쓰면 0.68이었다. 에러 정보만으로는 수정에 반영되지 않고, **자연어로 옮기는 단계**가 효과를 냈다는 뜻이다. GEPA의 feedback_text와 같은 설정은 아니므로 이 절의 주장을 직접 검증하지는 않는다. 같은 방향의 근거다. *(대응은 이 위키의 해석이다.)*
 
 ### 2. 반성은 암묵적 credit assignment다
 
@@ -135,7 +138,9 @@ Qwen3 8B로 최적화한 prompt를 **GPT-4.1 Mini에 그대로** 쓰면 +9.00%�
 - [[agent-evaluation]] — 채점 함수가 텍스트를 함께 내야 하는 이유. adversarial 탐색으로 만드는 회귀 suite
 - [[meta-harness]] — prompt가 층위 그림의 가장 빠르게 변하는 층인 이유
 - [[prompt-injection]] — adversarial prompt search와 위협 모델이 다른 이웃
+- [[agent-memory]] — 반성의 결과를 지시문이 아니라 episodic memory에 두는 쪽(Reflexion)
 
 ## Sources
 
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (UC Berkeley·Stanford·Databricks·MIT 등, ICLR 2026 Oral). 이 페이지 전체의 출처
+- [[2023-03-20-reflexion]] — Shinn 외 5인 (Northeastern·MIT·Princeton, arXiv 2303.11366). 계보의 Reflexion 항목과 §1의 직접 비교 노트 (2026-11-26)

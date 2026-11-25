@@ -32,6 +32,8 @@ status: draft
 - **virtual context management** — context window를 운영체제의 RAM으로, 외부 저장소를 디스크로 보고 정보를 페이지처럼 넣고 빼서 고정 길이 context로 더 긴 context의 환상을 만드는 기법. MemGPT의 용어. → [[agent-memory]]
 - **main context / external context** — MemGPT의 두 메모리 층. main context는 prompt token(system instructions, working context, FIFO queue)이라 모델이 바로 본다. external context(recall storage, archival storage)는 context 밖이라 함수로 가져와야 보인다.
 - **memory pressure** — prompt가 context window의 일정 비율(MemGPT 예시 70%)을 넘을 때 모델에게 보내는 경고. 모델이 중요한 정보를 밖에 저장하도록 유도한다. context anxiety와 같은 신호를 반대로 쓴 사례다.
+- **verbal reinforcement (언어 강화)** — 가중치를 바꾸지 않고, 실패에 대한 자연어 반성문을 memory에 넣어 다음 시도를 개선하는 것. Reflexion의 용어. 저자들은 반성문을 "semantic gradient"라 부른다. → [[2023-03-20-reflexion]], [[prompt-optimization]]
+- **episodic memory** — 이 위키에서는 과거 시도(trajectory)나 그 시도에서 얻은 교훈을 담는 memory를 가리킨다. 사실을 담는 memory(MemGPT의 working context)와 구분한다. → [[agent-memory]]
 - **능력 가정 / 과제 규칙** — harness나 prompt에 들어간 규칙을 가르는 두 종류. 능력 가정은 *"모델은 X를 못 한다"* 는 진술이라 모델이 좋아지면 썩는다(예: context anxiety를 막는 reset). 과제 규칙은 과제 자체에 대한 지시라 모델을 바꿔도 남는다(예: GEPA prompt의 모델 간 전이 +9%). 모델 밖에 무엇을 쌓을지 고르는 기준이다. 이 구분은 위키가 붙인 것이고 소스의 용어가 아니다. → [[meta-harness]], [[what-to-accumulate-outside-the-model]]
 - **quarantine** — 신뢰할 수 없는 콘텐츠를 읽는 에이전트에게 고권한 행동을 주지 않고, 행동은 별도 에이전트가 하게 하는 패턴. 무력화가 아니라 트레이드오프다(trust escalation). → [[agentic-governance]]
 - **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]
