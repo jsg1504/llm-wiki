@@ -2,8 +2,8 @@
 title: Agent Containment (에이전트 격리)
 type: concept
 created: 2026-09-21
-updated: 2026-09-21
-sources: [2026-05-25-how-we-contain-claude, 2026-04-08-scaling-managed-agents]
+updated: 2026-11-26
+sources: [2026-05-25-how-we-contain-claude, 2026-04-08-scaling-managed-agents, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
 tags: [containment, sandbox, blast-radius, agent-security, egress, isolation, anthropic]
 status: draft
 ---
@@ -201,6 +201,18 @@ Cowork의 egress allowlist가 `api.anthropic.com`을 정상 통과시켰고(제�
 
 > **일반화:** 경계를 어디 둘지는 *"누가 맥락을 아는가"* 로 정해진다. [[managed-agents]]가 MCP 프록시를 sandbox 밖에 둔 것과 같은 축의 반대편 사례다 — 그쪽은 비밀을 *안 보이게* 하려고 밖에 뒀고, 이쪽은 출처를 *알아보려고* 안에 뒀다.
 
+### 모델이 쓴 코드를 실행하는 scaffold (2026-11-26)
+
+[[recursive-language-model]]은 긴 입력을 REPL 변수로 두고, **모델이 쓴 코드를 턴마다 실행**한다. 입력 자체가 실행 환경 안에 있고, 그 입력을 다루는 프로그램을 모델이 쓴다. 원 저자들은 guardrail과 sandboxed REPL을 *"highly underexplored"* 라고 적는다 ([[2025-12-31-recursive-language-models]]). 재현은 개인 노트북에서 돌렸고 격리 설정을 언급하지 않는다 ([[2026-03-03-reproducing-recursive-language-models]]). 두 소스 모두 보안을 다루지 않는다.
+
+이 페이지의 틀로 보면 위험 셋이 한자리에 모인다. *(추론)*
+
+- **실행 경로가 넓다.** 코드 실행이 도구 호출 하나가 아니라 기본 동작이다. blast radius는 REPL 프로세스가 닿는 범위 전체다.
+- **입력이 곧 공격면이다.** 긴 문서 안에 섞인 지시문은 모델이 쓰는 코드로 이어질 수 있다. 사람이 그 코드를 매 턴 검토하는 구조가 아니므로, 감독할 수 없는 쪽의 패턴(환경 층위 격리)이 맞는다.
+- **sub-call이 곱해진다.** 하위 호출이 수백 번이면 각 호출이 같은 환경을 공유하는지, 따로 격리되는지가 설계 결정이 된다. 소스는 이를 정하지 않는다.
+
+→ [[context-and-memory]] "위험" 절
+
 ## 한계와 읽을 때의 주의
 
 - **완화 이후의 재측정이 없다.** 공개된 숫자(93%, 84%, 83%, 0.1%)는 전부 **문제를 진단하는 쪽**이고 **해결을 검증하는 쪽**이 아니다. MITM 프록시 도입 후 같은 공격이 막히는지, trust dialog 수정 후 유사 취약점이 줄었는지에 대한 수치가 없다.
@@ -218,8 +230,12 @@ Cowork의 egress allowlist가 `api.anthropic.com`을 정상 통과시켰고(제�
 - [[claude-code]] — Pattern 2의 실제 구현. sandbox·permission·auto mode
 - [[subagent]] — 멀티에이전트에서 격리 경계가 신뢰 경계와 어긋나는 지점
 - [[multi-agent-systems]] — 에이전트를 여럿 굴릴 때 blast radius가 곱해지는 문제
+- [[recursive-language-model]] — 모델이 쓴 코드를 REPL에서 실행하는 scaffold. 격리가 비어 있는 사례
+- [[context-and-memory]] — 창 밖을 코드로 다룰 때의 위험이 놓인 topic
 
 ## Sources
 
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 이 페이지 전체의 1차 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 자격증명 격리와 호스팅 환경의 대응 사례
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 모델이 쓴 코드를 실행하는 scaffold, guardrail 부재 (2026-11-26)
+- [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 재현 환경에 격리 언급 없음 (2026-11-26)

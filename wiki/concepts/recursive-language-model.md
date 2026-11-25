@@ -137,6 +137,7 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 - [[meta-harness]] — compaction 처방 표의 (d) 행. Managed Agents가 이 논문을 선행 연구로 인용한다. 학습으로 scaffold를 가중치에 넣는 반대 방향 사례
 - [[dynamic-workflows]] — 조정을 프로그램 변수에 두는 같은 원리. 한 번 쓰는 코드 vs 계속 고치는 코드
 - [[subagent]] — 말로 하는 위임 vs 코드로 하는 위임. 표현력 비판의 대상
+- [[orchestrator-worker]] — 말로 위임하는 대표 아키텍처. 하위 단위가 무거운 에이전트라 적용 범위가 다르다
 - [[agent-memory]] — 창 밖 저장소를 모델이 관리하는 극단. 능력 가정의 사례
 - [[multi-agent-systems]] — 단일 에이전트가 길어질 때의 실패와 그 경제성
 - [[claude-code]] — 외부에서 잰 baseline. offloading의 효과와 한계

@@ -64,7 +64,7 @@ status: draft
 | **고정 검색 + LLM 추출** | Zep, A-MEM | 검색 절차는 코드(Cypher 질의, 임베딩 top-k)로 고정. 무엇을 추출·연결·갱신할지는 LLM | 검색은 예측 가능하게, 구조화는 유연하게 | 추출 LLM의 능력. Zep의 갱신 이득은 gpt-4o에서만 나왔다 |
 | **모델이 쓴 코드** | RLM | 모델이 범용 Python으로 입력을 잘라 읽고, 루프에서 자기를 재귀 호출 | 무엇을 읽을지를 함수 목록이 아니라 프로그램이 정한다 | 모델의 코딩 능력과 sub-call 비용. 재현에서 강한 모델은 오히려 손해 ⚠️ |
 
-출처: [[2023-10-12-memgpt]], [[2026-04-08-scaling-managed-agents]], [[2025-01-20-zep]], [[2025-02-17-a-mem]], [[2025-12-31-recursive-language-models]], [[2026-03-03-reproducing-recursive-language-models]]. 처음 두 행의 대비는 [[agent-memory]] §5에 있고, 나머지 두 행을 더해 한 표로 묶은 것은 이 페이지다.
+출처: [[2023-10-12-memgpt]], [[2026-04-08-scaling-managed-agents]], [[2025-01-20-zep]], [[2025-02-17-a-mem]], [[2025-12-31-recursive-language-models]], [[2026-03-03-reproducing-recursive-language-models]]. 처음 두 행의 대비는 [[agent-memory]] §5에 있고, 나머지 두 행을 더해 한 표로 묶은 것은 이 페이지다. Managed Agents를 harness 행에 둔 근거는 *가져온 context의 변형*을 harness에 맡긴다는 문장이다. `getEvents()` 슬라이스를 누가 호출하는지는 원문이 분명히 하지 않는다 ([[managed-agents]] 열린 질문).
 
 **네 주체 모두 능력 가정을 안는다.** 모델에게 맡기면 모델 능력에, harness에 맡기면 설계자의 예측에 묶인다. 같은 신호(context가 차고 있다)가 MemGPT에서는 핵심 기능이었고 Claude Sonnet 4.5에서는 작업을 일찍 끝내는 원인이었다 ([[agent-memory]] §6, [[meta-harness]]). RLM 시스템 프롬프트는 GPT-5에서 Qwen3-Coder로 그대로 옮겨지지 않았다 ([[2025-12-31-recursive-language-models]]). → 판별 기준은 [[what-to-accumulate-outside-the-model]]의 "능력 가정은 썩고 과제 규칙은 남는다"
 
@@ -128,6 +128,7 @@ Zep은 바뀐 사실을 지우지 않고 유효 기간을 닫는다(무효화). 
 - [[artifact-chain]] — 리뷰를 거치는 쓰기 경로
 - [[agent-recipe]] — 누적된 판단을 밖에 둔다
 - [[subagent]], [[dynamic-workflows]] — 처방 (b) 격리
+- [[orchestrator-worker]] — lead가 계획을 Memory에 저장하고 핸드오프하는 (a)+(b)의 실전 사례
 - [[what-to-accumulate-outside-the-model]] — 밖에 쌓을 것의 수명 순서와 판별 기준
 - [[multi-agent-systems]] — 단일 에이전트가 길어질 때의 실패와 독립 context window의 경제성
 - [[prompt-injection]], [[agent-containment]] — 쓰기 경로와 코드 실행의 위험

@@ -19,7 +19,7 @@ status: draft
 - **mature** — frontmatter `status: mature`. 다수 출처로 검증되어 안정적으로 인용 가능.
 - **orphan** — 어떤 페이지로부터도 wikilink되지 않는 페이지. lint에서 식별.
 - **hub** — inbound link가 많은 페이지. 위키의 "허브".
-- **contradiction marker** — `> ⚠️ Contradiction:` blockquote. 페이지 간 모순을 명시할 때 사용.
+- **contradiction marker** — `> ⚠️ **Contradiction (YYYY-MM-DD): <질문>.**` blockquote. 페이지 간 모순을 명시할 때 사용. 등록 목록은 [[contradictions]].
 
 ## 에이전트 용어
 
@@ -34,7 +34,7 @@ status: draft
 - **memory pressure** — prompt가 context window의 일정 비율(MemGPT 예시 70%)을 넘을 때 모델에게 보내는 경고. 모델이 중요한 정보를 밖에 저장하도록 유도한다. context anxiety와 같은 신호를 반대로 쓴 사례다.
 - **verbal reinforcement (언어 강화)** — 가중치를 바꾸지 않고, 실패에 대한 자연어 반성문을 memory에 넣어 다음 시도를 개선하는 것. Reflexion의 용어. 저자들은 반성문을 "semantic gradient"라 부른다. → [[2023-03-20-reflexion]], [[prompt-optimization]]
 - **episodic memory** — 이 위키에서는 과거 시도(trajectory)나 그 시도에서 얻은 교훈을 담는 memory를 가리킨다. 사실을 담는 memory(MemGPT의 working context)와 구분한다. → [[agent-memory]]
-- **knowledge update** — 사용자 정보가 바뀐 것을 알아채고 memory를 갱신하는 능력. LongMemEval의 다섯 능력 중 하나다. 재는 방법은 있지만 갱신을 구현하는 방법은 위키에 아직 소스가 없다. → [[agent-memory]]
+- **knowledge update** — 사용자 정보가 바뀐 것을 알아채고 memory를 갱신하는 능력. LongMemEval의 다섯 능력 중 하나다. 재는 방법은 LongMemEval이, 구현하는 방법은 Zep(무효화)과 A-MEM(덮어쓰기)이 준다. 두 방식을 비교한 소스는 없다. → [[agent-memory]]
 - **abstention** — memory에 없는 것을 물으면 지어내지 않고 모른다고 답하는 능력. LongMemEval은 기존 질문을 거짓 전제 질문으로 바꿔 잰다.
 - **key expansion (document expansion)** — memory 항목을 색인할 때 원문에 요약·사실·keyphrase를 이어 붙여 key로 쓰는 것. LongMemEval에서는 원문 + 사용자 사실이 recall@k +9.4%였다. 압축본만 key로 쓰면 나아지지 않았다.
 - **bi-temporal** — 사실에 시간 축 둘을 붙이는 모델. 사실이 실제로 참이었던 기간(t_valid, t_invalid)과 시스템이 그 사실을 받아들이고 무효화한 시점(t′_created, t′_expired)을 따로 기록한다. Zep의 용어. → [[agent-memory]]
@@ -42,6 +42,12 @@ status: draft
 - **memory evolution** — 새 memory가 들어오면 가까운 기존 memory의 설명·keyword·tag를 LLM이 다시 쓰는 갱신 방식. 이전 버전은 남지 않는다. A-MEM의 용어. → [[2025-02-17-a-mem]]
 - **Zettelkasten** — 원자적인 노트를 만들고 노트끼리 자유롭게 링크해 지식망을 키우는 메모 방법. A-MEM이 memory 구조로 빌렸고, 이 위키의 wikilink 구조도 같은 계열이다.
 - **능력 가정 / 과제 규칙** — harness나 prompt에 들어간 규칙을 가르는 두 종류. 능력 가정은 *"모델은 X를 못 한다"* 는 진술이라 모델이 좋아지면 썩는다(예: context anxiety를 막는 reset). 과제 규칙은 과제 자체에 대한 지시라 모델을 바꿔도 남는다(예: GEPA prompt의 모델 간 전이 +9%). 모델 밖에 무엇을 쌓을지 고르는 기준이다. 이 구분은 위키가 붙인 것이고 소스의 용어가 아니다. → [[meta-harness]], [[what-to-accumulate-outside-the-model]]
+- **context rot** — 입력이 길어질수록 모델 품질이 떨어지는 현상. 열화 속도는 과제가 요구하는 처리량에 달렸다. 바늘 하나 찾기(O(1))는 1M token에서도 버티고, 쌍마다 집계하는 과제(O(n²))는 창 안에서도 무너진다. → [[recursive-language-model]], [[context-and-memory]]
+- **compaction 처방 (a)~(d)** — context window를 넘길 때의 네 처방. (a) 잘 요약한다, (b) 도달하지 않는다(subagent 격리), (c) 되돌릴 수 있게 한다(원본을 창 밖 로그에), (d) 애초에 넣지 않는다(REPL 변수). 함께 쓰인다. 이 분류는 위키가 붙인 것이다. → [[meta-harness]], [[context-and-memory]]
+- **RLM (Recursive Language Model)** — 긴 입력을 REPL 변수로 두고, 모델이 코드로 그 변수를 잘라 읽으며 코드 안에서 자기 자신을 재귀 호출하는 추론 scaffold. 바깥에서 보면 문자열을 받아 문자열을 내는 LM이다. → [[recursive-language-model]]
+- **recursion depth** — RLM에서 하위 호출이 다시 자기 REPL을 띄울 수 있는 깊이. depth=0은 하위 호출 없음, depth=1은 하위 호출이 일반 LM, depth≥2는 하위 호출도 RLM. 원 논문과 재현 모두 깊이가 늘면 대체로 나빠졌다(원 논문 GPT-5는 예외). → [[recursive-language-model]]
+- **말로 하는 위임 / 코드로 하는 위임** — 하위 호출을 부모 LLM이 하나씩 생성해 내는가(orchestrator-worker, Claude Code subagent), 코드 루프 안에서 내는가(RLM). 앞쪽은 위임 수가 부모의 출력 길이에 묶인다. 이 구분은 위키가 붙인 이름이다. → [[subagent]]
+- **overthinking (RLM)** — 깊은 재귀에서 하위 호출이 끝없이 재검증하거나, 입력을 버리고 사전지식으로 답하거나(context anchoring 상실), REPL 코드를 최종 답으로 내는 실패 모드. RLM 재현 논문의 용어. → [[2026-03-03-reproducing-recursive-language-models]]
 - **quarantine** — 신뢰할 수 없는 콘텐츠를 읽는 에이전트에게 고권한 행동을 주지 않고, 행동은 별도 에이전트가 하게 하는 패턴. 무력화가 아니라 트레이드오프다(trust escalation). → [[agentic-governance]]
 - **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]
 - **valued work per watt** — 에이전트 제품의 최적화 점수로 제안된 구호. 작업이 가치 있는가, 그 경제성이 맞는가의 두 단계. 측정 방법은 정의되지 않았다. → [[2026-09-30-loop-is-the-product]]

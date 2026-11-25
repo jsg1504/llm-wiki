@@ -56,6 +56,8 @@ status: stub | draft | mature       # 페이지의 성숙도
 ---
 ```
 
+**예외:** `type: source` 페이지는 그 자체가 출처이므로 `sources:` 대신 `source_file:`(raw 파일 상대 경로)과 `source_url:`·`author:`·`source_date:`를 쓴다 (형식은 `source-ingest` 스킬 §3). `type: meta` 페이지의 `sources:`는 빈 배열이거나 생략할 수 있다.
+
 본문은 다음 구조를 권장한다:
 
 ```markdown

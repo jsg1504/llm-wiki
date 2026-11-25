@@ -2,8 +2,8 @@
 title: Orchestrator-Worker 패턴
 type: concept
 created: 2026-09-11
-updated: 2026-09-12
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows]
+updated: 2026-11-26
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2025-12-31-recursive-language-models]
 tags: [multi-agent, architecture, orchestration, context-window, agent-design]
 status: draft
 ---
@@ -86,10 +86,11 @@ lead가 subagent에게 주는 태스크 기술이 부실하면 **중복 수행·
 
 ### 알려진 한계
 
-- **동기 실행 병목.** lead는 subagent 묶음이 끝날 때까지 기다린다. 조정은 단순해지지만 ⓐ lead가 진행 중인 subagent를 조종할 수 없고 ⓑ subagent끼리 협력할 수 없고 ⓒ느린 하나가 전체를 막는다. 비동기화하면 병렬성은 늘지만 결과 조정·상태 일관성·에러 전파가 어려워진다.
+- **동기 실행 병목.** lead는 subagent 묶음이 끝날 때까지 기다린다. 조정은 단순해지지만 ⓐ lead가 진행 중인 subagent를 조종할 수 없고 ⓑ subagent끼리 협력할 수 없고 ⓒ느린 하나가 전체를 막는다. 비동기화하면 병렬성은 늘지만 결과 조정·상태 일관성·에러 전파가 어려워진다. ⓑ에는 부분 예외가 있다. Managed Agents에서는 brain끼리 실행 환경(hand)을 넘겨줄 수 있다. 넘어가는 것은 결과가 아니라 자원이다 ([[2026-04-08-scaling-managed-agents]], [[subagent]] 알려진 한계).
 - **game of telephone.** 모든 결과가 lead를 통과하면 정보가 손실되고 큰 출력이 대화 히스토리에 복사되며 토큰을 낭비한다. 완화책은 **subagent가 산출물을 외부(파일시스템 등)에 저장하고 lead에게는 참조만 넘기는 것** — 코드·리포트·데이터 시각화처럼 구조화된 출력에 특히 잘 맞는다. 이 처방은 [[artifact-chain]]이 *세션 사이의* 기억에 대해 내리는 것과 같다: 대화가 아니라 파일이 인터페이스가 되게 하라.
 - **창발적 행동.** lead 프롬프트의 작은 변경이 subagent 행동을 예측 불가능하게 바꾼다. 개별 에이전트 행동이 아니라 **상호작용 패턴**을 이해해야 한다.
 - **컨텍스트 공유가 필요한 도메인엔 부적합.** 에이전트 간 의존성이 크면 이 패턴의 전제(독립 탐색)가 무너진다.
+- **압축은 세탁이 될 수 있다 (2026-11-26).** 이 패턴의 효용인 "subagent가 추려서 올린다"에는 이면이 있다. subagent 출력이 *"우리 것"* 이라는 이유로 raw tool result보다 높은 신뢰를 받으면, subagent가 읽은 웹 페이지의 주입된 지시가 구조화된 findings로 포장되어 lead에 닿는다(multi-agent trust escalation, [[2026-05-25-how-we-contain-claude]]). 리서치형 subagent는 정의상 미신뢰 콘텐츠를 읽는다. 완화 방향은 subagent 출력을 raw tool result와 같은 등급으로 검사하는 것이다. → [[prompt-injection]]
 
 ### 조정을 누가 들고 있는가 — LLM 주도 조정의 대안
 
@@ -106,9 +107,19 @@ lead가 subagent에게 주는 태스크 기술이 부실하면 **중복 수행·
 
 **트레이드오프이지 개선이 아니다.** LLM 주도 조정은 유연하고 프로그램 주도 조정은 견고하다. 위의 "알려진 한계" 중 **동기 실행 병목**은 양쪽에 공통이다 — fan-out의 종합 단계도 barrier여서 가장 느린 하나가 전체를 막는다.
 
+### 위임을 말로 낸다 — 표현력의 상한 (2026-11-26)
+
+이 패턴에서 lead는 subagent를 **하나씩 말로** 띄운다. 태스크 기술을 생성하는 것이 곧 위임이다. [[2025-12-31-recursive-language-models]]는 Claude Code subagent를 포함한 이 방식을 이렇게 비판한다. 하위 호출을 *"verbalize … autoregressively"* 하므로 **위임 수가 lead의 출력 길이에 묶인다.** 위의 노력 규칙이 "복잡한 연구에 10+"인 것도 같은 규모다.
+
+반대편은 위임을 **코드 안에서** 내는 [[recursive-language-model]]이다. 입력 조각마다 루프를 돌며 LM을 부르므로 수백 번도 가능하다(Qwen3-Coder는 OOLONG 정답 궤적에서 평균 약 500회). 쌍마다 집계하는 과제(OOLONG-Pairs)에서 입력을 파일로 넘긴 Claude Code는 F1 6.5, RLM은 58~76이었다. 단 Claude Code 행은 모델이 Opus 4.1로 달랐다.
+
+**이 패턴이 틀렸다는 뜻은 아니다.** 하위 단위가 다르다. 여기 subagent는 도구를 쓰며 넓게 탐색하는 무거운 에이전트이고, RLM의 하위 호출은 문자열을 받아 문자열을 내는 LM 호출이다. 하위 작업이 크고 이질적이면 이 패턴이, 같은 변환을 입력 전체에 반복해야 하면 코드 위임이 맞는다. 구분표는 [[subagent]] "말로 하는 위임 vs 코드로 하는 위임". *(적용 범위의 구분은 이 위키의 정리다.)*
+
 ### 상태를 다루는 법
 
 lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** context window가 200,000 토큰을 넘으면 잘려나가므로, 잘린 뒤에도 계획만은 되읽을 수 있어야 하기 때문이다. 같은 발상의 확장이 **긴 대화 관리 패턴**이다 — 완료된 단계를 요약해 외부 메모리에 넣고, context 한계에 다가가면 깨끗한 context의 새 subagent로 핸드오프한다.
+
+이 처방들은 [[context-and-memory]]의 compaction 지도에서 (a) 요약과 (b) 격리에 해당한다. 원본을 되돌릴 수 있게 남기는 (c)는 이 소스에 없다. [[meta-harness]]의 세션 로그가 그 자리다. 조정 상태를 lead의 창에 두는 한, lead가 죽으면 상태도 같이 사라진다. 세션 로그는 그 상태를 durable한 거처로 옮겨 `wake(sessionId)`로 이어 가게 한다 ([[2026-04-08-scaling-managed-agents]]). 다만 그 소스는 단일 brain의 복구를 설명할 뿐, lead와 여러 subagent의 조정 상태를 어떻게 기록하는지는 말하지 않는다. *(대응은 이 위키의 해석이다.)*
 
 ## 코딩 도구에서의 구현
 
@@ -129,8 +140,16 @@ lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** cont
 - [[dynamic-workflows]] — 같은 구조를 조정 주체만 바꿔 구현한 대안.
 - [[agent-orchestration-patterns]] — 이 패턴이 한 항목으로 들어가는 상위 카탈로그.
 - [[anthropic]] — 이 패턴을 프로덕션에서 운영하며 기록을 공개한 주체.
+- [[meta-harness]] — lead의 조정 상태를 durable한 세션 로그로 옮기는 처방. brain끼리 hand를 넘기는 구조
+- [[prompt-injection]] — subagent 출력의 trust escalation. 압축이 세탁이 되는 경로
+- [[recursive-language-model]] — 위임을 말이 아니라 코드로 내는 반대편. 이 패턴의 표현력 비판
+- [[context-and-memory]] — lead의 Memory 저장과 핸드오프가 속한 compaction 지도
+- [[agent-memory]] — 계획을 Memory에 저장하는 발상의 장기 판본
 
 ## Sources
 
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 조정 주체를 프로그램으로 옮긴 대안 구조. "조정을 누가 들고 있는가" 절.
 - [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). 이 페이지 전체의 출처.
+- [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 세션 로그와 brain 간 hand 전달 (2026-11-26)
+- [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). multi-agent trust escalation (2026-11-26)
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 말로 하는 위임 비판, Claude Code 외부 측정 (2026-11-26)

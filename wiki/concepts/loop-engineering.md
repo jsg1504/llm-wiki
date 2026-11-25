@@ -66,7 +66,7 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 루프가 더하는 것은 두 개의 축이다:
 
 - **cadence** — 누가 이걸 언제 시작하는가. 사람이 프롬프트를 칠 때가 아니라 스케줄이 올 때.
-- **연속성** — 이번 실행이 남긴 것을 다음 실행이 어떻게 집어드는가. 외부 state 파일.
+- **연속성** — 이번 실행이 남긴 것을 다음 실행이 어떻게 집어드는가. 외부 state 파일. 이 축은 memory 저장소, 커밋된 아티팩트, recipe와 같은 질문(창 밖에 무엇을 두는가)의 실행 사이 판본이다. 한 실행 안의 context 관리와 함께 놓은 지도는 [[context-and-memory]]에 있다.
 
 [[agent-orchestration-patterns]]의 "무엇이 이 카탈로그에 없는가"에 적힌 세 공백 중 하나(사람이 루프 안에 있는 패턴)가 여기서 부분적으로 답을 얻는다 — 소스의 예시 루프에서 **루프가 처리 못 한 것만 triage inbox로 사람에게 간다.** 사람은 매 턴이 아니라 **예외 경로**에 있다.
 
@@ -295,6 +295,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 ## Related
 
 - [[agent-memory]] — 실행 사이에 남는 state를 구조화하는 쪽. MemGPT의 timed event는 cadence의 선행 사례
+- [[context-and-memory]] — 연속성 축이 속한 topic. 실행 안과 실행 사이를 함께 놓는다
 - [[agent-recipe]] — 두 번째 루프의 산출물. system distillation으로 루프가 남기는 누적 판단
 - [[inner-outer-loop-verification]] — 첫 번째/두 번째 루프를 inner/outer loop로 읽고, 각 층위가 무엇을 검증하는지 정리한 synthesis
 - [[prompt-optimization]] — 두 번째 루프의 한 조각(prompt 증류)을 자동화하고 측정한 방법. signal을 텍스트로 줄 때의 표본 효율

@@ -2,8 +2,8 @@
 title: Managed Agents
 type: entity
 created: 2026-09-21
-updated: 2026-09-21
-sources: [2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
+updated: 2026-11-26
+sources: [2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2025-12-31-recursive-language-models]
 tags: [managed-agents, anthropic, claude-platform, meta-harness, product, sandbox, session-log]
 status: draft
 ---
@@ -45,7 +45,7 @@ Managed Agents는 [[anthropic]]이 Claude Platform 안에서 제공하는 서비
 - **컨테이너는 필요할 때만 뜬다.** sandbox를 쓰지 않는 세션은 컨테이너를 기다리지 않는다. 추론은 오케스트레이션 레이어가 대기 이벤트를 가져오는 즉시 시작된다. → **p50 TTFT 약 60% 감소, p95 90% 이상 감소** (내부 측정, 워크로드 구성 비공개)
 - **고객 VPC 연결이 가능하다.** harness가 컨테이너 밖으로 나오면서 "작업 대상이 나와 같은 곳에 있다"는 가정이 사라졌다. 초기 설계에서는 네트워크 peering이나 고객 환경에서의 harness 직접 운용이 유일한 경로였다.
 - **brain끼리 hand를 넘길 수 있다.** 어떤 hand도 특정 brain에 결합되어 있지 않다.
-- **세션은 context window와 별개다.** 컨텍스트가 창 밖 durable 로그에 살고 `getEvents()`로 슬라이스해 되가져온다. 가져온 이벤트의 변형(prompt cache 최적화, context engineering)은 harness의 몫으로 남긴다.
+- **세션은 context window와 별개다.** 컨텍스트가 창 밖 durable 로그에 살고 `getEvents()`로 슬라이스해 되가져온다. 가져온 이벤트의 변형(prompt cache 최적화, context engineering)은 harness의 몫으로 남긴다. 원문이 "창 밖 객체"의 선행 연구로 링크한 것은 [[2025-12-31-recursive-language-models]]다. 그쪽은 입력을 REPL 변수로 두고 모델이 코드로 잘라 읽는다. 이쪽은 같은 이점을 durable 로그로 얻는다 → [[recursive-language-model]]
 
 ## 자격증명 처리
 
@@ -78,7 +78,7 @@ Managed Agents (meta-harness)
 이 소스만으로는 답할 수 없는 것들 — 다음 소스나 공식 문서가 필요하다.
 
 - **어떤 harness를 실제로 가져다 쓸 수 있는가?** "어떤 harness든 수용한다"가 사용자가 임의의 harness를 배포할 수 있다는 뜻인지, Anthropic이 고른 harness 중 선택하는 것인지 글은 말하지 않는다.
-- **`getEvents()`의 슬라이스는 누가 결정하는가?** Claude가 직접 호출하는지, harness가 정책으로 부르는지 불명확하다. "the brain to interrogate context"라는 표현은 전자를 시사하지만 단정할 수 없다.
+- **`getEvents()`의 슬라이스는 누가 결정하는가?** Claude가 직접 호출하는지, harness가 정책으로 부르는지 불명확하다. "the brain to interrogate context"라는 표현은 전자를 시사하지만 단정할 수 없다. [[context-and-memory]]의 "누가 가져오나" 표는 이 제품을 **harness** 쪽에 두는데, 근거는 *변형*을 harness에 맡긴다는 문장이다. *슬라이스 호출*의 주체는 여전히 이 질문으로 남는다.
 - **세션 로그의 보존 기간·비용 모델.** durable 저장이 전제인데 한도가 언급되지 않는다.
 - **세션 토큰으로 도달 가능한 기능의 집합은 정확히 무엇인가?** capability grant 관점([[prompt-injection]])에서 이 vault·프록시 설계를 검증하려면 필요한데, 소스는 토큰의 존재만 말하고 그 권한 범위를 말하지 않는다.
 - **many hands를 쓸 때 Claude가 라우팅에 실패하면?** "어디로 일을 보낼지 고르는 것이 어려운 인지 과제"라고 인정하면서 그 실패 모드는 다루지 않는다.
@@ -93,8 +93,11 @@ Managed Agents (meta-harness)
 - [[prompt-injection]] — 이 격리가 막으려는 공격면
 - [[anthropic]] — 발행·운영 주체
 - [[multi-agent-systems]] — many brains로 스케일할 때의 경제성
+- [[recursive-language-model]] — 원문이 인용한 "창 밖 객체" 선행 연구. 같은 이점을 REPL로 얻는 쪽
+- [[context-and-memory]] — 세션 로그가 compaction 처방 (c)와 "누가 가져오나"의 harness 행으로 놓인 topic
 
 ## Sources
 
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin, Gabe Cemaj, Michael Cohen (Anthropic Engineering, 2026-04-08)
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 자격증명 처리 절의 자매 사례
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 원문이 링크한 선행 연구 (2026-11-26)
