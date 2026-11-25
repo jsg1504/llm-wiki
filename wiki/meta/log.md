@@ -166,3 +166,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - [[multi-agent-systems]]: Overview에 다섯 번째 축(시간) 추가, "세 축" 오기를 "다섯 축"으로 고침. Contradiction 가설 ①에 Osmani 운용 사례와 태스크 민감도 축을 추가했다. **판정 상태는 바꾸지 않았다.** "다섯 소스 모두 Anthropic" 편향 문장은 원문을 보존하고 갱신 노트를 달았다(관점의 외부성 ≠ 증거의 외부성). sources +2.
   - [[artifact-chain]]: 💡 블록에 세 번째·네 번째 층위(loop state, agent recipe) 추가. sources +2.
   - raw에서 새로 가져온 사실 없음. 전부 기존 source 페이지와 [[loop-engineering]]에 있던 내용의 역방향 반영이다.
+
+## [2026-11-25 23:07] manual | source-ingest skill에 역링크 점검(§4.4) 추가
+- touched: `.claude/skills/source-ingest/SKILL.md` (§4.4 신설, §7 보고 항목, 안티 패턴 1줄)
+- notes: lint 2026-09-12와 2026-11-25에서 두 번 연속 같은 문제가 나왔다. 새 클러스터가 기존 페이지로 링크만 걸고 역방향이 없어 단방향 다리가 됐다. 이제 ingest 때마다 만들거나 바꾼 페이지의 링크 대상을 점검한다. topic이 대상이거나 기존 주장을 보강·반박하는 경우에는 본문에 역링크를 넣고, entity 단순 언급과 source 페이지는 생략한다. 역링크 대상은 takeaway 합의 때 미리 승인받는다. 점검 스니펫을 [[agent-recipe]]와 [[loop-engineering]]에 돌려 보니 걸린 것은 entity 1개와 source 3개뿐이었다. 둘 다 규칙상 생략 대상이라 직전 curate 결과와 맞는다.
