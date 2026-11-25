@@ -271,3 +271,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[recursive-language-model]], [[2025-12-31-recursive-language-models]], [[meta-harness]], [[anthropic]], [[index]]
 - contradictions: [[recursive-language-model]] — "단순한 과제와 강한 모델에서도 RLM은 손해가 작은가" (원 논문 Figure 1·Observation 3 vs 재현의 S-NIAH 100 → 70~90, Kimi K2 OOLONG 86.6 → 60.0). 조건(모델·표본·길이)이 달라 판정 보류. "긴 입력에서 RLM이 이긴다"는 재현이 64k 이하만 재서 범위 밖으로 명시했다. depth 결과는 원 논문 Qwen3-Coder와 일치로 기록했다.
 - notes: 사용자 합의에 따라 이득의 재현은 "확인 안 됨"으로 기록했다. 근거 수치(DeepSeek OOLONG 0.0 → 42.1)의 base 0%가 부록 A.3에서 형식 실패로 밝혀졌기 때문이다. 실패의 재현(최종 답 태그 혼동, thinking 태그 파서 문제, 깊은 재귀 오류 전파, 꼬리 비용)은 "확인됨"으로 기록했다. Zep → MemGPT 선례를 따라 원 source 페이지에 "후속 검증" 절을 넣었다. dynamic-workflows의 정지 장치 연결은 저자 해석일 뿐이라 빼고 concept의 비용 절에 한 줄로 넣었다. 기존 ⚠️ 모순 셋을 모은 `wiki/meta/contradictions.md`를 새로 만들었다(기존 둘 + 이번 하나). session-start 훅은 `^> ⚠️ Contradiction`을 세는데 위키의 실제 마커는 `> ⚠️ **Contradiction`이라 미해결 모순이 0으로 나온다. 훅은 고치지 않았다. raw는 사용자가 직접 복사했다.
+
+## [2026-11-26 01:27] manual | 모순 카운트 수정 (session-start 훅, wiki-status)
+- touched: `.claude/hooks/session-start.sh`, `.claude/commands/wiki-status.md`, [[log]]
+- notes: 두 곳 모두 `⚠️ Contradiction`을 찾았지만 위키의 실제 마커는 `> ⚠️ **Contradiction`(굵게)이라 늘 0건으로 나왔다. 이제 [[contradictions]] 표의 상태 열(`**미해결`, `**부분 판정`)을 1차 기준으로 세고, 페이지 마커는 `\*{0,2}` 패턴으로 교차 확인용으로만 센다. 현재 출력: 미해결 2, 부분 판정 1, 마커 페이지 6개(synthesis 사본 포함). 사용자 승인.

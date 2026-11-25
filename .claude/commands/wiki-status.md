@@ -50,8 +50,9 @@ done
 # 최근 log
 grep "^## \[" wiki/meta/log.md | tail -5
 
-# 모순
-grep -rln "⚠️ Contradiction" wiki/ --include="*.md"
+# 모순 — 1차 기준은 등록 목록, 페이지 마커는 교차 확인용 (실제 마커는 `> ⚠️ **Contradiction`, 굵게)
+grep -E '^\|.*\*\*(미해결|부분 판정)' wiki/meta/contradictions.md
+grep -rlE '^> ⚠️ \*{0,2}Contradiction' wiki/ --include="*.md" | grep -v '^wiki/meta/'
 
 # Hub (inbound 카운트는 별도 grep)
 ```

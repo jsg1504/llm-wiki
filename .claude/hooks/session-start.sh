@@ -33,18 +33,29 @@ SYNTHESES=$(find wiki/syntheses -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
 # 최근 활동
 RECENT=$(grep "^## \[" wiki/meta/log.md 2>/dev/null | tail -5 | sed 's/^/  /')
 
-# 미해결 모순 카운트
-# `^> ⚠️ Contradiction`로 정확히 모순 마커만 잡고 meta는 제외 (glossary가 용어 정의용으로 마커 텍스트를 포함할 수 있음)
+# 모순 카운트
+# 1차 기준: wiki/meta/contradictions.md 표의 상태 열 (`**미해결`, `**부분 판정`).
+# 교차 확인: 페이지 본문의 ⚠️ 마커. 실제 마커는 `> ⚠️ **Contradiction`(굵게)이므로 `\*{0,2}`로 둘 다 잡는다.
+#   meta는 제외 (glossary가 용어 정의용으로 마커 텍스트를 포함할 수 있음). synthesis의 사본도 세어지므로
+#   이 숫자는 등록 건수와 같을 필요가 없다 — 크게 어긋나면 lint 대상.
 # `|| true` chain으로 grep 매치 없을 때의 exit 1 (set -e 트리거)을 무력화.
-CONTRADICTIONS=$( { grep -rl "^> ⚠️ Contradiction" wiki/ --include="*.md" 2>/dev/null || true; } \
+REGISTER="wiki/meta/contradictions.md"
+if [ -f "$REGISTER" ]; then
+  UNRESOLVED=$( { grep -E '^\|.*\*\*미해결' "$REGISTER" || true; } | wc -l | tr -d ' ')
+  PARTIAL=$( { grep -E '^\|.*\*\*부분 판정' "$REGISTER" || true; } | wc -l | tr -d ' ')
+else
+  UNRESOLVED="?"; PARTIAL="?"
+fi
+MARKER_PAGES=$( { grep -rlE '^> ⚠️ \*{0,2}Contradiction' wiki/ --include="*.md" 2>/dev/null || true; } \
   | { grep -v "^wiki/meta/" || true; } | wc -l | tr -d ' ')
+CONTRADICTIONS="미해결 ${UNRESOLVED}, 부분 판정 ${PARTIAL} (contradictions.md 기준) · ⚠️ 마커 페이지 ${MARKER_PAGES}개 (사본 포함)"
 
 # 출력 (Claude의 컨텍스트에 추가됨)
 cat <<EOF
 ## 📚 위키 현황 스냅샷
 
 규모: entities=$ENTITIES, concepts=$CONCEPTS, topics=$TOPICS, sources=$SOURCES, syntheses=$SYNTHESES
-미해결 모순: $CONTRADICTIONS
+모순: $CONTRADICTIONS
 
 최근 활동 (log.md tail -5):
 $RECENT
