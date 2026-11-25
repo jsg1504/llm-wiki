@@ -197,3 +197,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:50] manual | hook 경고가 Claude에게 전달되도록 exit 코드 수정
 - touched: `.claude/hooks/validate-frontmatter.sh`, `.claude/hooks/log-tracker.sh`
 - notes: 두 hook은 경고를 stderr에 쓰고 exit 0으로 끝나서 Claude가 경고를 보지 못했다. 경고 시 exit 2로 바꿨다. validate-frontmatter(PostToolUse)는 쓰기를 되돌리지 않고 stderr만 Claude에 전달한다. log-tracker(Stop)는 Claude가 멈추지 않고 log.md를 보강하게 하며, `stop_hook_active=true`면 통과해 무한 루프를 막는다. log-tracker는 이제 untracked 새 wiki 페이지도 변경으로 잡는다. 시뮬레이션 입력으로 frontmatter 누락/불완전/정상, Stop clean/dirty/active 6케이스를 확인했다.
+
+## [2026-11-25 23:58] manual | Obsidian vault 설정을 위키 규칙에 맞춰 커밋
+- touched: `.obsidian/app.json` (신규), `.obsidian/core-plugins.json` (신규), `.gitignore`
+- notes: Karpathy gist 점검 4번 후속. 첨부 폴더를 `raw/assets`로, 링크 형식을 wikilink(`useMarkdownLinks: false`, `newLinkFormat: shortest`)로 지정했다. Obsidian에서 rename하면 백링크가 자동 갱신되도록 `alwaysUpdateLinks: true`(CLAUDE.md §3.2)도 켰다. `appearance.json`은 개인 취향이라 ignore했고, `graph.json`의 zoom(`scale`) 변경은 되돌렸다. Web Clipper 저장 경로는 브라우저 확장 설정이라 repo 밖에 있다.

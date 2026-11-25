@@ -11,6 +11,7 @@ Thumbs.db
 # Obsidian
 .obsidian/workspace*
 .obsidian/cache
+.obsidian/appearance.json
 
 # Hook 백업
 .claude/hooks/*.bak
