@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **12개 중 5개**가 Anthropic 발행이다. 비-Anthropic 7개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **14개 중 5개**가 Anthropic 발행이다. 비-Anthropic 9개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -101,6 +101,12 @@ status: draft
 > - **편향의 종류.** 제1저자가 Tencent 인턴이고 Tencent 연구자 셋이 공저다. 자사 제품을 평가하지는 않는다.
 > - **세는 법:** 소스 12개 중 Anthropic 발행 5개, 비-Anthropic 7개. 비-Anthropic 중 스스로 측정한 소스는 GEPA, MemGPT, Reflexion, LongMemEval 넷이다.
 
+> **처음으로 Claude를 외부에서 잰 데이터, 그리고 두 번째 벤더 소스 (2026-11-26).** 두 소스가 함께 들어왔다.
+>
+> - [[2025-02-17-a-mem]](Rutgers 등, preprint)의 부록에 **Claude 3.0 Haiku와 3.5 Haiku** 실험이 있다. 위에 적은 "Claude를 외부에서 잰 소스는 아직 없다"가 처음으로 부분 해소된다. 단 신뢰도가 낮다. 대화 전체를 넣은 baseline의 F1이 Claude 3.0 Haiku에서 0.82~4.56으로, 같은 baseline의 GPT-4o-mini 수치(12~69)보다 비정상적으로 낮다. 원인 설명은 없다. Haiku 등급만 있고 주력 모델(Sonnet, Opus)은 없다.
+> - [[2025-01-20-zep]](Zep AI)은 **자사 제품을 소개하는 벤더 preprint**다. Anthropic 소스들이 가진 것과 같은 종류의 편향(자사 시스템을 자사가 측정)을 다른 회사가 갖는다. 비교 대상, 보고 범위(abstention 제외), 측정 조건을 모두 저자가 정했다.
+> - **세는 법:** 소스 14개 중 Anthropic 발행 5개, 비-Anthropic 9개. 비-Anthropic 중 스스로 측정한 소스는 GEPA, MemGPT, Reflexion, LongMemEval, Zep, A-MEM 여섯이다. 그중 Zep은 벤더 자사 측정이다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -139,3 +145,5 @@ status: draft
 - [[2023-10-12-memgpt]] — Packer 외 6인 (UC Berkeley, arXiv preprint). 편향 노트: 두 번째 독립 측정 소스, GEPA와 Stoica 공저 (2026-11-26)
 - [[2023-03-20-reflexion]] — Shinn 외 5인 (Northeastern·MIT·Princeton). 편향 노트: Berkeley 계열이 아닌 첫 학술 소스 (2026-11-26)
 - [[2024-10-14-longmemeval]] — Wu 외 5인 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 편향 노트: OpenAI 제품을 실측한 학계·산업 공동 소스 (2026-11-26)
+- [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI). 편향 노트: 벤더 자사 제품 preprint (2026-11-26)
+- [[2025-02-17-a-mem]] — Xu 외 5인 (Rutgers 등). 편향 노트: 외부 소스가 Claude(Haiku)를 잰 첫 데이터, 신뢰도 낮음 (2026-11-26)

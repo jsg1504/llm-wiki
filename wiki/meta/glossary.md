@@ -37,6 +37,10 @@ status: draft
 - **knowledge update** — 사용자 정보가 바뀐 것을 알아채고 memory를 갱신하는 능력. LongMemEval의 다섯 능력 중 하나다. 재는 방법은 있지만 갱신을 구현하는 방법은 위키에 아직 소스가 없다. → [[agent-memory]]
 - **abstention** — memory에 없는 것을 물으면 지어내지 않고 모른다고 답하는 능력. LongMemEval은 기존 질문을 거짓 전제 질문으로 바꿔 잰다.
 - **key expansion (document expansion)** — memory 항목을 색인할 때 원문에 요약·사실·keyphrase를 이어 붙여 key로 쓰는 것. LongMemEval에서는 원문 + 사용자 사실이 recall@k +9.4%였다. 압축본만 key로 쓰면 나아지지 않았다.
+- **bi-temporal** — 사실에 시간 축 둘을 붙이는 모델. 사실이 실제로 참이었던 기간(t_valid, t_invalid)과 시스템이 그 사실을 받아들이고 무효화한 시점(t′_created, t′_expired)을 따로 기록한다. Zep의 용어. → [[agent-memory]]
+- **edge invalidation** — 새 사실이 기존 사실과 모순될 때 기존 사실을 지우지 않고 t_invalid만 설정해 무효 표시하는 갱신 방식. 이전 상태가 남아 되돌릴 수 있다. → [[2025-01-20-zep]]
+- **memory evolution** — 새 memory가 들어오면 가까운 기존 memory의 설명·keyword·tag를 LLM이 다시 쓰는 갱신 방식. 이전 버전은 남지 않는다. A-MEM의 용어. → [[2025-02-17-a-mem]]
+- **Zettelkasten** — 원자적인 노트를 만들고 노트끼리 자유롭게 링크해 지식망을 키우는 메모 방법. A-MEM이 memory 구조로 빌렸고, 이 위키의 wikilink 구조도 같은 계열이다.
 - **능력 가정 / 과제 규칙** — harness나 prompt에 들어간 규칙을 가르는 두 종류. 능력 가정은 *"모델은 X를 못 한다"* 는 진술이라 모델이 좋아지면 썩는다(예: context anxiety를 막는 reset). 과제 규칙은 과제 자체에 대한 지시라 모델을 바꿔도 남는다(예: GEPA prompt의 모델 간 전이 +9%). 모델 밖에 무엇을 쌓을지 고르는 기준이다. 이 구분은 위키가 붙인 것이고 소스의 용어가 아니다. → [[meta-harness]], [[what-to-accumulate-outside-the-model]]
 - **quarantine** — 신뢰할 수 없는 콘텐츠를 읽는 에이전트에게 고권한 행동을 주지 않고, 행동은 별도 에이전트가 하게 하는 패턴. 무력화가 아니라 트레이드오프다(trust escalation). → [[agentic-governance]]
 - **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]

@@ -3,7 +3,7 @@ title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -127,6 +127,8 @@ status: draft
 
 위 지침들은 **제품 에이전트를 개선하기 위한** 평가다. [[2026-08-21-the-ai-native-sdlc-playbook]]은 같은 도구를 다른 자리에 놓는다 — **에이전트의 설정 자체**(`CLAUDE.md`·skills·hooks)가 바뀔 때 CI에서 eval suite를 돌려 통과율을 보고하게 한다. 실제 작업 20~50개를 eval로 만들라는 권고는 위 "20개 쿼리로 시작"과 규모가 같고, 여기에 하나를 더한다: **production incident 하나당 eval 하나**를 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아지면 변별력을 잃은 케이스를 교체해야 하는 살아있는 suite다.
 
+> **벤치마크가 낡는 실제 사례 (2026-11-26).** [[2023-10-12-memgpt]]가 2023년에 만든 DMR(Deep Memory Retrieval)은 MemGPT가 GPT-4 Turbo로 93.4%를 내며 기준이 됐다. 2025년 [[2025-01-20-zep]]이 다시 재자 **memory 시스템 없이 대화 전체를 context에 넣은 baseline**이 gpt-4-turbo 94.4%, gpt-4o-mini 98.0%였다. 대화당 60메시지라 context에 다 들어가기 때문이다. Zep 저자들은 DMR이 *"memory 시스템 평가에 부적합하다"* 고 본다. 측정하려던 능력(context 밖의 기억)이 context window가 커지면서 시험되지 않게 됐다. 위 "변별력을 잃은 케이스를 교체"가 suite 전체 단위에서 일어난 사례다. *(뒤 문장은 추론이다.)*
+>
 > **교체 대신 늘린다 (2026-11-26).** [[2024-10-14-longmemeval]]은 변별력 문제를 벤치마크 설계에서 푼다. 기존 장기 memory 벤치마크의 이력이 짧고 고정돼 있어 *"시스템이 계속 좋아지면서 난이도를 제한한다"* 고 보고, 증거 세션을 무관한 세션들 사이에 넣는 방식으로 **이력 길이를 자유롭게 늘릴 수 있게** 만든다. 표준은 약 115k token과 약 1.5M token 두 가지다. 케이스를 새로 쓰지 않고 **같은 질문의 난이도를 올리는** 길이다. 다만 길이라는 축 하나로만 늘어나므로 모든 과제에 쓸 수 있는 방법은 아니다. *(뒤 문장은 추론이다.)*
 >
 > **판정자를 사람과 대조한다.** 같은 소스는 GPT-4o 판정자를 유형별 30문항, 두 생성 모델에 대해 사람 전문가 판정과 비교해 평균 97~98% 일치를 확인하고 결과를 공개한다. 답이 열린 유형(preference, abstention)에서 가장 많이 어긋났다. §2의 LLM-as-judge를 쓸 때 **판정자 자체의 정확도를 따로 보고하는** 사례다. 대조적으로 [[2023-10-12-memgpt]]는 판정자에게 *"후하게 채점하라"* 고 지시하고, GPT-4가 사람과 잘 일치한다는 선행 연구를 인용할 뿐 **자체 대조 결과는 내지 않는다.**
@@ -166,4 +168,5 @@ status: draft
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). §7만 이 소스에서 왔다 (2026-11-25)
 - [[2023-03-20-reflexion]] — Shinn 외 5인 (arXiv 2303.11366). §2b의 "분리하지 않았을 때의 수치" 노트만 이 소스에서 왔다 (2026-11-26)
 - [[2024-10-14-longmemeval]] — Wu 외 5인 (ICLR 2025). §6의 "교체 대신 늘린다"·판정자 대조 노트만 이 소스에서 왔다 (2026-11-26)
-- [[2023-10-12-memgpt]] — Packer 외 6인 (arXiv 2310.08560). §6 노트의 대조 사례(검증 없는 관대한 판정자) (2026-11-26)
+- [[2023-10-12-memgpt]] — Packer 외 6인 (arXiv 2310.08560). §6 노트의 대조 사례(검증 없는 관대한 판정자), DMR 원 출처 (2026-11-26)
+- [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI, arXiv 2501.13956). §6의 "벤치마크가 낡는 실제 사례"(DMR 재측정)만 이 소스에서 왔다 (2026-11-26)

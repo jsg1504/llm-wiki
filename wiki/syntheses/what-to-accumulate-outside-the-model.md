@@ -3,7 +3,7 @@ title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않�
 type: synthesis
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval]
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem]
 question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
 aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
 tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
@@ -68,6 +68,16 @@ status: draft
 
 harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는 규칙인지**를 함께 적는다. 모델을 바꿀 때 그 규칙을 끈 상태로 eval을 돌리면 아직 필요한지 판별할 수 있다. 1번의 eval suite가 이 판별 도구가 된다. context reset 사례([[meta-harness]])를 미리 잡아내는 장치다.
 
+### 5. 쌓인 것은 지우지 않고 무효화한다 *(추론)*
+
+쌓는 자산은 시간이 지나면 틀린 것이 섞인다. 사용자 정보가 바뀌고, eval 케이스가 변별력을 잃고, harness 규칙이 썩는다. 그때 **덮어쓰거나 지우지 말고 "언제부터 유효하지 않은지"를 표시**하는 편이 안전하다.
+
+- memory에서 이 처방을 구현한 것이 Zep이다. 사실마다 참이었던 기간을 기록하고, 모순되는 새 사실이 오면 옛 사실을 지우지 않고 무효 표시한다. 원본에서 사실로, 사실에서 원본으로 거슬러 올라갈 수 있다 ([[agent-memory]] §3, [[2025-01-20-zep]]).
+- 반대 설계는 A-MEM이다. 새 정보가 오면 기존 노트의 설명을 **덮어쓰고** 이전 버전은 남기지 않는다 ([[2025-02-17-a-mem]]). LongMemEval이 관측한 ChatGPT memory는 이력을 압축하며 정보를 바꿔 원문보다 37% 낮았다 ([[2024-10-14-longmemeval]]). 덮어쓰기는 잘못 갱신했을 때 되돌릴 근거가 없다.
+- 두 방식은 같은 벤치마크로 비교된 적이 없다. 그래서 "무효화가 더 정확하다"는 근거는 없다. 근거가 있는 것은 **되돌릴 수 있다**는 성질뿐이다. 모델이 바뀌면 판정이 틀릴 수 있다는 1~4번의 전제에서는 그 성질이 값을 한다.
+
+이 원칙은 이 위키 자체의 운영 원칙과 같다. `CLAUDE.md`는 모순을 조용히 덮어쓰지 말고 양쪽을 보존하라고 하고, `log.md`는 append-only이며, 모든 변경이 git에 남는다. 4번의 "능력 가정에 유효기간을 단다"도 같은 처방을 harness 규칙에 적용한 것이다. 규칙을 지우는 대신 **어느 모델까지 유효했는지**를 남긴다.
+
 ## 쌓을수록 커지는 위험
 
 - **쌓인 것이 공격 표면이다.** persistent memory poisoning의 표적 목록에 `CLAUDE.md`와 장기 실행 에이전트의 state 디렉토리가 명시돼 있다. 커밋과 리뷰가 방어의 일부지만, 저자들은 그것만으로 부족하다고 본다 ([[artifact-chain]], [[prompt-injection]], [[2026-05-25-how-we-contain-claude]]).
@@ -88,9 +98,9 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 
 ## 빈틈
 
-- ~~**장기 memory 시스템** 자체를 다룬 소스가 없다.~~ **부분적으로 채워짐 (2026-11-26):** [[2023-10-12-memgpt]]가 들어와 [[agent-memory]]가 생겼다. 무엇을 어떻게 저장하고 다시 가져오는가는 다룬다. **무엇을 잊어야 하는가**(삭제, 갱신, 모순된 사실)와 memory 검색 품질의 측정은 여전히 비어 있다.
+- ~~**장기 memory 시스템** 자체를 다룬 소스가 없다.~~ **부분적으로 채워짐 (2026-11-26):** [[2023-10-12-memgpt]]가 들어와 [[agent-memory]]가 생겼다. 무엇을 어떻게 저장하고 다시 가져오는가는 다룬다. 이후 LongMemEval(측정), Zep·A-MEM(갱신 구현)이 들어와 **갱신**과 **측정**은 채워졌다. **삭제**는 여전히 구현도 측정도 없다.
 - **모델 간 전이의 근거가 얇다.** prompt 하나, 모델 두 개, 약한 모델에서 강한 모델 방향만 확인됐다. skill·harness profile·eval의 전이와 Claude 계열 데이터는 없다 ([[agent-recipe]]).
-- **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다. 변별력을 **지키는 설계** 하나(이력 길이를 늘릴 수 있는 벤치마크)는 [[2024-10-14-longmemeval]]로 생겼다.
+- **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다. 변별력을 **지키는 설계** 하나(이력 길이를 늘릴 수 있는 벤치마크)는 [[2024-10-14-longmemeval]]로 생겼다. 벤치마크 전체가 낡은 사례 하나(DMR: 2023년 기준이 2025년엔 단순 baseline에 진다)는 [[2025-01-20-zep]]로 생겼다. 속도에 대한 수치는 여전히 없다.
 - 채울 만한 소스 후보: agent memory 관련 논문이나 글, eval suite를 모델 교체에 걸쳐 유지한 실무 회고.
 
 ## Related
@@ -118,3 +128,5 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[2023-10-12-memgpt]] — memory 계층, 능력 가정이 새 모델에서 거꾸로 작용한 사례 (2026-11-26)
 - [[2023-03-20-reflexion]] — 모델의 강점에 올라타는 구조, 인스턴스용 반성문 (2026-11-26)
 - [[2024-10-14-longmemeval]] — 원문 + 사실로 저장하기, 난이도를 늘릴 수 있는 eval, 판정자 대조 (2026-11-26)
+- [[2025-01-20-zep]] — 무효화하되 지우지 않는 갱신(bi-temporal) (2026-11-26)
+- [[2025-02-17-a-mem]] — 덮어쓰는 갱신의 반대 사례 (2026-11-26)

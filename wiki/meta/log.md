@@ -250,3 +250,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[agent-memory]], [[meta-harness]], [[agent-evaluation]], [[prompt-injection]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
 - contradictions: 없음. MemGPT의 재귀 요약과 "압축하면 나빠진다"는 결과는 MemGPT가 원본도 보존하므로 일치로 기록했다.
 - notes: raw는 arXiv v2 PDF를 내려받았다(파일명 날짜는 arXiv 페이지에서 확인한 v1 제출일). 새 concept 없이 agent-memory에 흡수했고 페이지가 약 120줄에서 189줄로 커졌다(사용자 승인). 세 단계·네 조정점 틀로 MemGPT·Reflexion을 다시 놓았고, 다섯 능력, 설계 실험 표, 모델 순서가 뒤집힌 세 번째 사례(GPT-4o-mini > GPT-4o, Llama 70B < 8B)를 넣었다. memory poisoning은 *(추론)*에서 소스 근거로 올렸다. agent-evaluation §6에 "교체 대신 늘린다"와 판정자 대조(97~98%)를 넣으면서 MemGPT도 대조 사례로 인용해 sources에 추가했다.
+
+## [2026-11-26 01:08] ingest | Zep: A Temporal Knowledge Graph Architecture for Agent Memory + A-MEM: Agentic Memory for LLM Agents
+- source: [[wiki/sources/2025-01-20-zep|Zep (Rasmussen 외, arXiv 2501.13956)]], [[wiki/sources/2025-02-17-a-mem|A-MEM (Xu 외, arXiv 2502.12110)]]
+- created: [[2025-01-20-zep]], [[2025-02-17-a-mem]]
+- updated: [[agent-memory]], [[2023-10-12-memgpt]], [[agent-evaluation]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
+- contradictions: 없음. 갱신 방식의 대립(Zep 무효화 vs A-MEM 덮어쓰기)은 같은 벤치마크 비교가 없어 사용자 합의에 따라 "비교 데이터 없는 설계 선택의 대립"으로 기록했다.
+- notes: 사용자 요청으로 두 소스를 한 번에 처리했다. raw는 arXiv PDF를 내려받았다(파일명 날짜는 arXiv 페이지에서 확인한 v1 제출일). agent-memory는 사용자 승인으로 절 순서를 다시 짰다(무엇을 남기나 → 담나 → 갱신 → 찾고 읽기 → 누가 관리 → 능력 가정 → cadence → 위험). 내용은 지우지 않았고 236줄이 됐다. 섹션 번호를 참조하는 외부 링크가 없음을 먼저 확인했다. 새 §3 "어떻게 갱신하나"에 원문·key·이전 상태 비교 표를 넣었다. Zep의 DMR 재측정(대화 전체 baseline 94.4% > MemGPT 93.4%)으로 MemGPT source 페이지의 *(추론)*이 실측으로 확인됐다고 적었다. "무효화하되 지우지 않는다" 원칙은 artifact-chain이 아니라 synthesis §5에 일반화해 넣었다(사용자와 합의). A-MEM 부록의 Claude Haiku 데이터를 anthropic에 "외부 소스가 Claude를 잰 첫 데이터, 신뢰도 낮음"으로 기록했다.
