@@ -170,3 +170,22 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:07] manual | source-ingest skill에 역링크 점검(§4.4) 추가
 - touched: `.claude/skills/source-ingest/SKILL.md` (§4.4 신설, §7 보고 항목, 안티 패턴 1줄)
 - notes: lint 2026-09-12와 2026-11-25에서 두 번 연속 같은 문제가 나왔다. 새 클러스터가 기존 페이지로 링크만 걸고 역방향이 없어 단방향 다리가 됐다. 이제 ingest 때마다 만들거나 바꾼 페이지의 링크 대상을 점검한다. topic이 대상이거나 기존 주장을 보강·반박하는 경우에는 본문에 역링크를 넣고, entity 단순 언급과 source 페이지는 생략한다. 역링크 대상은 takeaway 합의 때 미리 승인받는다. 점검 스니펫을 [[agent-recipe]]와 [[loop-engineering]]에 돌려 보니 걸린 것은 entity 1개와 source 3개뿐이었다. 둘 다 규칙상 생략 대상이라 직전 curate 결과와 맞는다.
+
+## [2026-11-25 23:18] ingest | GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning
+- source: [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (UC Berkeley·Stanford·Databricks·MIT 등, arXiv 2507.19457, ICLR 2026 Oral)
+- created: [[2025-07-25-gepa-reflective-prompt-evolution]] (source), [[prompt-optimization]] (concept, draft)
+- updated: [[agent-recipe]] (stub → draft), [[loop-engineering]], [[agent-evaluation]] (§7 신설), [[meta-harness]], [[anthropic]], [[index]]
+- contradictions:
+  - **⚠️ 긴장 1건 (모순까지는 아님): "AI 시스템에는 recipe 같은 그릇이 없다".** [[agent-recipe]]가 Gavrilescu를 따라 적은 진술에 GEPA와 DSPy 계열이 반례가 된다. 양쪽 주장을 보존했다. "부품을 자동으로 증류하는 방법은 있다. 그것들을 묶는 그릇은 없다"로 부분 화해하고 이 위키의 해석으로 표시했다. 사용자 승인.
+  - 기존 모순 **taste는 루프에 맞는가**([[loop-engineering]])는 판정 상태를 바꾸지 않았다. GEPA의 과제는 전부 정답이 있어 taste 영역의 데이터가 아니다.
+- backlinks (§4.4, 처음 적용): 새 페이지가 링크한 대상 6개 중 5개([[agent-recipe]], [[loop-engineering]], [[agent-evaluation]], [[meta-harness]], [[anthropic]])에는 본문과 Related에 역링크를 넣었다. [[prompt-injection]] 1개는 사전 승인 목록에 없어 보류하고 사용자에게 물었다. topic 직접 링크는 없다. [[agent-recipe]] → [[ai-native-sdlc]] 경로로 이어진다.
+- notes:
+  - lint 2026-11-25 액션 #2 수행. 9/12 lint부터 두 주기 동안 미통합이었다.
+  - **이 위키 최초의 동료 심사, 학술, 대규모 정량 소스다.** Anthropic을 전혀 거치지 않고 실험 모델에 Claude가 없다. 편향의 종류는 **자기 도구 편향**이다. MIPROv2 저자와 DSPy 창시자가 공저자다.
+  - 핵심 주장("텍스트 피드백이 스칼라보다 풍부하다")을 직접 검증하는 비교가 본문에 없다. GRPO 비교는 다른 파라미터 공간끼리다. test set이 과제당 300개 수준이다. AIME에서는 GRPO가 이겼다. 모두 source 페이지 My Notes에 기록했다.
+  - [[agent-recipe]]의 provider-agnostic 주장에 첫 정량 근거가 생겼다(Qwen3 8B → GPT-4.1 Mini +9%). 한 방향, 두 모델, prompt 하나뿐이라는 한계를 같이 적었다.
+  - [[meta-harness]]에 추론 하나를 더했다. 썩는 것은 **능력 가정**이고, 남는 것은 **과제 규칙**이다.
+
+## [2026-11-25 23:20] curate | GEPA ingest 보류 역링크 — prompt-injection
+- touched: [[prompt-injection]], [[index]]
+- notes: 직전 ingest에서 §4.4로 보류했던 역링크를 사용자 승인으로 반영했다. Related 한 줄로 끝내지 않고 "열린 질문" 절을 새로 만들었다. Gray Swan 적응적 공격(100회 후 5~6%)과 GEPA adversarial 탐색(AIME 76% → 10%)을 연결했다. 위협 모델이 다르다는 점(신뢰 경계를 넘는가)을 명시했고, injection 탐색에 쓸 수 있는지는 *(추론)*으로 표시한 질문으로만 남겼다. sources +1.

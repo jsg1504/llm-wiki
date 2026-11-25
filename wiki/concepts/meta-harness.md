@@ -2,8 +2,8 @@
 title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
-updated: 2026-09-30
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product]
+updated: 2026-11-25
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -202,6 +202,8 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 
 > **맨 위 층은 나중에 추가됐다 (2026-09-21).** [[2026-06-07-loop-engineering]]이 *"Loop engineering sits one floor above the harness"* 라고 적으며 한 칸을 더 얹는다 — harness를 **주기적으로 기동하고** 실행과 실행 사이를 외부 state로 잇는 층이다. 이 소스는 [[managed-agents]]를 다루지 않으므로 meta-harness와 루프의 정확한 상하 관계를 직접 말하지는 않는다. 위 배치는 *무엇이 얼마나 오래 사는가* 축을 그대로 연장한 이 위키의 정리다. → [[loop-engineering]]
 
+> **맨 아래 층도 자동화된다 (2026-11-25).** prompt는 가장 빠르게 변하는 층이라 손으로 따라가기도 가장 힘들다. [[2025-07-25-gepa-reflective-prompt-evolution]]은 그 층을 알고리즘으로 돌린다. trace와 채점 텍스트를 반성해 prompt를 고친다. 이 페이지의 논리와 맞물리는 결과가 하나 있다. Qwen3 8B로 최적화한 prompt가 GPT-4.1 Mini에서도 +9%를 냈다. **모델이 바뀌면 harness의 가정이 썩는다**는 이 페이지의 전제와 달리, trace에서 증류한 지시문은 적어도 한 방향(약한 모델 → 강한 모델)으로는 살아남았다. 모순은 아니다. 이 페이지가 말한 것은 *"Claude는 X를 못 한다"* 같은 **능력 가정**이고, GEPA의 지시문은 **과제에 대한 규칙**이다. 무엇이 썩고 무엇이 남는지를 가르는 기준이 하나 생긴 셈이다. *(추론)* → [[prompt-optimization]]
+
 이 층위 구분은 [[subagent]]가 기록한 **조정 주체의 네 층위**(사람 / lead agent / 프로그램 / …)와 직교한다. 그쪽은 *누가 조정하는가*를, 이쪽은 *무엇이 얼마나 오래 사는가*를 나눈다.
 
 ## 한계와 읽을 때의 주의
@@ -217,6 +219,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[dynamic-workflows]] — 같은 문제의 반대 방향 처방. 대체재가 아니라 다른 층위
 - [[agent-recipe]] — "harness보다 오래 사는 것"에 대한 또 다른 답. 여기는 **인터페이스**를 고정하고, 그쪽은 **누적된 판단**(eval, skill, harness profile)을 provider-agnostic하게 들고 간다
 - [[loop-engineering]] — 한 칸 위의 층위. harness를 *언제* 기동하고 실행 사이에 무엇을 남길 것인가
+- [[prompt-optimization]] — 맨 아래 층(prompt)을 자동으로 최적화하는 방법. 능력 가정과 달리 과제 규칙은 모델을 바꿔도 남는다는 근거
 - [[claude-code]] — meta-harness 위에 얹힐 수 있는 harness 중 하나로 위치 지어진다
 - [[agentic-governance]] — 통제 표면의 구체. 이 페이지는 그 위의 판별 기준("이 방어는 모델 능력의 함수인가")을 더한다
 - [[artifact-chain]] — 상태를 구성요소 밖 파일로 빼 결합을 끊는 같은 처방의 다른 층위
@@ -233,3 +236,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 보안 경계 절의 실증
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). Related의 agent-recipe 대비만 이 소스에서 왔다
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 층위 다이어그램 맨 위 칸(loop)의 출처
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). prompt 층 자동화와 모델 간 전이 (2026-11-25)

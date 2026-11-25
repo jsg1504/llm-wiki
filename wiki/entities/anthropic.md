@@ -2,8 +2,8 @@
 title: Anthropic
 type: entity
 created: 2026-09-11
-updated: 2026-09-30
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
+updated: 2026-11-25
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
@@ -74,6 +74,13 @@ status: draft
 > - **못 메우는 것 — 편향의 종류만 바뀌었다.** 벤더 편향 대신 **스타트업 제품 편향**이다. 개념 설명이 곧바로 자사 `pi.recipes` 소개로 이어진다. 정량 데이터는 여전히 0이다.
 > - **값을 낸 것 — 실질적 반론 하나.** Osmani의 *"taste는 루프에 맞지 않는다"* 에 정면으로 반대한다. → [[loop-engineering]]의 Contradiction 절
 
+> **처음으로 학술적이고 정량적인 독립 소스 (2026-11-25).** [[2025-07-25-gepa-reflective-prompt-evolution]](UC Berkeley·Stanford·Databricks 등, ICLR 2026 Oral)은 Anthropic을 발행처로도 인용 경로로도 거치지 않는다. 실험 모델에 Claude가 없다(Qwen3 8B, GPT-4.1 Mini, GPT-4o, GPT-5 Mini).
+>
+> - **메우는 것 — 동료 심사와 수치.** 이 위키가 계속 비어 있다고 적어 온 *"독립 벤치마크"* 칸에 처음으로 들어오는 소스다. 6개 benchmark, 2개 모델, 공개 코드, baseline 4종 비교가 있다.
+> - **못 메우는 것 — 이 위키의 중심 주제.** 다루는 대상은 고정된 파이프라인의 prompt 최적화다. 멀티에이전트 조정, 격리, 장기 실행 코딩 에이전트에 대한 Anthropic 소스들의 주장을 직접 검증하지는 않는다.
+> - **편향의 종류가 또 바뀐다.** 벤더나 스타트업 제품이 아니라 **자기 도구 편향**이다. 주요 비교 대상(MIPROv2)의 저자와 DSPy 창시자가 공저자이고, 벤치마크도 같은 연구 계열에서 왔다.
+> - **세는 법:** 소스 9개 중 Anthropic 발행 5개, 비-Anthropic 4개. 비-Anthropic 중 **스스로 측정한 소스는 이것 하나**다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -92,6 +99,7 @@ status: draft
 - [[agent-containment]] — 다섯 번째 소스의 중심 개념. 세 제품의 격리 아키텍처.
 - [[prompt-injection]] — 같은 소스가 보고한 공격면과 실패 사례.
 - [[loop-engineering]] — 이 위키 최초의 비-Anthropic 소스가 들어온 개념. 편향 추적의 대조군.
+- [[prompt-optimization]] — 최초의 학술·정량 독립 소스가 들어온 개념. 실험에 Claude가 없다.
 
 ## Sources
 
@@ -106,3 +114,4 @@ status: draft
 - [[2026-06-07-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-06-07). 이 위키 최초의 외부 소스. Codex와 Claude Code를 대칭으로 다룬다.
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani, 개인 블로그 (2026-08-14). 앞 글의 실전편. **내용의 상당 부분이 Claude Code 팀 X article의 인용**이므로 순수 외부 소스로 세면 안 된다.
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu, Introspection (AI Engineer World's Fair 발표). **Anthropic을 발행처로도 인용 경로로도 거치지 않는 첫 소스.** 단 자사 제품 발표다.
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 편향 노트: 최초의 학술·정량 독립 소스 (2026-11-25)

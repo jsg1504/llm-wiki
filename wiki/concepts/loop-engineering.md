@@ -2,8 +2,8 @@
 title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
-updated: 2026-09-30
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product]
+updated: 2026-11-25
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
 ---
@@ -139,6 +139,8 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 > - **맥락이 다르다:** Osmani는 **개인 개발자가 자기 코드베이스**에서 도는 루프를, Gavrilescu는 **같은 판단을 수많은 사용자에게 반복 적용하는 제품**을 말한다. 후자는 판단이 반복되고 A/B로 검증할 사용자 신호가 있다. 전자의 *"이 PR이 가치 있는가"* 는 매번 다른 일회성 판단이다.
 >
 > 양쪽 모두 정량 근거가 없다. 어느 쪽이 맞는지보다 **어떤 조건에서 taste를 코드화할 수 있는가**가 남은 질문이다.
+>
+> **2026-11-25:** [[2025-07-25-gepa-reflective-prompt-evolution]]이 들어왔지만 판정 상태는 바꾸지 않는다. 정답이 있는 과제에서 증류가 효율적으로 자동화된다는 것만 보였다. taste 영역의 데이터는 아니다. 위 "두 번째 루프" 절의 노트 참조.
 
 그리고 이미 도는 루프를 끊는 신호 하나 — **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
 
@@ -205,6 +207,10 @@ use /goal to implement a fix until all local tests pass and push the branch."
 이 위키의 기존 기록과 겹치는 지점이 있다. 위 *"검증을 skill로 코드화한다"* 는 사람이 반복하던 확인을 skill로 옮기는 것이었다. 이것은 **system distillation 한 단계를 손으로 한 것**이다. 새 소스는 그 단계를 루프로 **자동화**하라고 말한다. 단, 사람의 보정은 남긴다.
 
 > ⚠️ 이 소스는 **자사 제품(pi.recipes) 발표**이고 정량 근거가 없다. 두 번째 루프가 실제로 첫 루프를 개선했다는 수치는 제시되지 않는다.
+
+> **signal의 품질에 대한 첫 수치 (2026-11-25).** [[2025-07-25-gepa-reflective-prompt-evolution]]은 다른 맥락(고정된 파이프라인의 prompt 최적화)에서 두 번째 루프의 한 조각을 측정한다. signal을 **점수 하나가 아니라 점수로 접히기 전의 텍스트**(컴파일러 에러, 실패한 루브릭, 아직 못 찾은 문서)로 주면, 학습 신호로 쓴 train rollout 6~179회로 가중치 RL(24,000 rollout)의 최고 점수에 도달한다. Gavrilescu의 *"signal의 품질이 성공률을 정한다"* 를 메커니즘으로 보여주는 셈이다. *(대응은 이 위키의 해석이다.)*
+>
+> **taste 모순(아래)은 판정하지 못한다.** GEPA의 과제는 전부 정답이 있다(exact match, F1, pass rate). 다만 조건 하나는 좁혀 준다. 채점 함수와 텍스트 피드백이 **있으면** 증류는 적은 시도로 자동화된다. 남는 질문은 taste를 채점 함수로 쓸 수 있는가이다. → [[prompt-optimization]]
 
 ## 반대급부 — 루프가 좋아질수록 커지는 셋
 
@@ -278,6 +284,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 ## Related
 
 - [[agent-recipe]] — 두 번째 루프의 산출물. system distillation으로 루프가 남기는 누적 판단
+- [[prompt-optimization]] — 두 번째 루프의 한 조각(prompt 증류)을 자동화하고 측정한 방법. signal을 텍스트로 줄 때의 표본 효율
 - [[meta-harness]] — 바로 아래 층위. harness들보다 오래 사는 인터페이스를 고정하는 처방
 - [[dynamic-workflows]] — 한 턴 안의 조정을 코드로 내리는 처방. 루프의 한 턴이 이것을 띄울 수 있다
 - [[agent-orchestration-patterns]] — 루프의 한 턴 안에서 쓰이는 여섯 제어 구조. #6 loop-until-done이 `/goal`의 원형
@@ -296,3 +303,4 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). 두 번째 루프 절, taste에 관한 ⚠️ Contradiction
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 층위 대비와 loop-until-done·판정자 분리의 대조군
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). harness 층위 다이어그램의 출처
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 두 번째 루프의 signal 품질에 대한 첫 수치. taste 모순은 판정하지 못함 (2026-11-25)

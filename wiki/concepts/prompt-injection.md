@@ -2,8 +2,8 @@
 title: Prompt Injection (에이전트 공격면)
 type: concept
 created: 2026-09-21
-updated: 2026-09-21
-sources: [2026-05-25-how-we-contain-claude, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents]
+updated: 2026-11-25
+sources: [2026-05-25-how-we-contain-claude, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [prompt-injection, agent-security, exfiltration, memory-poisoning, trust-escalation, mcp, anthropic]
 status: draft
 ---
@@ -194,6 +194,16 @@ classifier는 사용자 의도에 닻을 내린다. 사용자가 직접 친 지�
 
 **패턴이 보인다:** 모델 층위는 indirect에서만 실질적으로 기여하고, **나머지 전부에서 환경 층위가 최후 방어선**이다. 이것이 [[agent-containment]]의 *"환경 층위 먼저"* 원칙의 실증적 근거다.
 
+## 열린 질문: 적응적 공격을 자동 탐색으로 만들 수 있는가 (2026-11-25)
+
+위 Gray Swan 수치는 단발 공격 0.1%가 **100회 적응적 공격 후 5~6%**로 오른다는 것이다. 공격자가 결과를 보고 문장을 고쳐 나가면 방어가 얇아진다.
+
+[[2025-07-25-gepa-reflective-prompt-evolution]]은 그 "결과를 보고 문장을 고쳐 나가기"를 자동으로 하는 엔진을 보여준다. 보상을 뒤집으면 성능을 떨어뜨리는 지시문을 찾는다. 과제 내용은 그대로 둔 채 잡담 몇 줄을 끼워 넣은 지시문 하나가 GPT-5 Mini의 AIME-2025 정답률을 76%에서 10%로 떨어뜨렸다. → [[prompt-optimization]]
+
+**위협 모델은 다르다.** 이 페이지의 공격은 **외부 공격자가 신뢰 경계를 넘어** 에이전트가 원하지 않는 행동을 하게 만드는 것이다. GEPA의 탐색은 **사용자 자신의 prompt에 끼워 넣은 사소한 교란**으로 성능을 떨어뜨리는 것이고, 신뢰 경계를 넘지 않는다. 그래서 GEPA 결과는 injection 방어에 대해 아무것도 증명하지 않는다.
+
+**남는 질문:** 같은 탐색 기법으로 injection 문장(유출, 권한 상승)을 찾게 하면 적응적 공격을 싸게 만들 수 있는가? 그렇다면 방어 쪽도 이 엔진으로 회귀 suite를 미리 만들 수 있는가? 소스는 어느 쪽도 다루지 않는다. *(추론)*
+
 ## 한계와 읽을 때의 주의
 
 - **이 페이지의 사례는 전부 한 조직의 것이다.** 다섯 소스가 모두 [[anthropic]]이고, 여기 적힌 공격은 Anthropic 제품에서 발견·수정된 것들이다. **발견되지 않은 것의 분포는 알 수 없고**, 다른 벤더의 에이전트에서 어떤 경로가 열려 있는지도 이 위키에 자료가 없다.
@@ -211,9 +221,11 @@ classifier는 사용자 의도에 닻을 내린다. 사용자가 직접 친 지�
 - [[managed-agents]] — 자격증명이 에이전트에 닿지 않게 하는 두 패턴
 - [[artifact-chain]] — 지속 아티팩트가 memory poisoning 면을 갖는다
 - [[multi-agent-systems]] — 에이전트를 여럿 굴릴 때 신뢰 경계가 늘어나는 문제
+- [[prompt-optimization]] — 적응적 공격 문장을 자동으로 찾는 엔진의 이웃. 위협 모델은 다르다 (열린 질문 절)
 
 ## Sources
 
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 이 페이지 대부분의 1차 출처
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — quarantine 패턴의 원래 기록 (trust escalation 절의 대조군)
 - [[2026-04-08-scaling-managed-agents]] — 자격증명이 sandbox에 닿지 않게 하는 구조적 방어
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 열린 질문 절만 이 소스에서 왔다 (2026-11-25)

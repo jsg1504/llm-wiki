@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-09-30
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
+updated: 2026-11-25
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -120,6 +120,16 @@ status: draft
 
 위 지침들은 **제품 에이전트를 개선하기 위한** 평가다. [[2026-08-21-the-ai-native-sdlc-playbook]]은 같은 도구를 다른 자리에 놓는다 — **에이전트의 설정 자체**(`CLAUDE.md`·skills·hooks)가 바뀔 때 CI에서 eval suite를 돌려 통과율을 보고하게 한다. 실제 작업 20~50개를 eval로 만들라는 권고는 위 "20개 쿼리로 시작"과 규모가 같고, 여기에 하나를 더한다: **production incident 하나당 eval 하나**를 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아지면 변별력을 잃은 케이스를 교체해야 하는 살아있는 suite다.
 
+### 7. 채점 함수는 점수와 함께 텍스트를 내야 한다 (2026-11-25)
+
+지금까지 이 페이지의 eval은 **판정**을 위한 것이었다. 통과했는가, 몇 점인가. [[2025-07-25-gepa-reflective-prompt-evolution]]은 eval의 출력을 **개선의 재료**로 쓴다. 그러려면 점수 하나로는 부족하다.
+
+- **feedback function.** 채점 함수가 점수와 함께 `feedback_text`를 돌려준다. 점수로 접히기 전에 이미 있던 텍스트다. 컴파일러 에러, 통과 못 한 루브릭 항목, 멀티홉 검색에서 아직 못 찾은 문서 목록 같은 것이다. 모듈별로 줄 수 있으면 더 좋다.
+- **사람 채점의 근거도 같은 자리에 들어간다.** 사람이 점수를 매기는 도메인이라면 *왜 그 점수인지* 쓴 설명을 feedback_text로 넣는다. §3b의 "사람은 eval을 보정한다"와 같은 방향이다. 사람의 판단이 숫자가 아니라 **읽을 수 있는 근거**로 루프에 들어간다.
+- **효과의 크기.** 이렇게 텍스트를 반성해 prompt를 고치면 학습 신호로 쓴 train rollout 6~179회로 가중치 RL(24,000 rollout)의 최고 점수에 도달했다. 다만 텍스트를 **끄고** 돌린 직접 비교는 논문에 없다. → [[prompt-optimization]]
+
+**같은 엔진을 뒤집으면 회귀 suite가 나온다.** 보상을 반대로 주면 성능을 떨어뜨리는 지시문을 찾는다. 과제 내용을 보존하는 잡담 몇 줄이 GPT-5 Mini의 AIME-2025 정답률을 76%에서 10%로 떨어뜨렸다. 저자들은 이런 지시문을 **재사용 가능한 stress test와 회귀 suite**로 쓰자고 제안한다. §6의 "incident 하나당 eval 하나"는 사고가 **난 뒤** 회귀 케이스를 추가한다. 이쪽은 **사고 전에** 최악의 경우를 탐색해 케이스를 만든다. *(대비는 이 위키의 정리다. 저자들의 결과는 모델 하나, 30문제의 예비 결과다.)*
+
 ## Related
 
 - [[agent-orchestration-patterns]] — adversarial verification·tournament가 제어 구조로 구현된 형태
@@ -131,6 +141,7 @@ status: draft
 - [[anthropic]] — 이 지침을 공개한 주체.
 - [[agent-recipe]] — judge와 eval이 recipe의 핵심 구성물로 누적되는 자리. §3b의 절차가 곧 recipe 개선 절차다
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
+- [[prompt-optimization]] — eval 출력을 판정이 아니라 개선 재료로 쓰는 방법. §7의 feedback_text와 adversarial 회귀 suite
 
 ## Sources
 
@@ -140,3 +151,4 @@ status: draft
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 2b절의 "정지 조건도 판정 대상이다"만 이 소스에서 왔다.
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection, AI Engineer World's Fair). §3b만 이 소스에서 왔다.
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 같은 절의 ⚠️ 정정 — evaluator는 룰 체커이지 품질 판정자가 아니다.
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). §7만 이 소스에서 왔다 (2026-11-25)
