@@ -2,7 +2,7 @@
 title: Wiki Index
 type: meta
 created: 2026-04-28
-updated: 2026-11-25
+updated: 2026-11-26
 status: mature
 ---
 
@@ -64,6 +64,7 @@ status: mature
 ## 🧩 Syntheses (Q&A에서 나온 보존할 만한 답변)
 
 - [[inner-outer-loop-verification]] — 안쪽 loop는 결과를, 바깥쪽 loop는 판단 기준(eval·skill·prompt)을 검증한다. 검증 skill → system distillation → GEPA 텍스트 피드백으로 두 층위를 잇는다 (소스 4개, 2026-11-25) 🆕
+- [[what-to-accumulate-outside-the-model]] — 모델이 좋아져도 썩지 않는 로컬 자산. 능력 가정은 썩고 과제 규칙은 남는다. eval > skill/prompt > state > trace > 인터페이스 > harness profile 순의 수명 표 (소스 8개, 2026-11-26) 🆕
 
 ---
 

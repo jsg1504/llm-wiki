@@ -3,7 +3,7 @@ title: Agent Recipe / System Distillation
 aliases: [system-distillation, System Distillation]
 type: concept
 created: 2026-09-30
-updated: 2026-11-25
+updated: 2026-11-26
 sources: [2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
 tags: [agent-recipe, system-distillation, loop-engineering, evaluation, taste, versioning, provider-agnostic, prompt-optimization]
 status: draft
@@ -87,6 +87,7 @@ recipe의 핵심 내용물은 **제작자의 taste**다. 남의 recipe를 받아
 - [[artifact-chain]] — 상태를 커밋된 파일로 빼는 같은 계열의 처방
 - [[claude-code]] — skill, CLAUDE.md, hook 같은 recipe 부품의 한 구현
 - [[prompt-optimization]] — recipe 부품 중 prompt를 trace에서 자동으로 증류하는 방법들. GEPA가 대표
+- [[what-to-accumulate-outside-the-model]] — recipe 부품을 수명 순으로 정렬한 synthesis. 무엇을 로컬에 쌓고 무엇에 유효기간을 다는가
 
 ## Sources
 

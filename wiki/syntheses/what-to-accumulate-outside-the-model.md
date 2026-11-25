@@ -1,0 +1,106 @@
+---
+title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않는 로컬 자산
+type: synthesis
+created: 2026-11-26
+updated: 2026-11-26
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system]
+question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
+aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
+tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
+status: draft
+---
+
+# 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않는 로컬 자산
+
+> 모델 밖에 쌓을 가치가 있는 것은 **다음 모델이 나와도 썩지 않는 것**이다. "Claude는 X를 못 한다" 같은 **능력 가정**은 모델이 좋아지면 낡는다. **과제에 대한 규칙과 판단 기준**은 모델이 바뀌어도 남는다. 그래서 쌓을 것은 판단(eval·skill·prompt), 실행 사이에 남는 state, 그 재료인 trace다. harness 안의 우회 코드는 쌓을 대상이 아니다.
+
+## 판별 기준: 능력 가정 vs 과제 규칙
+
+[[meta-harness]]는 harness를 "모델이 아직 혼자 못 하는 것에 대한 가정의 집합"으로 본다. 그 가정은 모델이 좋아지면 썩는다. 사례가 있다. Sonnet 4.5의 "context anxiety"를 막으려고 harness에 context reset을 넣었는데, Opus 4.5에서는 그 행동이 사라져 reset이 dead weight가 됐다 ([[meta-harness]], [[2026-04-08-scaling-managed-agents]]).
+
+반대 방향의 근거도 있다. GEPA로 Qwen3 8B에서 최적화한 prompt를 GPT-4.1 Mini에 **수정 없이** 쓰자 +9.00%가 나왔다. GPT-4.1 Mini에서 직접 최적화한 다른 optimizer(+3~6%)보다 높다 ([[prompt-optimization]], [[2025-07-25-gepa-reflective-prompt-evolution]]). trace에서 뽑은 지시문은 특정 모델의 버릇이 아니라 **과제에 대한 규칙**을 담기 때문으로 읽힌다 ([[prompt-optimization]] §5).
+
+[[meta-harness]]는 이 둘을 모순이 아니라 판별 기준으로 정리한다. **능력 가정은 썩고, 과제 규칙은 남는다.** *(이 기준은 위키의 추론이다. 두 소스 모두 이렇게 말하지는 않는다.)*
+
+## 무엇을 쌓는가: 수명 순서
+
+| 쌓을 것 | 무엇을 담나 | 왜 모델보다 오래 사나 | 근거 |
+|---|---|---|---|
+| **Eval / judge** | 실패 패턴, 제작자의 taste를 코드화한 것 | "좋은 결과란 무엇인가"는 모델이 바뀌어도 그대로다. 오히려 새 모델을 검증하는 도구가 된다 *(추론)* | [[agent-recipe]], [[agent-evaluation]] §3b |
+| **Skill / prompt** | 반복 행동, 에이전트가 짐작해야 했을 프로젝트 지식 | trace에서 증류한 지시문이 모델 간에 전이됐다 (+9%) | [[prompt-optimization]] §5, [[loop-engineering]] |
+| **외부 state / artifact** | 무엇이 끝났고 무엇이 남았는가, 단계별 산출물 | *"The agent forgets, the repo doesn't."* 메모리는 컨텍스트가 아니라 디스크에 둔다 | [[loop-engineering]], [[artifact-chain]] |
+| **Trace / session log (원본)** | 실행 기록 전체 | 두 번째 루프의 signal이 된다. compaction은 되돌릴 수 없으니 원본을 창 밖에 둔다 | [[meta-harness]], [[agent-evaluation]] §5 |
+| **인터페이스** | session / harness / sandbox 경계 | harness는 갈아 끼우고 경계선만 고정한다 | [[meta-harness]] |
+| **Harness profile / memory** | 사용자 불만에서 나온 harness 확장 | 가장 빨리 낡는다. 모델별로 따로 둔다 | [[agent-recipe]] |
+
+이 묶음 전체를 git에 버전 관리한 것이 [[agent-recipe]]다. 루프의 교훈을 recipe로 옮기는 과정은 **system distillation**이라고 부른다. 변환 규칙은 세 가지다. 실패 패턴은 judge와 eval이 된다. 반복 행동은 skill과 prompt가 된다. 사용자 불만은 harness 확장과 memory가 된다 ([[agent-recipe]], [[2026-09-30-loop-is-the-product]]).
+
+세 처방은 상태를 모델과 context window **밖**에 둔다는 점에서 같다. 밖에 두는 대상만 다르다. [[meta-harness]]는 경계선을, [[artifact-chain]]은 산출물을, [[agent-recipe]]는 판단을 밖에 둔다 ([[agent-recipe]]).
+
+## 각 항목을 잘 쌓는 법
+
+### 1. Eval이 가장 중요한 자산이다
+
+- **production incident 하나마다 eval을 하나** 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아져 변별력을 잃은 케이스는 교체한다. eval suite는 계속 고쳐 쓰는 대상이다 ([[agent-evaluation]] §6, [[2026-08-21-the-ai-native-sdlc-playbook]]).
+- 채점 함수는 **점수와 함께 텍스트**를 돌려준다. 컴파일러 에러, 통과 못 한 루브릭 항목, 사람이 쓴 채점 근거 같은 것이다. 이 텍스트를 반성해 prompt를 고치면 train rollout 6~179회로 가중치 RL(24,000 rollout)의 최고 점수에 도달했다 ([[agent-evaluation]] §7, [[prompt-optimization]]). 단, 텍스트를 끄고 돌린 직접 비교는 논문에 없다.
+- 사람은 eval을 직접 쓰지 않고 **보정**한다. 에이전트가 trace를 클러스터링해 judge를 만들고, 사람은 그 판정에 동의하는지만 답한다 ([[agent-evaluation]] §3b).
+- 보상을 뒤집어 성능을 떨어뜨리는 지시문을 찾으면, 사고가 나기 **전에** 회귀 케이스를 만들 수 있다 ([[agent-evaluation]] §7).
+
+### 2. 반복하던 확인은 skill로 옮긴다
+
+사람이 반복하던 확인을 skill로 코드화하는 것은 system distillation 한 단계를 손으로 하는 것이다 ([[loop-engineering]]). prompt 층은 GEPA 같은 optimizer로 자동화할 수 있다. 다만 채점 함수가 먼저 있어야 돈다 ([[prompt-optimization]], [[agent-recipe]]).
+
+### 3. trace를 버리지 않는다
+
+두 번째 루프는 첫 루프의 trace·실패·사용자 불만을 signal로 받아 루프 자체를 고친다. 순서는 trace 패턴 → judge 보정 → recipe 후보 → offline eval → A/B → promote다 ([[loop-engineering]], [[inner-outer-loop-verification]]). signal의 품질이 루프의 성공률을 정한다. trace는 내용을 보지 않고 결정 패턴만 모니터링하는 방식으로도 쌓을 수 있다 ([[agent-evaluation]] §5, [[2025-06-13-multi-agent-research-system]]).
+
+### 4. 능력 가정에는 유효기간을 단다 *(추론)*
+
+harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는 규칙인지**를 함께 적는다. 모델을 바꿀 때 그 규칙을 끈 상태로 eval을 돌리면 아직 필요한지 판별할 수 있다. 1번의 eval suite가 이 판별 도구가 된다. context reset 사례([[meta-harness]])를 미리 잡아내는 장치다.
+
+## 쌓을수록 커지는 위험
+
+- **쌓인 것이 공격 표면이다.** persistent memory poisoning의 표적 목록에 `CLAUDE.md`와 장기 실행 에이전트의 state 디렉토리가 명시돼 있다. 커밋과 리뷰가 방어의 일부지만, 저자들은 그것만으로 부족하다고 본다 ([[artifact-chain]], [[prompt-injection]], [[2026-05-25-how-we-contain-claude]]).
+- **comprehension debt.** 루프와 recipe가 매끄러울수록 시스템에 실제로 있는 것과 내가 아는 것의 간격이 빨리 벌어진다 ([[loop-engineering]]).
+
+## 모순: taste를 recipe에 실을 수 있는가
+
+> ⚠️ **Contradiction** ([[loop-engineering]]에 기록된 모순을 그대로 옮긴다)
+> - Osmani: taste와 주관적 판단은 루프에 맞지 않는다. task는 위임하고 judgment는 되가져온다 ([[2026-06-07-loop-engineering]], [[2026-08-14-practical-loop-engineering]]).
+> - Gavrilescu: taste를 eval로 코드화하는 것이 루프의 핵심이고, 사람은 보정만 한다 ([[2026-09-30-loop-is-the-product]]).
+> - 판정 상태: **부분 화해, 미해결.** GEPA는 정답이 있는 과제에서 증류가 자동화된다는 것만 보였다. taste 영역의 데이터는 아니다 ([[loop-engineering]]).
+
+이 모순은 이 페이지의 표 첫 행에 직접 걸린다. eval이 "누구나 같게 판정하는 기준"이면 가장 오래 사는 자산이다. eval이 "제작자의 taste"이면 그 수명은 taste를 코드로 옮길 수 있는지에 달려 있다. *(추론)*
+
+## 적용: 이 위키 자체 *(추론)*
+
+이 repo도 같은 구조다. `CLAUDE.md`와 skill 파일은 skill·prompt 층이고, hook은 검증 규칙이다. `log.md`와 `index.md`는 외부 state이고, `raw/`는 원본 trace에 해당한다. 비어 있는 칸은 **eval**이다. "ingest를 잘했는가"를 판정하는 채점 함수가 없다. 다음에 쌓을 것으로는 이것이 가장 유력하다.
+
+## 빈틈
+
+- **장기 memory 시스템** 자체를 다룬 소스가 없다. 무엇을 기억하고 언제 잊는지, 검색은 어떻게 하는지가 비어 있다.
+- **모델 간 전이의 근거가 얇다.** prompt 하나, 모델 두 개, 약한 모델에서 강한 모델 방향만 확인됐다. skill·harness profile·eval의 전이와 Claude 계열 데이터는 없다 ([[agent-recipe]]).
+- **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다.
+- 채울 만한 소스 후보: agent memory 관련 논문이나 글, eval suite를 모델 교체에 걸쳐 유지한 실무 회고.
+
+## Related
+
+- [[agent-recipe]] — 이 페이지가 말하는 "쌓을 것"의 묶음 단위. 수명 순서 표의 출발점
+- [[meta-harness]] — "능력 가정은 썩고 과제 규칙은 남는다"는 판별 기준의 출처
+- [[agent-evaluation]] — 가장 오래 사는 자산인 eval을 어떻게 만들고 보정하는가
+- [[prompt-optimization]] — prompt 층 증류의 자동화와 모델 간 전이 수치
+- [[loop-engineering]] — 외부 state, 두 번째 루프, taste 모순
+- [[artifact-chain]] — 산출물을 파일로 빼는 처방. 지속성은 공격 표면이기도 하다
+- [[inner-outer-loop-verification]] — 바깥쪽 loop가 판단 기준을 검증하는 방식
+- [[prompt-injection]] — 쌓인 state를 노리는 memory poisoning
+
+## Sources
+
+- [[2026-04-08-scaling-managed-agents]] — context anxiety 사례, 세션 로그를 창 밖에 두는 설계
+- [[2025-07-25-gepa-reflective-prompt-evolution]] — prompt 증류, 텍스트 피드백, 모델 간 전이 +9%
+- [[2026-09-30-loop-is-the-product]] — agent recipe, system distillation, 사람은 eval을 보정한다
+- [[2026-06-07-loop-engineering]] — 외부 state ("The agent forgets, the repo doesn't"), taste 모순의 한쪽
+- [[2026-08-14-practical-loop-engineering]] — task는 위임하고 judgment는 되가져온다
+- [[2026-08-21-the-ai-native-sdlc-playbook]] — incident 하나당 eval 하나, eval을 CI에
+- [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning
+- [[2025-06-13-multi-agent-research-system]] — production tracing과 관측성

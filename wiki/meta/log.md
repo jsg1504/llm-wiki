@@ -215,3 +215,9 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:53] curate | loop-engineering 중복 헤더 제거
 - touched: [[loop-engineering]]
 - notes: "loop engineering이란?" query 중 발견한 중복 헤더(`### skill은 저작 포맷, plugin은 배포 수단`) 1개를 사용자 승인으로 삭제했다. 내용 변경 없음. updated 날짜는 이미 2026-11-25라 그대로 두었다.
+
+## [2026-11-26 00:07] query | 모델이 아닌 로컬에 쌓아 agent를 계속 개선할 것은 무엇인가
+- created: [[what-to-accumulate-outside-the-model]] (synthesis)
+- updated: [[agent-recipe]] (Related에 역링크 1줄), [[index]]
+- cited: [[meta-harness]], [[agent-recipe]], [[loop-engineering]], [[prompt-optimization]], [[agent-evaluation]], [[artifact-chain]], [[inner-outer-loop-verification]], [[prompt-injection]]
+- notes: meta-harness의 "능력 가정은 썩고 과제 규칙은 남는다" 기준을 recipe·artifact-chain·eval에 적용해 로컬 자산의 수명 순서 표를 만들었다. 능력 가정에 유효기간을 달고 eval로 재검증하자는 제안은 *(추론)*으로 표시했다. taste 모순은 판정 변경 없이 옮겼다.
