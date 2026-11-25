@@ -63,7 +63,7 @@ status: mature
 
 ## 🧩 Syntheses (Q&A에서 나온 보존할 만한 답변)
 
-*아직 synthesis 페이지가 없습니다.*
+- [[inner-outer-loop-verification]] — 안쪽 loop는 결과를, 바깥쪽 loop는 판단 기준(eval·skill·prompt)을 검증한다. 검증 skill → system distillation → GEPA 텍스트 피드백으로 두 층위를 잇는다 (소스 4개, 2026-11-25) 🆕
 
 ---
 

@@ -4,6 +4,7 @@ type: concept
 created: 2026-09-21
 updated: 2026-11-25
 sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution]
+aliases: [inner loop, outer loop, 두 번째 루프]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
 ---
@@ -195,6 +196,12 @@ use /goal to implement a fix until all local tests pass and push the branch."
 
 위의 다섯 primitive + state가 **한 루프를 어떻게 돌리는가**라면, 이 소스는 **루프 위에 루프를 하나 더** 얹는다. 첫 루프의 산출물(trace, 실패, 사용자 불만)을 signal로 되먹여 **루프 자체를 고치는** 두 번째 루프다.
 
+원문은 첫 번째 루프를 **inner loop**라고 부른다. 바깥 루프의 일을 taste로 정의한다.
+
+> *"you can think of the worker as the inner loop and it generates all these artifacts. But how you look at the artifacts and know what to change is the taste. ... And experiments is what how you self-calibrate that okay, my taste is actually validated in production with users."* (11:42)
+
+두 루프는 검증 대상이 다르다. inner loop의 verifier는 **이 결과물이 맞는가**를 본다. 두 번째 루프는 **그 판정 기준이 맞는가**를 offline eval과 A/B로 본다. 층위별 비교는 [[inner-outer-loop-verification]]에 있다. *(outer loop라는 말은 원문에 없다. 대응은 이 위키가 붙인 것이다.)*
+
 ```
 두 번째 루프   trace 패턴 → judge/eval 보정 → recipe 후보 → offline eval → A/B → promote
     ▲    │
@@ -284,6 +291,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 ## Related
 
 - [[agent-recipe]] — 두 번째 루프의 산출물. system distillation으로 루프가 남기는 누적 판단
+- [[inner-outer-loop-verification]] — 첫 번째/두 번째 루프를 inner/outer loop로 읽고, 각 층위가 무엇을 검증하는지 정리한 synthesis
 - [[prompt-optimization]] — 두 번째 루프의 한 조각(prompt 증류)을 자동화하고 측정한 방법. signal을 텍스트로 줄 때의 표본 효율
 - [[meta-harness]] — 바로 아래 층위. harness들보다 오래 사는 인터페이스를 고정하는 처방
 - [[dynamic-workflows]] — 한 턴 안의 조정을 코드로 내리는 처방. 루프의 한 턴이 이것을 띄울 수 있다

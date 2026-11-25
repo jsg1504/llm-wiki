@@ -201,3 +201,13 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:58] manual | Obsidian vault 설정을 위키 규칙에 맞춰 커밋
 - touched: `.obsidian/app.json` (신규), `.obsidian/core-plugins.json` (신규), `.gitignore`
 - notes: Karpathy gist 점검 4번 후속. 첨부 폴더를 `raw/assets`로, 링크 형식을 wikilink(`useMarkdownLinks: false`, `newLinkFormat: shortest`)로 지정했다. Obsidian에서 rename하면 백링크가 자동 갱신되도록 `alwaysUpdateLinks: true`(CLAUDE.md §3.2)도 켰다. `appearance.json`은 개인 취향이라 ignore했고, `graph.json`의 zoom(`scale`) 변경은 되돌렸다. Web Clipper 저장 경로는 브라우저 확장 설정이라 repo 밖에 있다.
+
+## [2026-11-25 23:34] query | loop engineering의 바깥쪽 loop, 안쪽 loop는 무엇이고 검증과 관련 있는가
+- created: [[inner-outer-loop-verification]] (synthesis)
+- updated: [[loop-engineering]] (Related에 역링크 1줄), [[index]]
+- cited: [[loop-engineering]], [[agent-recipe]], [[prompt-optimization]], [[agentic-governance]], [[agent-evaluation]], [[2026-09-30-loop-is-the-product]], [[2026-08-14-practical-loop-engineering]], [[2025-07-25-gepa-reflective-prompt-evolution]], [[2026-08-21-the-ai-native-sdlc-playbook]]
+- notes: 위키의 첫 번째/두 번째 루프를 Gavrilescu 원문의 "inner loop"와 대응시켰다. 안쪽 loop는 결과를, 바깥쪽 loop는 판단 기준을 검증한다는 비교 표를 만들었다. outer loop라는 용어는 어느 소스에도 없어 *(추론)*으로 표시했다. 시스템 시각(23:34)이 직전 항목들(23:40~23:58)보다 이르다. 시각을 지어내지 않고 실제 시각을 그대로 적었다.
+
+## [2026-11-25 23:36] curate | inner/outer loop synthesis 후속 — loop-engineering 보강, glossary 항목 추가
+- touched: [[loop-engineering]], [[glossary]]
+- notes: 직전 query 답변의 개선 후보 두 건을 사용자 승인으로 반영했다. loop-engineering "두 번째 루프" 절에 Gavrilescu 원문의 inner loop 인용(11:42)과 두 루프의 검증 대상 차이를 추가했고, aliases에 inner loop / outer loop를 넣었다. glossary에 inner/outer loop의 두 뜻(루프 엔지니어링 / 소프트웨어 개발)을 구분해 적었다.
