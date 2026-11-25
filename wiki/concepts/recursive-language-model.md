@@ -3,15 +3,15 @@ title: Recursive Language Model (RLM)
 type: concept
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2025-12-31-recursive-language-models, 2026-04-08-scaling-managed-agents]
+sources: [2025-12-31-recursive-language-models, 2026-04-08-scaling-managed-agents, 2026-03-03-reproducing-recursive-language-models]
 aliases: [RLM, recursive language models, context offloading, prompt as environment, symbolic recursion]
-tags: [recursive-language-model, long-context, context-rot, compaction, repl, inference-time-scaling, subagent, context-engineering]
+tags: [recursive-language-model, reproduction, long-context, context-rot, compaction, repl, inference-time-scaling, subagent, context-engineering]
 status: draft
 ---
 
 # Recursive Language Model (RLM)
 
-> 긴 입력을 창에 넣지 않고 **REPL 변수로 두고**, 모델이 코드로 그 변수를 다루며 **코드 안에서 자기 자신을 재귀 호출**하게 하는 추론 scaffold다. REPL은 길이 문제를, 재귀는 정보 밀도 문제를 푼다. 비용은 모델의 코딩 능력에 묶이고 꼬리가 길다.
+> 긴 입력을 창에 넣지 않고 **REPL 변수로 두고**, 모델이 코드로 그 변수를 다루며 **코드 안에서 자기 자신을 재귀 호출**하게 하는 추론 scaffold다. REPL은 길이 문제를, 재귀는 정보 밀도 문제를 푼다. 비용은 모델의 코딩 능력에 묶이고 꼬리가 길다. 외부 재현에서는 실패는 재현됐고 이득은 확인되지 않았으며, 단순 과제와 강한 모델에서는 오히려 손해였다 ⚠️.
 
 ## Overview
 
@@ -96,14 +96,36 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 
 이 위키의 기존 논지와 반대 방향이다. [[meta-harness]]는 *harness에 넣은 가정은 모델이 좋아지면 썩는다*고 보고, 인터페이스를 고정하고 harness를 갈아 끼우라고 처방한다. RLM은 scaffold의 행동을 **가중치로 옮기고** 바깥 인터페이스(문자열 → 문자열)는 그대로 둔다. 둘은 모순이 아니다. 둘 다 "무엇이 오래 사는가"에 답하는데, meta-harness는 인터페이스를, RLM은 학습된 행동을 꼽는다. *(추론)*
 
+### 외부 재현: 실패는 재현됐고, 이득은 확인되지 않았다 (2026-11-26)
+
+[[2026-03-03-reproducing-recursive-language-models]](CUHK, 단독 저자)가 원 저자 그룹 밖에서 처음 재현했다. 모델은 DeepSeek v3.2와 Kimi K2, 과제는 S-NIAH와 OOLONG이다. 조건당 20문항, 1회 실행이고 context는 64k token 이하로 제한했다.
+
+| | S-NIAH (base → d=1 → d=2) | OOLONG (base → d=1 → d=2) |
+|---|---|---|
+| DeepSeek v3.2 | 100 → 85 → 70 | 0.0 → 42.1 → 33.7 |
+| Kimi K2 | 100 → 90 → — | **86.6** → 60.0 → 55.0 |
+
+- **재현된 것: 실패.** 원 논문 부록 B의 실패가 다른 모델 둘에서 다시 나왔다. 최종 답 대신 `print()` 코드를 반환했고, thinking 태그가 파서를 깼고, 깊은 재귀에서 오류가 번졌다. 원 논문에서 Qwen3-Coder가 깊이가 늘면 나빠진 것처럼, depth=2는 모든 조건에서 depth=1보다 나빴다. **depth 결과는 원 논문과 일치한다.** 깊이가 이득이었던 모델은 원 논문의 GPT-5뿐이다.
+- **확인되지 않은 것: 이득.** 저자는 DeepSeek OOLONG 0.0 → 42.1을 핵심 결과의 재현으로 든다. 하지만 부록에서 저자 스스로 base의 0%는 답을 찾고도 형식을 어긴 결과라고 적는다. 이 차이로는 형식 효과와 추론 효과를 가를 수 없다.
+- **새로 보인 것: 깊은 재귀의 실패 모드.** depth=2에서 DeepSeek은 입력에 숨긴 가상의 "magic number" 대신 핵물리 magic number를 사전지식으로 답했다(context anchoring 상실). 이미 뽑은 답을 재검증하는 sub-call을 멈추지 않고 띄워 한 문항에 741초를 썼다.
+
+> ⚠️ **Contradiction (2026-11-26): 단순한 과제와 강한 모델에서도 RLM은 손해가 작은가.** [[2025-12-31-recursive-language-models]]는 Figure 1에서 RLM(GPT-5)이 S-NIAH를 포함한 세 과제 모두에서 *"maintains strong performance"* 하고, 2¹⁴ token을 넘으면 base GPT-5를 *"consistently"* 이긴다고 보고한다. [[2026-03-03-reproducing-recursive-language-models]]에서는 base가 100%인 S-NIAH에서 RLM이 70~90%로 떨어졌다. 이미 long-context에 강한 Kimi K2는 OOLONG에서 86.6 → 60.0으로 떨어졌다.
+>
+> **판정 보류.** 조건이 다르다. 모델(GPT-5 vs DeepSeek·Kimi), 문항 수(50 vs 20, 1회 실행), 길이(원 논문은 2¹³~2²⁰, 재현은 64k 이하)가 다르다. 재현의 하락에는 형식 실패(REPL과 최종 출력의 혼동)가 섞였을 수 있다. 정면으로 겹치는 구간은 16k~64k다. **"긴 입력에서 RLM이 이긴다"는 이 재현이 시험하지 않았으므로 이 모순의 범위 밖이다.**
+>
+> 판정에 필요한 것: 같은 모델로 원 논문과 같은 길이 구간을 재고, 형식 실패와 오답을 따로 집계한 측정.
+
+모순이 어느 쪽으로 풀리든 실무상 함의는 같다. **RLM은 켜고 끄는 선택지여야 한다.** base 모델이 이미 푸는 과제나 강한 long-context 모델에 기본값으로 씌우면 손해일 수 있다. *(추론)* [[meta-harness]]의 "harness 가정은 모델이 좋아지면 썩는다"와 같은 모양이다.
+
 ### 비용과 위험
 
+- **지연은 재현에서 더 나쁘게 나왔다.** DeepSeek의 S-NIAH 한 문항은 base 3.6초, depth=1 89.3초, depth=2 344.5초였다. Kimi는 depth=2에서 문항당 545.5초였다. sub-call이 동기 실행이고, REPL에는 정지 장치가 없다 ([[2026-03-03-reproducing-recursive-language-models]]).
 - **중앙값은 싸고 꼬리가 길다.** 중앙값 RLM 실행은 base 모델보다 싸지만 평균은 더 비싸다. sub-call이 동기 실행이라 95분위 runtime이 매우 길다. 저자들은 *"exploding sub-call costs"* 를 한계로 적는다 ([[2025-12-31-recursive-language-models]]). 예산과 timeout이 필요하다. [[multi-agent-systems]]의 경제성 판단(조정 비용을 벌어야 한다)이 여기에도 걸린다.
 - **모델이 쓴 코드를 실행한다.** guardrail과 sandboxed REPL은 *"highly underexplored"* 다. [[agent-containment]]의 blast radius 질문과 [[prompt-injection]]의 경로가 그대로 걸린다. 긴 입력 안에 섞인 지시문이 REPL 코드로 이어질 수 있다. 논문은 보안을 다루지 않는다. *(추론)*
 
 ## 한계와 읽을 때의 주의
 
-- **소스가 하나다.** 구현·측정 모두 저자 측정이고 preprint다. arXiv에는 후속 연구(재현, 일반화, RLMOpt 등)가 있으나 이 위키에는 아직 없다.
+- **소스가 둘이고, 독립 재현은 작다.** 원 논문은 저자 측정 preprint다. 외부 재현([[2026-03-03-reproducing-recursive-language-models]])은 조건당 20문항, 1회 실행, 64k 이하라 원 논문의 긴 구간을 재지 않았다. 다른 후속 연구(일반화, RLMOpt 등)는 이 위키에 아직 없다.
 - **Claude Code 비교는 모델이 다르다.** Claude Code 행은 Opus 4.1, 나머지는 GPT-5다. → [[2025-12-31-recursive-language-models]] My Notes
 - **벤치마크가 작고 일부는 저자 제작이다.** 이득이 가장 큰 OOLONG-Pairs가 저자가 만든 20문항이다.
 
@@ -116,8 +138,10 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 - [[multi-agent-systems]] — 단일 에이전트가 길어질 때의 실패와 그 경제성
 - [[claude-code]] — 외부에서 잰 baseline. offloading의 효과와 한계
 - [[agent-containment]] — 모델이 쓴 코드를 실행하는 구조의 격리 문제
+- [[contradictions]] — 위 ⚠️ Contradiction이 등록된 목록
 
 ## Sources
 
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL), arXiv 2512.24601 v3. 이 페이지 전체의 1차 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 이 논문을 "창 밖 객체" 선행 연구로 인용한 지점
+- [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 외부 재현, depth=2, ⚠️ Contradiction의 한쪽 (2026-11-26)

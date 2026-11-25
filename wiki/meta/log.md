@@ -264,3 +264,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[meta-harness]], [[dynamic-workflows]], [[subagent]], [[agent-memory]], [[multi-agent-systems]], [[claude-code]], [[anthropic]], [[index]]
 - contradictions: 없음. RLM의 subagent 비판(말로 하는 위임은 출력 길이에 묶인다)은 사용자 합의에 따라 ⚠️ 대신 "표현력 상한 지적" 보강 노트로 기록했다([[subagent]] 새 절).
 - notes: Claude가 arXiv API로 찾아 v3 PDF(2026-05-11, 43쪽)를 받았다. raw 복사는 권한 거부돼 사용자가 직접 `raw/papers/2025-12-31-recursive-language-models.pdf`로 옮겼다(파일명 날짜는 v1 제출일). Managed Agents 원문의 "Prior work has explored" 링크가 이 논문임을 확인해 meta-harness의 compaction 처방 표에 (d) "애초에 넣지 않는다"를 별도 행으로 넣고 (c)와 같은 줄기임을 명시했다. scaffold를 가중치로 옮기는 학습 결과를 meta-harness의 반대 방향 사례로 기록했다. Claude Code(Opus 4.1) 측정은 "외부 측정, 모델 상이·경쟁자 측정" 단서와 함께 claude-code와 anthropic에 넣었다. concept 이름은 `context-offloading` 대신 `recursive-language-model`로 했다(소스 하나뿐이라 넓은 hub는 보류). §4.4 역링크: agent-containment, prompt-injection은 RLM 페이지의 *(추론)* 언급뿐이라 승인 범위 밖으로 두고 생략했다. source 페이지 역링크는 규칙대로 생략했다.
+
+## [2026-11-26 01:24] ingest | Think, But Don't Overthink: Reproducing Recursive Language Models
+- source: [[wiki/sources/2026-03-03-reproducing-recursive-language-models|Reproducing RLMs (Daren Wang, arXiv 2603.02615)]]
+- created: [[2026-03-03-reproducing-recursive-language-models]], [[contradictions]]
+- updated: [[recursive-language-model]], [[2025-12-31-recursive-language-models]], [[meta-harness]], [[anthropic]], [[index]]
+- contradictions: [[recursive-language-model]] — "단순한 과제와 강한 모델에서도 RLM은 손해가 작은가" (원 논문 Figure 1·Observation 3 vs 재현의 S-NIAH 100 → 70~90, Kimi K2 OOLONG 86.6 → 60.0). 조건(모델·표본·길이)이 달라 판정 보류. "긴 입력에서 RLM이 이긴다"는 재현이 64k 이하만 재서 범위 밖으로 명시했다. depth 결과는 원 논문 Qwen3-Coder와 일치로 기록했다.
+- notes: 사용자 합의에 따라 이득의 재현은 "확인 안 됨"으로 기록했다. 근거 수치(DeepSeek OOLONG 0.0 → 42.1)의 base 0%가 부록 A.3에서 형식 실패로 밝혀졌기 때문이다. 실패의 재현(최종 답 태그 혼동, thinking 태그 파서 문제, 깊은 재귀 오류 전파, 꼬리 비용)은 "확인됨"으로 기록했다. Zep → MemGPT 선례를 따라 원 source 페이지에 "후속 검증" 절을 넣었다. dynamic-workflows의 정지 장치 연결은 저자 해석일 뿐이라 빼고 concept의 비용 절에 한 줄로 넣었다. 기존 ⚠️ 모순 셋을 모은 `wiki/meta/contradictions.md`를 새로 만들었다(기존 둘 + 이번 하나). session-start 훅은 `^> ⚠️ Contradiction`을 세는데 위키의 실제 마커는 `> ⚠️ **Contradiction`이라 미해결 모순이 0으로 나온다. 훅은 고치지 않았다. raw는 사용자가 직접 복사했다.

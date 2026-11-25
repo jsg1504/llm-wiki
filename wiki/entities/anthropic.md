@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **15개 중 5개**가 Anthropic 발행이다. 비-Anthropic 10개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **16개 중 5개**가 Anthropic 발행이다. 비-Anthropic 11개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -115,6 +115,12 @@ status: draft
 > - **순환 하나가 닫혔다.** Anthropic 소스 [[2026-04-08-scaling-managed-agents]]가 이 논문을 선행 연구로 링크했다. 벤더가 학술 연구를 인용한 경로가 위키 안에서 양쪽 끝이 다 보이는 첫 사례다.
 > - **세는 법:** 소스 15개 중 Anthropic 발행 5개, 비-Anthropic 10개. 비-Anthropic 중 스스로 측정한 소스는 GEPA, MemGPT, Reflexion, LongMemEval, Zep, A-MEM, RLM 일곱이다. 그중 Zep은 벤더 자사 측정이다.
 
+> **첫 독립 재현 (2026-11-26).** [[2026-03-03-reproducing-recursive-language-models]](CUHK, 단독 저자, 과제 보고서 형식)가 RLM을 원 저자 그룹 밖에서 재현했다.
+>
+> - **메우는 것 — 저자 측정만 있던 상태.** 이 위키의 비-Anthropic 측정 소스는 지금까지 전부 자기 방법을 자기가 쟀다. 남의 방법을 다시 잰 것은 이것이 처음이다(Zep의 DMR 재측정은 경쟁 제품을 다시 잰 것이라 성격이 다르다).
+> - **못 메우는 것 — 규모와 Claude.** 조건당 20문항, 1회 실행이다. 실험 모델은 DeepSeek v3.2와 Kimi K2로, Claude는 없다.
+> - **세는 법:** 소스 16개 중 Anthropic 발행 5개, 비-Anthropic 11개. 비-Anthropic 중 스스로 측정한 소스는 여덟이다. 그중 Zep은 벤더 자사 측정, 이 소스는 남의 방법의 재현이다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -157,3 +163,4 @@ status: draft
 - [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI). 편향 노트: 벤더 자사 제품 preprint (2026-11-26)
 - [[2025-02-17-a-mem]] — Xu 외 5인 (Rutgers 등). 편향 노트: 외부 소스가 Claude(Haiku)를 잰 첫 데이터, 신뢰도 낮음 (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv preprint). 편향 노트: Claude Code(Opus 4.1)를 경쟁 scaffold 저자가 잰 외부 측정, GEPA와 Khattab 공저 (2026-11-26)
+- [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv preprint). 편향 노트: 원 저자 밖의 첫 독립 재현, 표본 작음 (2026-11-26)

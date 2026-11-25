@@ -88,6 +88,14 @@ status: mature
 - **안전 장치가 비어 있다.** 저자들은 guardrail과 sandboxed REPL을 *"highly underexplored"* 라고 쓴다. 모델이 쓴 코드를 실행하는 구조이므로 [[agent-containment]]의 질문(blast radius)이 그대로 걸린다. 논문은 보안을 다루지 않는다. *(추론)*
 - **초록 문구가 판마다 다르다.** arXiv 메타데이터의 초록은 *"two orders of magnitude"*, *"28.3% on average"* 라고 쓰고, 이 위키가 읽은 v3 PDF는 *"more than an order of magnitude"*, *"a median of 28%"* 라고 쓴다. 이 페이지는 PDF를 따랐다.
 
+## 후속 검증 (2026-11-26)
+
+[[2026-03-03-reproducing-recursive-language-models]]가 S-NIAH와 OOLONG을 DeepSeek v3.2·Kimi K2로 재현했다(조건당 20문항, 64k token 이하).
+
+- **재현됨:** 부록 B의 실패(최종 답 태그 혼동, thinking 모델의 파서 문제, 깊은 재귀의 오류 전파)와 긴 꼬리 비용. depth가 늘면 나빠진다는 Qwen3-Coder 결과도 다른 모델 둘에서 나왔다.
+- **확인 안 됨:** depth=1 이득. 재현의 근거 수치(DeepSeek OOLONG 0.0 → 42.1)에서 base 0%는 형식 실패였다.
+- **어긋남:** S-NIAH에서 RLM이 base보다 10~30%p 낮았고, 강한 base(Kimi K2, OOLONG 86.6)는 RLM에서 60.0으로 떨어졌다. 조건이 달라 판정은 보류했다. → [[recursive-language-model]]의 ⚠️ Contradiction
+
 ## Raw Source
 
 [원본 PDF](../../raw/papers/2025-12-31-recursive-language-models.pdf)

@@ -3,7 +3,7 @@ title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models]
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -214,6 +214,8 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 > **맨 아래 층도 자동화된다 (2026-11-25).** prompt는 가장 빠르게 변하는 층이라 손으로 따라가기도 가장 힘들다. [[2025-07-25-gepa-reflective-prompt-evolution]]은 그 층을 알고리즘으로 돌린다. trace와 채점 텍스트를 반성해 prompt를 고친다. 이 페이지의 논리와 맞물리는 결과가 하나 있다. Qwen3 8B로 최적화한 prompt가 GPT-4.1 Mini에서도 +9%를 냈다. **모델이 바뀌면 harness의 가정이 썩는다**는 이 페이지의 전제와 달리, trace에서 증류한 지시문은 적어도 한 방향(약한 모델 → 강한 모델)으로는 살아남았다. 모순은 아니다. 이 페이지가 말한 것은 *"Claude는 X를 못 한다"* 같은 **능력 가정**이고, GEPA의 지시문은 **과제에 대한 규칙**이다. 무엇이 썩고 무엇이 남는지를 가르는 기준이 하나 생긴 셈이다. *(추론)* → [[prompt-optimization]]
 
 > **반대 방향: scaffold를 가중치로 옮긴다 (2026-11-26).** 이 페이지의 처방은 *가정은 썩으니 harness를 갈아 끼울 수 있게 하라*다. [[2025-12-31-recursive-language-models]]는 반대쪽으로 간다. RLM scaffold의 행동(입력을 들여다보고 쪼개고 재귀 호출하기)을 궤적 1,000개 남짓의 SFT로 Qwen3-8B에 넣었더니 +28%였고, 학습 과제와 무관한 과제에서도 올랐다. 저자들은 이를 *"a new axis of scale"* 로 본다. 모순은 아니다. RLM도 바깥 인터페이스(문자열 → 문자열)는 고정하고 그 안쪽을 학습으로 바꾼다. "무엇이 오래 사는가"에 meta-harness는 **인터페이스**를, RLM은 **학습된 행동**을 답한다. 다만 같은 논문의 부록 B는 학습 전 RLM scaffold가 모델마다 다른 시스템 프롬프트를 필요로 했다고 적는다. 손으로 쓴 scaffold의 가정이 썩는다는 이 페이지의 전제를 오히려 뒷받침한다. *(추론)* → [[recursive-language-model]]
+>
+> 외부 재현이 같은 방향의 사례를 더한다. [[2026-03-03-reproducing-recursive-language-models]]에서 이미 long-context에 강한 Kimi K2는 base OOLONG 86.6이 RLM에서 60.0으로 떨어졌다. **학습 안 된 scaffold는 모델이 강해지면 짐이 된다.** context reset이 Opus 4.5에서 쓸모없어진 것과 같은 모양이다. 단 조건당 20문항, 1회 실행이고 형식 실패가 섞였을 수 있다. 원 논문과의 어긋남은 ⚠️로 기록했다.
 
 이 층위 구분은 [[subagent]]가 기록한 **조정 주체의 네 층위**(사람 / lead agent / 프로그램 / …)와 직교한다. 그쪽은 *누가 조정하는가*를, 이쪽은 *무엇이 얼마나 오래 사는가*를 나눈다.
 
@@ -253,3 +255,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). compaction 처방 (a)+(c)의 선행 사례, context 한계 경고가 기능이었던 사례 (2026-11-26)
 - [[2024-10-14-longmemeval]] — Wu 외 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 처방 (a)만 쓴 제품(ChatGPT memory)의 실측 노트만 이 소스에서 왔다 (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). compaction 처방 (d), scaffold를 가중치로 옮기는 반대 방향 (2026-11-26)
+- [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 강한 모델에서 scaffold가 짐이 된 Kimi K2 사례만 이 소스에서 왔다 (2026-11-26)
