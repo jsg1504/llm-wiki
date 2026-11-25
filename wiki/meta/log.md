@@ -221,3 +221,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[agent-recipe]] (Related에 역링크 1줄), [[index]]
 - cited: [[meta-harness]], [[agent-recipe]], [[loop-engineering]], [[prompt-optimization]], [[agent-evaluation]], [[artifact-chain]], [[inner-outer-loop-verification]], [[prompt-injection]]
 - notes: meta-harness의 "능력 가정은 썩고 과제 규칙은 남는다" 기준을 recipe·artifact-chain·eval에 적용해 로컬 자산의 수명 순서 표를 만들었다. 능력 가정에 유효기간을 달고 eval로 재검증하자는 제안은 *(추론)*으로 표시했다. taste 모순은 판정 변경 없이 옮겼다.
+
+## [2026-11-26 00:09] curate | 로컬 자산 synthesis 후속 — glossary 항목 추가, agent-recipe에 수명 기준 연결
+- touched: [[glossary]], [[agent-recipe]]
+- notes: 직전 query 답변의 개선 후보 두 건을 사용자 승인으로 반영했다. glossary 에이전트 용어 절에 "능력 가정 / 과제 규칙" 항목을 넣었다. 위키가 붙인 구분임을 명시했다. agent-recipe "오래 사는 것" 대비표 아래에 recipe 부품별 수명 차이 노트를 *(추론)*으로 추가하고 synthesis로 연결했다.
