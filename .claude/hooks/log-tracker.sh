@@ -2,8 +2,17 @@
 # log-tracker.sh
 # Stop hook: 세션이 끝날 때, wiki/ 안에서 변경이 있었으나 log.md에 새 항목이 없으면 경고.
 # 위키의 추적성(traceability)을 보장.
+#
+# exit 2 → Claude가 멈추지 않고 stderr를 받아 log.md를 보강한다.
+# (exit 0 + stderr는 Claude에게 전달되지 않으므로 경고가 무의미하다.)
+# 무한 루프 방지: 이미 이 hook 때문에 계속 진행 중이면(stop_hook_active=true) 통과.
 
 set -euo pipefail
+
+INPUT="$(cat 2>/dev/null || true)"
+if [ "$(echo "$INPUT" | jq -r '.stop_hook_active // false' 2>/dev/null)" = "true" ]; then
+  exit 0
+fi
 
 WIKI_ROOT="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 cd "$WIKI_ROOT" 2>/dev/null || exit 0
@@ -13,8 +22,9 @@ command -v git >/dev/null 2>&1 || exit 0
 [ -d .git ] || exit 0
 
 # 이번 세션에서 wiki/ 아래(meta/log.md 제외) 변경이 있었는가?
-CHANGED=$(git diff --name-only HEAD 2>/dev/null \
-  | grep "^wiki/" | grep -v "^wiki/meta/log.md$" || true)
+# (수정된 tracked 파일 + 새로 만든 untracked 파일 모두)
+CHANGED=$( { git diff --name-only HEAD 2>/dev/null; git ls-files --others --exclude-standard wiki/ 2>/dev/null; } \
+  | grep "^wiki/" | grep -v "^wiki/meta/log.md$" | sort -u || true)
 
 if [ -z "$CHANGED" ]; then
   exit 0
@@ -40,6 +50,7 @@ log.md는 위키의 추적성을 보장합니다 (CLAUDE.md §4.2).
   - touched: [[page1]], [[page2]]
   - notes: ...
 EOF
+  exit 2
 fi
 
 exit 0

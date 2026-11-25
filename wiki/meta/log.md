@@ -193,3 +193,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:40] manual | Karpathy gist 대조 점검 후속 — librarian 도구 정비 + 문서·skill 소규모 보강
 - touched: `.claude/agents/librarian.md`, CLAUDE.md (§8 에이전트 위임 문장), `.claude/skills/wiki-lint/SKILL.md` (§1.8, 출력 §8), `.claude/hooks/validate-frontmatter.sh` (주석), README.md
 - notes: librarian `tools:`의 존재하지 않는 `SkillsetCall`을 `Skill`로 교체하고, owner인 index.md·log.md를 직접 갱신하도록 `Edit`/`Write`를 추가했다. subagent는 subagent를 띄울 수 없으므로 editor/linker 작업은 "위임 plan"으로 반환하고 메인 세션이 실행하도록 바꿨다. wiki-lint 데이터 갭에 웹 검색 기반 ingest 후보와 `/query` 후보 질문 제안을 추가했다(검색 결과는 raw/ 경유 ingest로만 위키에 들어감). README에 `/query`·`wiki-query`를 반영했고, hook 주석을 실제 동작(lint-*.md도 검사)에 맞췄다. overview 페이지는 현 규모(25페이지)에서 index.md로 충분하다고 보고 만들지 않았다.
+
+## [2026-11-25 23:50] manual | hook 경고가 Claude에게 전달되도록 exit 코드 수정
+- touched: `.claude/hooks/validate-frontmatter.sh`, `.claude/hooks/log-tracker.sh`
+- notes: 두 hook은 경고를 stderr에 쓰고 exit 0으로 끝나서 Claude가 경고를 보지 못했다. 경고 시 exit 2로 바꿨다. validate-frontmatter(PostToolUse)는 쓰기를 되돌리지 않고 stderr만 Claude에 전달한다. log-tracker(Stop)는 Claude가 멈추지 않고 log.md를 보강하게 하며, `stop_hook_active=true`면 통과해 무한 루프를 막는다. log-tracker는 이제 untracked 새 wiki 페이지도 변경으로 잡는다. 시뮬레이션 입력으로 frontmatter 누락/불완전/정상, Stop clean/dirty/active 6케이스를 확인했다.
