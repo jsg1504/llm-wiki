@@ -228,7 +228,7 @@ Claude는 항상 다음 4가지 작업 중 하나를 수행한다고 명확히 �
 | `editor` | agent | 페이지 작성/리라이트 전담 |
 | `linker` | agent | 그래프 구조 분석, cross-reference 추천 |
 
-스킬은 자동 호출, 에이전트는 명시적으로 호출되거나 큰 작업에서 librarian이 위임.
+스킬은 자동 호출, 에이전트는 명시적으로 호출된다. librarian은 스킬을 직접 실행하고, editor/linker 작업은 위임 plan으로 반환하면 메인 세션이 실행한다 (subagent는 다른 subagent를 띄울 수 없음).
 
 ---
 

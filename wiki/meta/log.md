@@ -189,3 +189,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:20] curate | GEPA ingest 보류 역링크 — prompt-injection
 - touched: [[prompt-injection]], [[index]]
 - notes: 직전 ingest에서 §4.4로 보류했던 역링크를 사용자 승인으로 반영했다. Related 한 줄로 끝내지 않고 "열린 질문" 절을 새로 만들었다. Gray Swan 적응적 공격(100회 후 5~6%)과 GEPA adversarial 탐색(AIME 76% → 10%)을 연결했다. 위협 모델이 다르다는 점(신뢰 경계를 넘는가)을 명시했고, injection 탐색에 쓸 수 있는지는 *(추론)*으로 표시한 질문으로만 남겼다. sources +1.
+
+## [2026-11-25 23:40] manual | Karpathy gist 대조 점검 후속 — librarian 도구 정비 + 문서·skill 소규모 보강
+- touched: `.claude/agents/librarian.md`, CLAUDE.md (§8 에이전트 위임 문장), `.claude/skills/wiki-lint/SKILL.md` (§1.8, 출력 §8), `.claude/hooks/validate-frontmatter.sh` (주석), README.md
+- notes: librarian `tools:`의 존재하지 않는 `SkillsetCall`을 `Skill`로 교체하고, owner인 index.md·log.md를 직접 갱신하도록 `Edit`/`Write`를 추가했다. subagent는 subagent를 띄울 수 없으므로 editor/linker 작업은 "위임 plan"으로 반환하고 메인 세션이 실행하도록 바꿨다. wiki-lint 데이터 갭에 웹 검색 기반 ingest 후보와 `/query` 후보 질문 제안을 추가했다(검색 결과는 raw/ 경유 ingest로만 위키에 들어감). README에 `/query`·`wiki-query`를 반영했고, hook 주석을 실제 동작(lint-*.md도 검사)에 맞췄다. overview 페이지는 현 규모(25페이지)에서 index.md로 충분하다고 보고 만들지 않았다.

@@ -46,6 +46,10 @@ description: Use this skill when the user asks to check the health of the wiki, 
 - topic 페이지의 "미해결 질문" 섹션
 - contradiction이 unresolved로 표시된 페이지
 
+갭마다 **채울 수단**을 함께 제안한다:
+- 웹 검색(WebSearch)으로 1차 출처 후보를 찾아 URL과 함께 "ingest 후보"로 제시한다. 검색 결과를 위키에 바로 쓰지 않는다. 사용자가 `raw/`에 넣고 ingest해야 위키에 들어간다 (CLAUDE.md §6 출처 규칙).
+- 위키 내용에서 자연스럽게 나오는 **새 질문**을 2~3개 제안한다 (`/query` 후보).
+
 ---
 
 ## 2. 출력 형식
@@ -107,6 +111,8 @@ status: mature
 ## 8. 데이터 갭 / 다음 조사 거리
 - [[topic-X]]의 "미해결 질문" 섹션이 답 없이 6주 이상 정체. 새 소스를 찾아볼 만함.
 - [[entity-Y]]가 stub로 남음. 1차 출처 필요.
+  - ingest 후보: <URL> — <왜 이 소스가 갭을 메우는가>
+- 다음에 물어볼 질문: "..." (/query 후보)
 
 ---
 

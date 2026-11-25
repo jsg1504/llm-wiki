@@ -26,6 +26,7 @@ Obsidian으로 위키를 보면서 Claude Code로 위키를 키워간다.
 │   │   └── linker.md             # 그래프 무결성 전담
 │   ├── commands/                 # 슬래시 커맨드
 │   │   ├── ingest.md             # /ingest <path>
+│   │   ├── query.md              # /query <질문>
 │   │   ├── lint.md               # /lint
 │   │   ├── wiki-status.md        # /wiki-status
 │   │   └── save-as-synthesis.md  # /save-as-synthesis
@@ -34,10 +35,11 @@ Obsidian으로 위키를 보면서 Claude Code로 위키를 키워간다.
 │   │   ├── validate-frontmatter.sh  # frontmatter 검증 (PostToolUse)
 │   │   ├── session-start.sh      # 세션 시작 시 위키 현황 주입
 │   │   └── log-tracker.sh        # log.md 갱신 누락 경고 (Stop)
-│   └── skills/                   # 4개 skill
+│   └── skills/                   # 5개 skill
 │       ├── source-ingest/SKILL.md   # 새 소스 통합
 │       ├── wiki-page/SKILL.md       # 페이지 작성/리라이트
 │       ├── wiki-link/SKILL.md       # rename, validate, orphan, suggest
+│       ├── wiki-query/SKILL.md      # 인덱스 우선 질의응답 + synthesis 보존 판단
 │       └── wiki-lint/SKILL.md       # 종합 건강 검진
 ├── raw/                          # 원본 소스 (IMMUTABLE)
 │   ├── articles/                 # 웹 클리핑, 블로그 포스트
@@ -96,13 +98,15 @@ Claude는:
 ### 4. 위키에 질문
 
 ```
-> 이 위키에서 X에 대해 알려줘
+> /query X와 Y는 뭐가 달라?
 ```
 
-답변이 가치 있으면:
+자연어로 물어도 `wiki-query` 스킬이 호출된다. Claude는 `index.md`부터 읽고, 주장마다 위키 페이지를 인용하며, 답변이 새 종합을 만들었으면 synthesis 저장을 제안한다. 승인하면:
 ```
 > /save-as-synthesis
 ```
+
+좋은 답변을 위키에 되돌려 넣는 것이 이 패턴의 핵심이다. 그래야 질문도 ingest처럼 위키를 키운다.
 
 ### 5. 정기 점검
 
@@ -117,6 +121,7 @@ Claude는:
 | 명령 | 용도 |
 |---|---|
 | `/ingest <path>` | raw 파일 통합 |
+| `/query <질문>` | 위키에 질문 (인용 + synthesis 저장 제안) |
 | `/lint` | 종합 건강 검진 |
 | `/wiki-status` | 빠른 현황 스냅샷 |
 | `/save-as-synthesis` | 마지막 답변을 wiki/syntheses/에 보존 |
@@ -124,10 +129,11 @@ Claude는:
 | 자연어 표현 | 자동 호출되는 스킬/에이전트 |
 |---|---|
 | "이거 정리해줘" + 파일 언급 | `source-ingest` |
+| "X에 대해 알려줘" | `wiki-query` |
 | "이 페이지 다시 써줘" | `editor` 에이전트 + `wiki-page` |
 | "X를 Y로 이름 바꿔" | `linker` 에이전트 + `wiki-link` |
 | "위키 어디가 부족해?" | `wiki-lint` |
-| "5개 논문 한번에 ingest" | `librarian` 에이전트가 plan |
+| "5개 논문 한번에 ingest" | `librarian` 에이전트가 plan + 스킬 실행, editor/linker 위임은 메인 세션이 실행 |
 
 ---
 

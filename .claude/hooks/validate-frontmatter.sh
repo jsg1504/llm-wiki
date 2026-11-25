@@ -26,7 +26,8 @@ case "$FILE_PATH" in
     ;;
 esac
 
-# meta 페이지(log.md, index.md, lint-*.md)는 frontmatter 규칙이 다름. 통과.
+# log.md, index.md는 frontmatter 규칙이 다름. 통과.
+# (lint-*.md, glossary.md 등 나머지 meta 페이지는 일반 frontmatter를 가지므로 검사한다.)
 case "$FILE_PATH" in
   *wiki/meta/log.md|*wiki/meta/index.md)
     exit 0
