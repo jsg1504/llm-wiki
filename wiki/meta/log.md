@@ -257,3 +257,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[agent-memory]], [[2023-10-12-memgpt]], [[agent-evaluation]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
 - contradictions: 없음. 갱신 방식의 대립(Zep 무효화 vs A-MEM 덮어쓰기)은 같은 벤치마크 비교가 없어 사용자 합의에 따라 "비교 데이터 없는 설계 선택의 대립"으로 기록했다.
 - notes: 사용자 요청으로 두 소스를 한 번에 처리했다. raw는 arXiv PDF를 내려받았다(파일명 날짜는 arXiv 페이지에서 확인한 v1 제출일). agent-memory는 사용자 승인으로 절 순서를 다시 짰다(무엇을 남기나 → 담나 → 갱신 → 찾고 읽기 → 누가 관리 → 능력 가정 → cadence → 위험). 내용은 지우지 않았고 236줄이 됐다. 섹션 번호를 참조하는 외부 링크가 없음을 먼저 확인했다. 새 §3 "어떻게 갱신하나"에 원문·key·이전 상태 비교 표를 넣었다. Zep의 DMR 재측정(대화 전체 baseline 94.4% > MemGPT 93.4%)으로 MemGPT source 페이지의 *(추론)*이 실측으로 확인됐다고 적었다. "무효화하되 지우지 않는다" 원칙은 artifact-chain이 아니라 synthesis §5에 일반화해 넣었다(사용자와 합의). A-MEM 부록의 Claude Haiku 데이터를 anthropic에 "외부 소스가 Claude를 잰 첫 데이터, 신뢰도 낮음"으로 기록했다.
+
+## [2026-11-26 01:19] ingest | Recursive Language Models
+- source: [[wiki/sources/2025-12-31-recursive-language-models|Recursive Language Models (Zhang·Kraska·Khattab, arXiv 2512.24601)]]
+- created: [[2025-12-31-recursive-language-models]], [[recursive-language-model]]
+- updated: [[meta-harness]], [[dynamic-workflows]], [[subagent]], [[agent-memory]], [[multi-agent-systems]], [[claude-code]], [[anthropic]], [[index]]
+- contradictions: 없음. RLM의 subagent 비판(말로 하는 위임은 출력 길이에 묶인다)은 사용자 합의에 따라 ⚠️ 대신 "표현력 상한 지적" 보강 노트로 기록했다([[subagent]] 새 절).
+- notes: Claude가 arXiv API로 찾아 v3 PDF(2026-05-11, 43쪽)를 받았다. raw 복사는 권한 거부돼 사용자가 직접 `raw/papers/2025-12-31-recursive-language-models.pdf`로 옮겼다(파일명 날짜는 v1 제출일). Managed Agents 원문의 "Prior work has explored" 링크가 이 논문임을 확인해 meta-harness의 compaction 처방 표에 (d) "애초에 넣지 않는다"를 별도 행으로 넣고 (c)와 같은 줄기임을 명시했다. scaffold를 가중치로 옮기는 학습 결과를 meta-harness의 반대 방향 사례로 기록했다. Claude Code(Opus 4.1) 측정은 "외부 측정, 모델 상이·경쟁자 측정" 단서와 함께 claude-code와 anthropic에 넣었다. concept 이름은 `context-offloading` 대신 `recursive-language-model`로 했다(소스 하나뿐이라 넓은 hub는 보류). §4.4 역링크: agent-containment, prompt-injection은 RLM 페이지의 *(추론)* 언급뿐이라 승인 범위 밖으로 두고 생략했다. source 페이지 역링크는 규칙대로 생략했다.

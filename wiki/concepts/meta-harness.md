@@ -3,7 +3,7 @@ title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval]
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -120,7 +120,7 @@ meta-harness 사고가 보안에 적용되면 판단 기준 하나가 나온다.
 
 > *"It is difficult to know which tokens the future turns will need."*
 
-compaction이 메시지를 변형하면 harness는 원본을 창에서 제거하고, 따로 저장해두지 않는 한 **복구 불가능하다.** 선행 연구는 컨텍스트를 **창 밖의 객체**로 두는 접근을 탐구해 왔다 — 예컨대 REPL 안의 객체로 두고 LLM이 코드를 써서 filter·slice하게 하는 것.
+compaction이 메시지를 변형하면 harness는 원본을 창에서 제거하고, 따로 저장해두지 않는 한 **복구 불가능하다.** 선행 연구는 컨텍스트를 **창 밖의 객체**로 두는 접근을 탐구해 왔다 — 예컨대 REPL 안의 객체로 두고 LLM이 코드를 써서 filter·slice하게 하는 것. 원문이 링크한 그 선행 연구가 [[2025-12-31-recursive-language-models]]다(→ [[recursive-language-model]]).
 
 Managed Agents에서 **session이 그 객체 역할을 한다.** 단 sandbox나 REPL이 아니라 세션 로그에 durable하게 저장된다. `getEvents()`가 이벤트 스트림의 **위치 기반 슬라이스**를 허용하고, 쓰임새가 유연하다:
 
@@ -143,8 +143,11 @@ Managed Agents에서 **session이 그 객체 역할을 한다.** 단 sandbox나 
 | **(a) 잘 요약한다** — compaction / memory tool | 창에 들어갈 것을 압축 | 요약이 lossy. 엣지케이스 요건과 *"don't do X"* 제약이 유실 | [[2025-06-13-multi-agent-research-system]] |
 | **(b) 도달하지 않는다** — subagent 격리 | 각 목표를 짧고 독립적으로 유지해 애초에 compaction까지 가지 않음 | 부모의 조정 컨텍스트는 여전히 찬다. subagent 간 컨텍스트 공유 불가 | [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] |
 | **(c) 되돌릴 수 있게 한다** — 창 밖 durable 로그 | 폐기가 아니라 **탈거(eviction)**. 필요하면 슬라이스해 다시 가져옴 | 저장 비용, 재조회의 지연·토큰 비용. 무엇을 다시 읽을지는 여전히 판단 문제 | [[2026-04-08-scaling-managed-agents]] |
+| **(d) 애초에 넣지 않는다** — REPL 변수 + 코드 안 재귀 (2026-11-26) | 입력을 창에 한 번도 통째로 넣지 않는다. 모델은 메타데이터만 보고 코드로 잘라 읽고, 조각마다 자기를 재귀 호출한다 | 모델의 코딩 능력에 묶인다. sub-call 비용의 꼬리가 길다. 모델이 쓴 코드를 실행하므로 격리가 필요하다 | [[2025-12-31-recursive-language-models]] |
 
-**셋은 배타적이지 않다.** (c)는 (a)를 안전하게 만든다 — 원본이 로그에 남아 있으면 compaction의 되돌릴 수 없음이 되돌릴 수 있음이 된다.
+**넷은 배타적이지 않다.** (c)는 (a)를 안전하게 만든다 — 원본이 로그에 남아 있으면 compaction의 되돌릴 수 없음이 되돌릴 수 있음이 된다.
+
+> **(d)는 (c)와 같은 줄기다 (2026-11-26).** Managed Agents 원문이 세션 로그를 *"this same benefit"* 을 다른 저장 위치(REPL 대신 durable 로그)로 얻는 것이라 설명한다. 둘 다 원본을 창 밖에 둔다. 갈리는 점은 둘이다. (c)는 창에 들어왔던 것을 **밀어냈다가** 되가져오고, (d)는 처음부터 넣지 않는다. (c)는 *무엇을 다시 읽을지*가 판단 문제로 남고, (d)는 그 판단을 모델이 쓰는 코드에 맡기는 대신 **모델의 코딩 능력**이 상한이 된다. 측정도 (d) 쪽에만 있다. compaction agent는 OOLONG-Pairs에서 F1 0.1, RLM은 58~76이었다 ([[2025-12-31-recursive-language-models]]). 행을 나눈 것은 약점이 달라서다. *(구분은 이 위키의 정리다.)*
 
 > **선행 사례: MemGPT (2023, 2026-11-26 추가).** [[2023-10-12-memgpt]]는 (a)와 (c)를 이미 함께 썼다. FIFO queue에서 밀려난 메시지는 재귀 요약으로 압축되고(a), 원본은 recall storage에 무기한 남아 함수로 다시 검색된다(c). 차이는 **누가 다시 가져오는가**다. Managed Agents는 그 결정을 harness로 밀어내고 인터페이스에는 "durable하고 interrogable하다"만 남긴다. MemGPT는 결정을 **모델**에게 맡긴다. 그 대가로 성능이 모델의 function calling 능력에 묶였다. 비교는 [[agent-memory]]에 있다. *(대응은 이 위키의 해석이다.)*
 
@@ -210,6 +213,8 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 
 > **맨 아래 층도 자동화된다 (2026-11-25).** prompt는 가장 빠르게 변하는 층이라 손으로 따라가기도 가장 힘들다. [[2025-07-25-gepa-reflective-prompt-evolution]]은 그 층을 알고리즘으로 돌린다. trace와 채점 텍스트를 반성해 prompt를 고친다. 이 페이지의 논리와 맞물리는 결과가 하나 있다. Qwen3 8B로 최적화한 prompt가 GPT-4.1 Mini에서도 +9%를 냈다. **모델이 바뀌면 harness의 가정이 썩는다**는 이 페이지의 전제와 달리, trace에서 증류한 지시문은 적어도 한 방향(약한 모델 → 강한 모델)으로는 살아남았다. 모순은 아니다. 이 페이지가 말한 것은 *"Claude는 X를 못 한다"* 같은 **능력 가정**이고, GEPA의 지시문은 **과제에 대한 규칙**이다. 무엇이 썩고 무엇이 남는지를 가르는 기준이 하나 생긴 셈이다. *(추론)* → [[prompt-optimization]]
 
+> **반대 방향: scaffold를 가중치로 옮긴다 (2026-11-26).** 이 페이지의 처방은 *가정은 썩으니 harness를 갈아 끼울 수 있게 하라*다. [[2025-12-31-recursive-language-models]]는 반대쪽으로 간다. RLM scaffold의 행동(입력을 들여다보고 쪼개고 재귀 호출하기)을 궤적 1,000개 남짓의 SFT로 Qwen3-8B에 넣었더니 +28%였고, 학습 과제와 무관한 과제에서도 올랐다. 저자들은 이를 *"a new axis of scale"* 로 본다. 모순은 아니다. RLM도 바깥 인터페이스(문자열 → 문자열)는 고정하고 그 안쪽을 학습으로 바꾼다. "무엇이 오래 사는가"에 meta-harness는 **인터페이스**를, RLM은 **학습된 행동**을 답한다. 다만 같은 논문의 부록 B는 학습 전 RLM scaffold가 모델마다 다른 시스템 프롬프트를 필요로 했다고 적는다. 손으로 쓴 scaffold의 가정이 썩는다는 이 페이지의 전제를 오히려 뒷받침한다. *(추론)* → [[recursive-language-model]]
+
 이 층위 구분은 [[subagent]]가 기록한 **조정 주체의 네 층위**(사람 / lead agent / 프로그램 / …)와 직교한다. 그쪽은 *누가 조정하는가*를, 이쪽은 *무엇이 얼마나 오래 사는가*를 나눈다.
 
 ## 한계와 읽을 때의 주의
@@ -235,6 +240,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[prompt-injection]] — 그 경계를 넘는 공격들. capability grant 재개념화
 - [[multi-agent-systems]] — 많은 brain으로 스케일할 때의 경제성
 - [[agent-memory]] — 창 밖 저장소를 **모델**이 관리하는 반대편 설계(MemGPT). context 한계 경고가 기능이었던 사례
+- [[recursive-language-model]] — compaction 처방 (d). Managed Agents가 인용한 "창 밖 객체" 선행 연구. scaffold를 가중치로 옮기는 반대 방향
 
 ## Sources
 
@@ -246,3 +252,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). prompt 층 자동화와 모델 간 전이 (2026-11-25)
 - [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). compaction 처방 (a)+(c)의 선행 사례, context 한계 경고가 기능이었던 사례 (2026-11-26)
 - [[2024-10-14-longmemeval]] — Wu 외 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 처방 (a)만 쓴 제품(ChatGPT memory)의 실측 노트만 이 소스에서 왔다 (2026-11-26)
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). compaction 처방 (d), scaffold를 가중치로 옮기는 반대 방향 (2026-11-26)

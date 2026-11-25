@@ -3,7 +3,7 @@ title: Agent Memory (에이전트 장기 기억)
 type: concept
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2023-10-12-memgpt, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2026-05-25-how-we-contain-claude, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem]
+sources: [2023-10-12-memgpt, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2026-05-25-how-we-contain-claude, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models]
 aliases: [long-term memory, 장기 memory, virtual context management, main context, external context, knowledge update, abstention, memory evolution, edge invalidation]
 tags: [agent-memory, virtual-context-management, memory-hierarchy, context-engineering, memory-poisoning, retrieval, benchmark, knowledge-graph, bi-temporal]
 status: draft
@@ -175,6 +175,8 @@ Reflexion의 sliding window는 "무엇을 잊는가"에 대한 가장 단순한 
 
 Zep과 A-MEM은 그 사이에 있다. 검색 절차는 코드로 고정하고(Zep은 미리 정한 Cypher 질의, A-MEM은 임베딩 top-k), **무엇을 추출하고 연결하고 갱신할지는 LLM이** 정한다 ([[2025-01-20-zep]], [[2025-02-17-a-mem]]).
 
+**모델 쪽 극단: RLM (2026-11-26).** [[2025-12-31-recursive-language-models]]는 MemGPT·Mem0식 명시적 memory 계층과 자신을 구분한다. *"all context window management is implicitly handled by the LM itself."* MemGPT는 미리 정한 paging 함수를 주고, RLM은 입력을 REPL 변수로 두고 **범용 Python**을 준다. 무엇을 어떻게 잘라 읽을지를 함수 목록이 아니라 모델이 쓴 프로그램이 정한다. 단, RLM이 다루는 것은 **한 번의 긴 입력**이지 세션을 넘는 기억이 아니다. 이 페이지의 세 단계 중 "찾고 읽기"에만 해당한다. → [[recursive-language-model]] *(대응은 이 위키의 해석이다.)*
+
 모델에게 맡기면 harness가 단순해진다. 대신 성능이 **모델의 능력**에 묶인다. MemGPT는 GPT-3.5에서 function calling이 약해 문서 QA 성능이 크게 떨어졌다 ([[2023-10-12-memgpt]]). 다음 절의 사례도 같은 이유다.
 
 ### 6. memory 정책은 능력 가정이다
@@ -184,6 +186,7 @@ memory 정책에는 모델에 대한 가정이 들어 있다. 그 가정은 모�
 - **새 모델이 더 나빴다.** nested KV 과제에서 baseline으로는 GPT-4 Turbo가 GPT-4보다 나았다. 그런데 MemGPT에 올리자 GPT-4 Turbo가 GPT-4보다 나빴다. 조회를 충분히 하지 않았다 ([[2023-10-12-memgpt]]).
 - **context 한계 경고가 반대로 작용했다.** MemGPT는 window의 70%에서 "memory pressure" 경고를 넣고, *"context 한계를 의식하는 것이 자기 편집이 작동하는 핵심"* 이라고 쓴다 ([[2023-10-12-memgpt]]). 반면 Claude Sonnet 4.5는 context 한계가 다가오는 것을 감지하자 작업을 일찍 끝냈다(context anxiety). harness에 넣은 reset은 Opus 4.5에서 쓸모가 없어졌다 ([[meta-harness]], [[2026-04-08-scaling-managed-agents]]).
 - **큰 모델이 늘 낫지 않았다.** [[2024-10-14-longmemeval]]에서 ChatGPT memory는 GPT-4o-mini(0.711)로 돌릴 때가 GPT-4o(0.577)보다 높았다. 약 115k token 이력을 통째로 읽는 설정에서는 Llama 3.1 70B(0.334)가 8B(0.454)보다 낮았다. 가져온 기억을 몇 token까지 넣는 게 좋은지도 읽는 모델마다 달랐다. Llama 3.1 8B는 3k token을 넘으면 급락했고 GPT-4o는 20k를 넘어서도 좋아졌다. 시간 범위를 뽑는 query 확장도 강한 모델에서만 효과가 있었다. 단, ChatGPT의 결과는 내부 구현이 공개되지 않아 모델 효과인지 시스템 효과인지 가를 수 없다.
+- **창 밖을 다루는 scaffold도 모델에 달렸다.** RLM의 부록 B는 같은 시스템 프롬프트가 GPT-5와 Qwen3-Coder에서 다르게 작동했고(Qwen은 sub-call을 남발), 코딩 능력이 약한 모델은 RLM으로 작동하지 않았다고 적는다. 반대로 궤적 1,000개 남짓을 SFT하자 Qwen3-8B가 +28% 올랐다 ([[2025-12-31-recursive-language-models]]). 능력 가정은 썩기도 하지만 **학습으로 채울 수도 있다.**
 - **갱신의 효과도 모델에 달렸다.** Zep의 knowledge update 개선은 gpt-4o에서만 나타났고(+6.52%), gpt-4o-mini에서는 떨어졌다(−3.36%). 저자들은 *"덜 강한 모델이 Zep의 시간 데이터를 이해하려면 더 개발이 필요하다"* 고 쓴다 ([[2025-01-20-zep]]). A-MEM은 memory 조직의 품질이 하부 LLM 능력에 좌우된다는 것을 스스로 한계로 적는다 ([[2025-02-17-a-mem]]).
 
 같은 신호(context가 차고 있다)가 한 설계에서는 핵심 기능이고 다른 모델에서는 실패 원인이었다. 정면 모순은 아니다. 실험한 모델과 과제가 다르다. 대신 **"모델은 한계를 알려 주면 잘 대처한다"는 것도 능력 가정**이라는 사례로 읽는다. [[what-to-accumulate-outside-the-model]]의 기준(능력 가정은 썩고 과제 규칙은 남는다)에 따르면, memory **정책**(언제 경고하고, 언제 밀어내고, 몇 token을 넣고, 무엇을 모순으로 볼지)은 모델이 바뀔 때마다 다시 검증할 대상이다. 반면 memory **내용**(사용자에 대한 사실, 과거 대화 원본)은 모델과 무관하게 남는다. *(추론)*
@@ -222,6 +225,7 @@ MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽�
 - [[agent-evaluation]] — memory를 재는 벤치마크 설계. 판정자 검증, retrieval과 최종 정확도의 분리, DMR이 낡은 사례
 - [[prompt-optimization]] — 같은 반성 엔진의 결과를 memory가 아니라 지시문에 두는 쪽(GEPA)
 - [[orchestrator-worker]] — 조정 상태가 lead의 context window에 사는 구조. memory를 밖에 두지 않을 때의 비용
+- [[recursive-language-model]] — 긴 입력을 REPL 변수로 두고 모델이 코드로 읽는다. 창 밖 관리를 모델에게 맡기는 극단
 
 ## Sources
 
@@ -233,3 +237,4 @@ MemGPT 구조에서는 **모델이 사용자 메시지와 검색 결과를 읽�
 - [[2026-04-08-scaling-managed-agents]] — 세션 로그, harness가 context를 관리하는 쪽의 근거, context anxiety
 - [[2026-06-07-loop-engineering]] — 외부 state, *"The agent forgets, the repo doesn't."*
 - [[2026-05-25-how-we-contain-claude]] — persistent memory poisoning
+- [[2025-12-31-recursive-language-models]] — Zhang 외 (MIT CSAIL), arXiv 2512.24601. 창 밖 관리를 모델이 코드로 하는 극단, scaffold의 능력 가정과 학습 (2026-11-26)

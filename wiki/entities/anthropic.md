@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **14개 중 5개**가 Anthropic 발행이다. 비-Anthropic 9개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **15개 중 5개**가 Anthropic 발행이다. 비-Anthropic 10개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -107,6 +107,14 @@ status: draft
 > - [[2025-01-20-zep]](Zep AI)은 **자사 제품을 소개하는 벤더 preprint**다. Anthropic 소스들이 가진 것과 같은 종류의 편향(자사 시스템을 자사가 측정)을 다른 회사가 갖는다. 비교 대상, 보고 범위(abstention 제외), 측정 조건을 모두 저자가 정했다.
 > - **세는 법:** 소스 14개 중 Anthropic 발행 5개, 비-Anthropic 9개. 비-Anthropic 중 스스로 측정한 소스는 GEPA, MemGPT, Reflexion, LongMemEval, Zep, A-MEM 여섯이다. 그중 Zep은 벤더 자사 측정이다.
 
+> **Claude Code를 외부에서 잰 첫 데이터, 그리고 DSPy 계열 두 번째 소스 (2026-11-26).** [[2025-12-31-recursive-language-models]](MIT CSAIL, preprint)가 들어왔다.
+>
+> - **메우는 것 — 주력 모델과 제품의 외부 측정.** Claude Code v2.0.0 + **Opus 4.1**을 long-context baseline으로 쟀다. A-MEM의 Haiku 결과에 이어 Claude를 외부에서 잰 두 번째 데이터이고, 주력 모델과 Anthropic 제품을 잰 것은 처음이다. offloading한 Claude Code는 BrowseComp+ 84.0으로 강했고, OOLONG-Pairs에서는 6.5로 약했다. → [[claude-code]]
+> - **못 메우는 것 — 중립성.** 측정한 쪽은 Claude Code의 **경쟁 scaffold**(RLM)를 낸 저자들이다. Claude Code만 Opus 4.1로, 나머지는 GPT-5로 돌려 모델 차이가 섞인다. 논문은 Anthropic 2025(Claude Code subagent 문서)를 *"verbalize sub-calls"* 하는 방식의 예로 비판한다.
+> - **외부 소스끼리의 독립성.** Omar Khattab이 GEPA에 이어 이 소스의 공저자다. GEPA와 이 소스를 서로 독립적인 확인으로 세면 안 된다. 이 소스는 MemGPT를 인용하지만 같은 그룹은 아니다.
+> - **순환 하나가 닫혔다.** Anthropic 소스 [[2026-04-08-scaling-managed-agents]]가 이 논문을 선행 연구로 링크했다. 벤더가 학술 연구를 인용한 경로가 위키 안에서 양쪽 끝이 다 보이는 첫 사례다.
+> - **세는 법:** 소스 15개 중 Anthropic 발행 5개, 비-Anthropic 10개. 비-Anthropic 중 스스로 측정한 소스는 GEPA, MemGPT, Reflexion, LongMemEval, Zep, A-MEM, RLM 일곱이다. 그중 Zep은 벤더 자사 측정이다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -127,6 +135,7 @@ status: draft
 - [[loop-engineering]] — 이 위키 최초의 비-Anthropic 소스가 들어온 개념. 편향 추적의 대조군.
 - [[prompt-optimization]] — 최초의 학술·정량 독립 소스가 들어온 개념. 실험에 Claude가 없다.
 - [[agent-memory]] — 두 번째 학술·정량 독립 소스(MemGPT)가 들어온 개념. GEPA와 같은 연구 그룹 계열이다.
+- [[recursive-language-model]] — Claude Code(Opus 4.1)를 외부에서 잰 데이터가 들어온 개념. 측정자는 경쟁 scaffold의 저자다.
 
 ## Sources
 
@@ -147,3 +156,4 @@ status: draft
 - [[2024-10-14-longmemeval]] — Wu 외 5인 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 편향 노트: OpenAI 제품을 실측한 학계·산업 공동 소스 (2026-11-26)
 - [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI). 편향 노트: 벤더 자사 제품 preprint (2026-11-26)
 - [[2025-02-17-a-mem]] — Xu 외 5인 (Rutgers 등). 편향 노트: 외부 소스가 Claude(Haiku)를 잰 첫 데이터, 신뢰도 낮음 (2026-11-26)
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv preprint). 편향 노트: Claude Code(Opus 4.1)를 경쟁 scaffold 저자가 잰 외부 측정, GEPA와 Khattab 공저 (2026-11-26)

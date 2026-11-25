@@ -2,8 +2,8 @@
 title: Dynamic Workflows (동적 harness)
 type: concept
 created: 2026-09-12
-updated: 2026-09-21
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering]
+updated: 2026-11-26
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2025-12-31-recursive-language-models]
 tags: [dynamic-workflows, agentic-harness, orchestration, multi-agent, context-window, token-economics]
 status: draft
 ---
@@ -55,6 +55,8 @@ generic해짐                          맞춤형(tailor-made)
 | **dynamic workflow** | **결정론적 프로그램** | **프로그램 변수 (컨텍스트 밖)** |
 
 LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 조정은 코드가 한다. 이 분리가 아래 세 실패 모드에 대한 방어의 원리다.
+
+> **같은 원리, 한 단계 아래 (2026-11-26).** [[recursive-language-model]]은 조정 상태뿐 아니라 **입력 자체**를 프로그램 변수에 둔다. 모델은 REPL에서 코드를 쓰고, 루프 안에서 자기를 재귀 호출하며, 중간값을 변수에 쌓는다 ([[2025-12-31-recursive-language-models]]). 차이는 코드를 쓰는 횟수다. dynamic workflow는 harness를 한 번 쓰고 실행하지만, RLM은 턴마다 실행 결과를 보고 코드를 다시 쓴다. 그래서 아래 "한계" 절의 *실행 중 전략을 바꾸지 못한다*는 대가를 RLM은 치르지 않는다. 대신 모든 턴이 모델의 코딩 능력에 묶인다. 한 번에 프로그램을 생성하는 방식(DisCIPL)을 저자들은 *"cannot recover from generation mistakes"* 라고 비판한다. *(대응은 이 위키의 해석이다.)*
 
 ### 막으려는 것: 단일 context window의 세 실패 모드
 
@@ -141,7 +143,7 @@ dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에�
 > ⚠️ **이 소스에는 정량 데이터가 없다.** [[2025-06-13-multi-agent-research-system]]이 BrowseComp 분산 분석과 90.2% 같은 수치를 제시한 것과 달리, 이 소스는 성능 비교·토큰 실측·성공률을 **전혀 제시하지 않는다.** Bun 재작성도 외부 X 스레드 링크로만 언급된다. 저자들 스스로 *"best practices are still developing"*이라고 쓴다. 따라서 이 페이지의 주장은 **경험 보고이지 측정이 아니다.**
 
 - **토큰 비용이 상방으로 열려 있다.** 15x 같은 구체적 배수조차 제시되지 않는다. 예산을 명시적으로 걸라는 조언이 그 자체로 비용이 예측 불가함을 시사한다.
-- **조정을 코드로 옮긴 대가는 유연성이다.** 결정론적 프로그램은 실행 중 전략을 바꾸지 못한다. [[orchestrator-worker]]에서 lead agent는 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄울 수 있지만, 그 판단을 코드가 하려면 정지 조건을 미리 표현할 수 있어야 한다 (loop-until-done 패턴이 이 자리를 메운다).
+- **조정을 코드로 옮긴 대가는 유연성이다.** 결정론적 프로그램은 실행 중 전략을 바꾸지 못한다. [[orchestrator-worker]]에서 lead agent는 종합 후 *"충분한가?"*를 판단해 subagent를 더 띄울 수 있지만, 그 판단을 코드가 하려면 정지 조건을 미리 표현할 수 있어야 한다 (loop-until-done 패턴이 이 자리를 메운다). 코드를 턴마다 다시 쓰는 [[recursive-language-model]]은 이 대가 대신 코딩 오류가 하위 호출로 번지는 대가를 치른다.
 - **harness를 쓰는 것 자체가 한 번의 LLM 판단이다.** 잘못 설계된 워크플로는 잘못을 병렬로 확대한다. 소스가 skeptic 페르소나와 루브릭을 반복 권하는 이유가 이것으로 읽힌다.
 - **워크플로가 인코딩한 가정도 낡는다.** 태스크마다 새로 쓰므로 노후화 주기가 짧다는 것이 이 접근의 방어책이지만, skill이나 `~/.claude/workflows`에 **저장·배포된** 워크플로는 손으로 만든 harness와 같은 문제를 갖는다. 저장하는 순간 수명이 길어지기 때문이다. → [[meta-harness]]
 
@@ -157,6 +159,7 @@ dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에�
 - [[meta-harness]] — 같은 문제의 반대 방향 처방. harness를 새로 쓰는 대신 갈아 끼울 수 있게 만든다
 - [[managed-agents]] — 이 워크플로가 얹힐 수 있는 하부 층위의 구현
 - [[loop-engineering]] — 한 칸 위 층위. 이 워크플로를 *언제* 돌리고 결과를 어디에 남길 것인가
+- [[recursive-language-model]] — 입력까지 프로그램 변수에 두고, 코드를 한 번이 아니라 턴마다 다시 쓰는 같은 원리
 
 ## Sources
 
@@ -164,3 +167,4 @@ dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에�
 - [[2025-06-13-multi-agent-research-system]] — 대조군으로 인용. *"에이전트 간 실시간 위임"*의 한계 보고와 orchestrator-worker의 LLM 주도 조정
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "반대 방향의 처방" 절
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). "한 칸 위 — 루프" 절
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). "같은 원리, 한 단계 아래" 노트 (2026-11-26)

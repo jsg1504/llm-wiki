@@ -2,8 +2,8 @@
 title: Claude Code
 type: entity
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
+updated: 2026-11-26
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models]
 tags: [claude-code, anthropic, agentic-coding, tooling, ai-native]
 status: draft
 ---
@@ -141,6 +141,16 @@ CI 러너의 스텝이나 Agent SDK 서비스로 돈다. 쓰임:
 
 **병렬 세션 vs subagent:** 병렬 세션은 엔지니어가 동시에 진행할 수 있는 작업 수를 늘리고, subagent는 각 세션이 자기 작업에 집중하게 유지한다. 엔지니어의 일은 그 전부를 조종하고 리뷰하는 것.
 
+**외부 측정: 긴 입력에서의 Claude Code (2026-11-26).** [[2025-12-31-recursive-language-models]]가 Claude Code v2.0.0 + Opus 4.1을 long-context baseline으로 쟀다.
+
+| | CodeQA | BrowseComp+ (6~11M token) | OOLONG | OOLONG-Pairs (F1) |
+|---|---|---|---|---|
+| Claude Code (입력을 prompt로) | 12.0 | 0.0 | 40.2 | 0.1 |
+| Claude Code (입력을 파일로 offloading) | 62.0 | 84.0 | 48.0 | 6.5 |
+| RLM(GPT-5, depth=1) | 62.0 | 91.3 | 56.0 | 58.0 |
+
+입력을 파일로 두기만 해도 창 한계는 풀린다. 하지만 줄마다·쌍마다 의미를 읽어야 하는 과제에서는 subagent를 말로 띄우는 방식이 모자랐다. 저자들은 그 원인을 *"verbalize sub-calls autoregressively"* 로 본다 → [[subagent]], [[recursive-language-model]]. **단서 둘:** Claude Code 행만 모델이 Opus 4.1이고 나머지는 GPT-5라 harness 차이와 모델 차이가 섞여 있다. 측정한 쪽은 경쟁 방법을 낸 저자들이다.
+
 **verifier subagent vs 피드백 루프:** 피드백 루프는 작업 내내 필요한 만큼 반복된다. verifier subagent는 세션이 작업이 끝났다고 믿을 때 **신선한 컨텍스트 윈도로 한 번** 도는 최종 확인이다. 요점은 **판정이 코드를 만든 가정에 오염되지 않는다는 것.** 이것은 [[agent-evaluation]]의 "경로가 아니라 결과를 본다" 원칙을 도구 차원에서 구현한 것이다.
 
 ### Dynamic workflows
@@ -247,6 +257,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - **Claude Code는 harness 중 하나다.** 여기 있는 기능의 상당수는 모델의 부족분을 메우는 구조이고, 모델이 좋아지면 일부는 불필요해진다. 통제 목적의 기능(plan mode, hook)은 그렇지 않다.
 - **승인 기반 감독은 측정된 실패다** — 프롬프트의 93%가 승인된다. sandbox가 프롬프트를 84% 줄였고, auto mode는 sandbox **안에서 쓰는 한 겹**이지 대체재가 아니다(~17% 통과).
 - **`/loop`·`/goal`·`/schedule`은 실행 자체를 반복시키는 층이다.** `/loop`는 로컬·세션 스코프·7일 만료, `/schedule`은 클라우드 routine. `/goal`의 evaluator는 **하드 룰 충족만** 보므로 verifier subagent를 대신하지 않는다.
+- **긴 입력은 파일로 두면 풀리고, 밀도는 안 풀린다.** 외부 측정에서 offloading한 Claude Code는 BrowseComp+ 84.0, OOLONG-Pairs 6.5였다. 모델이 달라 비교에 단서가 붙는다.
 - **이 기능군은 Claude Code 고유가 아니다.** automations·worktrees·skills·connectors·subagents 다섯 개가 Codex에도 있다. 외부 소스 하나가 기록한 첫 대조군이다.
 - **`CLAUDE.md`와 `.claude/settings.json`은 양면이다.** 리뷰 가능하다는 장점과 공격자가 커밋하면 매 세션 로드된다는 위험이 같은 속성에서 나온다.
 
@@ -266,6 +277,7 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[managed-agents]] — 이 harness가 얹힐 수 있는 하부 인터페이스. 경쟁 제품이 아니라 다른 층위
 - [[agent-containment]] — 이 도구의 sandbox가 속한 세 격리 패턴 중 HITL 패턴
 - [[prompt-injection]] — 보고된 취약점 3건과 피싱 사례가 속한 공격면
+- [[recursive-language-model]] — Claude Code를 long-context baseline으로 잰 외부 측정과 subagent 방식 비판
 
 ## Sources
 
@@ -275,3 +287,4 @@ Claude가 행동하기 전에 실행되는 스크립트. **allow / ask / block**
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 격리 아키텍처·취약점·sandbox 수치·auto mode 전제의 출처
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/loop`·`/goal` 절, skill↔plugin 구분, Codex 대조군
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). `/loop`↔`/schedule` 구분과 7일 만료, evaluator의 성격, verification skill, 병렬 상한 수치. **단, 상당 부분이 Claude Code 팀 원문의 인용이다** → [[anthropic]]
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). Claude Code(Opus 4.1)를 long-context baseline으로 잰 외부 측정 (2026-11-26)

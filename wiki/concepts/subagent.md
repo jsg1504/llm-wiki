@@ -2,8 +2,8 @@
 title: Subagent
 type: concept
 created: 2026-09-12
-updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
+updated: 2026-11-26
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models]
 tags: [multi-agent, agent-design, context-window, orchestration, agentic-coding]
 status: draft
 ---
@@ -85,6 +85,23 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 >
 > 단 이 소스는 **단일 brain의 세션 복구**를 설명하지, 여러 subagent를 조율하는 스키마를 제시하지 않는다. 위 표의 다섯 번째 행이 되기에는 근거가 부족하다.
 
+### 말로 하는 위임 vs 코드로 하는 위임 (2026-11-26)
+
+위 표와 다른 축이 하나 더 있다. 하위 호출을 **어떻게 내는가**다. [[2025-12-31-recursive-language-models]]는 Claude Code subagent를 포함한 기존 self-delegation을 이렇게 비판한다.
+
+> *"they are handicapped by the underlying LLM's limited output lengths because they are designed to verbalize sub-calls autoregressively rather than producing them programmatically."*
+
+부모 LLM이 위임을 하나씩 **말로** 내면, 위임 수는 부모의 출력 길이에 묶인다. 실제로 몇 개에서 수십 개다. [[recursive-language-model]]은 위임을 **코드 안에서** 낸다. 입력 조각마다 루프를 돌며 sub-LM을 부르므로 입력 길이에 비례하거나(Ω(|P|)) 그 제곱에 비례하는 호출도 낼 수 있다. Qwen3-Coder는 OOLONG의 정답 궤적에서 평균 약 500회를 불렀다.
+
+| | 말로 하는 위임 | 코드로 하는 위임 |
+|---|---|---|
+| 예 | orchestrator-worker, Claude Code subagent | RLM, (한 번 쓴 프로그램으로는) dynamic workflow |
+| 위임 수의 상한 | 부모의 출력 길이 | 없음 (비용이 상한) |
+| 하위 단위 | 도구를 가진 에이전트 | 문자열 → 문자열 LM 호출 |
+| 강점 | 하위 작업이 크고 이질적일 때 | 같은 변환을 입력 전체에 반복할 때 |
+
+**모순이 아니라 표현력의 상한 지적이다.** [[dynamic-workflows]]와 [[meta-harness]]의 처방 (b) "subagent 격리로 애초에 compaction에 도달하지 않는다"는 여전히 맞다. RLM은 그 격리가 **위임 수**에서 모자란다고 말한다. OOLONG-Pairs에서 offloading한 Claude Code는 F1 6.5, RLM은 58~76이었다. 다만 Claude Code 행은 모델(Opus 4.1)이 달라 harness 차이만의 효과는 아니다. 넷째 층위(dynamic workflow)는 코드로 위임하므로 이 비판에서 벗어나지만, 하위 단위가 무거운 subagent라 Ω(|P|)개를 부를 경제성은 따로 따져야 한다. *(표의 분류는 이 위키의 정리다.)*
+
 > ✅ **판정 (2026-09-12):** [[multi-agent-systems]]의 모순은 **두 축으로 나뉘어 부분 판정됐다.**
 >
 > - **적합성 축** — 코딩에서 에이전트를 여럿 조정하는 것은 **가능해졌다.** 단 2025-06의 판단이 **반증된 것이 아니라 우회됐다** — 네 번째 층위는 LLM의 조정 능력에 의존하지 않는다. 세 번째 층위(LLM이 LLM에게 실시간 위임)에 대한 데이터는 세 소스 어디에도 **여전히 없다.**
@@ -146,6 +163,7 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[prompt-injection]] — subagent 경계에서 일어나는 trust escalation
 - [[agent-containment]] — 에이전트를 여럿 굴릴 때의 환경 층위 격리
 - [[loop-engineering]] — 조정 주체 네 층위에 시간 축(누가 실행을 *시작시키는가*)을 더하는 자리
+- [[recursive-language-model]] — 위임을 말이 아니라 코드로 내는 반대편. subagent 방식의 표현력 비판
 
 ## Sources
 
@@ -156,3 +174,4 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[2026-05-25-how-we-contain-claude]] — multi-agent trust escalation. subagent 경계가 신뢰 경계로서 갖는 양면성
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). maker/checker 분리의 외부 확인, 역할별 모델 등급 분화
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). checker와 `/goal` evaluator의 구분
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 말로 하는 위임 vs 코드로 하는 위임 (2026-11-26)
