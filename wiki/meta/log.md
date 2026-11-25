@@ -211,3 +211,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 23:36] curate | inner/outer loop synthesis 후속 — loop-engineering 보강, glossary 항목 추가
 - touched: [[loop-engineering]], [[glossary]]
 - notes: 직전 query 답변의 개선 후보 두 건을 사용자 승인으로 반영했다. loop-engineering "두 번째 루프" 절에 Gavrilescu 원문의 inner loop 인용(11:42)과 두 루프의 검증 대상 차이를 추가했고, aliases에 inner loop / outer loop를 넣었다. glossary에 inner/outer loop의 두 뜻(루프 엔지니어링 / 소프트웨어 개발)을 구분해 적었다.
+
+## [2026-11-25 23:53] curate | loop-engineering 중복 헤더 제거
+- touched: [[loop-engineering]]
+- notes: "loop engineering이란?" query 중 발견한 중복 헤더(`### skill은 저작 포맷, plugin은 배포 수단`) 1개를 사용자 승인으로 삭제했다. 내용 변경 없음. updated 날짜는 이미 2026-11-25라 그대로 두었다.

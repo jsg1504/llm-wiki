@@ -172,8 +172,6 @@ use /goal to implement a fix until all local tests pass and push the branch."
 
 ### skill은 저작 포맷, plugin은 배포 수단
 
-### skill은 저작 포맷, plugin은 배포 수단
-
 혼동하기 쉬운 구분이라 소스가 명시한다. 둘 다 `SKILL.md`를 담은 폴더이고, repo를 넘어 공유하거나 여러 개를 묶을 때 **plugin으로 패키징**한다. Codex와 Claude Code 양쪽에서 동일하다.
 
 트리거 설계에 대한 한 줄이 실무적으로 유용하다 — description이 매칭되면 암묵 호출되므로 ***"a tight boring description beats a clever one."***
