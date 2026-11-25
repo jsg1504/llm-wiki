@@ -154,3 +154,15 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-25 22:47] manual | Query operation 도구화 — `/query` + `wiki-query` skill
 - touched: CLAUDE.md (§2.2 Trigger/Flow, §8 표), `.claude/skills/wiki-query/SKILL.md` (신규), `.claude/commands/query.md` (신규)
 - notes: Karpathy 패턴 3 operation 중 Query만 전용 skill/명령이 없었고, syntheses 0개·log의 query 항목 0건이었다. 새 skill은 인덱스 우선, 주장마다 출처, 위키 근거/*(추론)*/*(위키 외)* 구분, 모순 노출, 답변마다 synthesis 보존 판단(§3.1 기준)을 강제한다. log 기록은 기존 규칙대로 synthesis 저장 시에만.
+
+## [2026-11-25 22:56] lint | 25페이지 점검 — 기계적 0건, loop 클러스터 단절 High, GEPA 두 주기째 미통합
+- touched: [[lint-2026-11-25]]
+- notes: 깨진 링크·고아 0. 9/21·9/30 loop 소스 3개가 두 topic([[ai-native-sdlc]], [[multi-agent-systems]])과 연결되지 않은 세 번째 섬이 됐다. 지난 lint와 같은 패턴의 재발이다. 미해결 모순 1건(taste)은 위키 안에 판정 근거가 없다. 지난 lint 액션 #7(MCP)·#8(비-Anthropic 소스)과 GEPA 논문 통합이 미수행이다. 자동 수정 없음.
+
+## [2026-11-25 22:59] curate | lint 2026-11-25 액션 #1 — loop 클러스터를 topic에 연결
+- touched: [[ai-native-sdlc]], [[multi-agent-systems]], [[artifact-chain]], [[index]]
+- notes: lint에서는 섬으로 봤지만 실제로는 단방향 다리였다. [[loop-engineering]]은 이미 세 페이지를 링크하고 있었고 역방향만 없었다. 2026-09-12 lint와 같은 패턴이다. 그래서 loop-engineering과 agent-recipe는 수정하지 않았다.
+  - [[ai-native-sdlc]]: Stage 6을 loop engineering의 조직 규모 판본(automations와 state 대응)으로, 6·7번을 두 번째 루프/[[agent-recipe]]로 연결했다. 둘 다 *(추론)* 표시. Stage 3에 병렬 세션 수(2~3 vs 최대 5) ℹ️ 노트. Open Questions에 comprehension debt 추가. sources +3.
+  - [[multi-agent-systems]]: Overview에 다섯 번째 축(시간) 추가, "세 축" 오기를 "다섯 축"으로 고침. Contradiction 가설 ①에 Osmani 운용 사례와 태스크 민감도 축을 추가했다. **판정 상태는 바꾸지 않았다.** "다섯 소스 모두 Anthropic" 편향 문장은 원문을 보존하고 갱신 노트를 달았다(관점의 외부성 ≠ 증거의 외부성). sources +2.
+  - [[artifact-chain]]: 💡 블록에 세 번째·네 번째 층위(loop state, agent recipe) 추가. sources +2.
+  - raw에서 새로 가져온 사실 없음. 전부 기존 source 페이지와 [[loop-engineering]]에 있던 내용의 역방향 반영이다.

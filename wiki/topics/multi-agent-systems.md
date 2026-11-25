@@ -2,8 +2,8 @@
 title: 멀티에이전트 시스템
 type: topic
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude]
+updated: 2026-11-25
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
 tags: [multi-agent, agentic-workflows, token-economics, architecture]
 status: draft
 ---
@@ -14,12 +14,13 @@ status: draft
 
 ## Overview
 
-멀티에이전트 시스템은 **도구를 루프 안에서 자율적으로 쓰는 LLM** 여럿이 함께 일하는 구조다. 이 위키에서는 다음 세 축으로 다룬다:
+멀티에이전트 시스템은 **도구를 루프 안에서 자율적으로 쓰는 LLM** 여럿이 함께 일하는 구조다. 이 위키에서는 다음 다섯 축으로 다룬다:
 
 1. **구조** — 어떻게 조립하는가 → [[orchestrator-worker]]
 2. **경제성** — 언제 그 비용을 낼 가치가 있는가 → 이 페이지
 3. **검증** — 비결정적 시스템을 어떻게 평가하는가 → [[agent-evaluation]]
 4. **인프라** — 실제로 여럿을 돌릴 때 무엇이 병목인가 → 아래 "스케일의 인프라 비용" 절, [[meta-harness]]
+5. **시간** — 한 실행 안에서 누가 조정하는가가 아니라, **그 실행을 누가 언제 시작시키고 실행 사이에 무엇이 남는가** → [[loop-engineering]] (2026-11-25)
 
 ## Key Points
 
@@ -124,6 +125,10 @@ status: draft
 
 **2026-09-12 lint에서 추가된 증거 (가설 ① 관련):** [[claude-code]]가 병렬 세션을 *"각자의 git worktree에서 별도 작업을 하는 완전한 Claude Code 인스턴스. **서로를 모르며, 공유하는 것은 그것들을 조종하는 엔지니어뿐**"*으로, subagent를 *"**단일 세션 안에서** 도는 스코프된 헬퍼"*로 정의한다. 병렬성 세 층위의 구분은 [[subagent]]에 정리했다.
 
+**2026-11-25 curate에서 추가된 증거 (가설 ① 관련, 2026-09-21 ingest분):** [[2026-08-14-practical-loop-engineering]]의 저자는 매일 5~10개 에이전트를 쓰고 동시 실행은 보통 **최대 5개**다. 전부 사람이 조종하는 병렬이다. 가설 ①을 지지하는 운용 사례다. 판정 상태는 바꾸지 않는다. 2025-06이 부정한 *LLM이 LLM에게 실시간 위임하는* 구조에 대한 데이터는 여전히 아니기 때문이다.
+
+이 소스는 이 위키에 없던 축을 하나 더한다. 기존 논의는 **무엇을 병렬화할 수 있는가**(적합성)와 **얼마를 지불할 가치가 있는가**(경제성)만 다뤘다. 그쪽은 **무엇을 사람이 봐야 하는가**(태스크 민감도)로 나눈다. 문서·테스트 커버리지는 완전 위임하고, 인증·보안·금융은 밀착 감시한다. 병렬 수의 천장이 리뷰 능력이라면, 그 리뷰 능력을 **어디에 쓸지**를 정하는 기준이 이것이다. → [[loop-engineering]]
+
 ### 축 1 — **할 수 있는가 (적합성): 판정됨.** 뒤집힌 게 아니라 우회됐다
 
 세 번째 소스가 **코딩 태스크에서 에이전트가 에이전트를 조정하는 실제 사례**를 제시한다. Bun이 Zig에서 Rust로 재작성된 것이 dynamic workflow를 통해서였고, 방법은 수정 단위마다 worktree에서 subagent를 띄우고 별도 에이전트가 적대적으로 리뷰한 뒤 머지하는 것이다. 가설 ②(14개월 시차)가 지지되는 것처럼 보인다.
@@ -156,6 +161,7 @@ status: draft
 - **미해결:** 에이전트를 여럿 굴릴 때 **신뢰 경계가 몇 개 늘어나는가**를 비용에 넣어야 하나? [[2026-05-25-how-we-contain-claude]]가 **multi-agent trust escalation**을 보고한다 — subagent 출력이 "우리 것"이라는 이유로 raw tool result보다 높은 신뢰를 받으면 새 injection 벡터가 생긴다. 이 위키의 경제성 논의는 토큰과 인프라만 세었고 **신뢰 경계 관리 비용**은 세지 않았다. → [[prompt-injection]], [[subagent]]
 - **미해결:** 같은 소스가 지적하듯 **감독이 멀티에이전트에서 더 빨리 무너진다** — *"사용자가 멀티에이전트 시스템으로 옮겨가면 이 접근(이탈 시 개입)은 효과적인 감독 전략일 가능성이 훨씬 낮아진다."* 사람의 리뷰 능력이 천장이라는 이 위키의 기록([[subagent]])에 **드리프트를 알아챌 수 있는가**라는 조건이 하나 더 붙는다.
 - **편향 주의:** **다섯 소스 모두** Anthropic 발행이다. 조정 구조에 대한 외부 관점이 없다. → [[anthropic]]
+  > **갱신 (2026-11-25).** 위 문장은 기록 당시 그대로 보존한다. 그 뒤 비-Anthropic 저자(Addy Osmani)의 소스 2개가 들어와 위 가설 ① 증거로 인용됐다. 다만 **관점의 외부성이지 증거의 외부성은 아니다.** 저자는 스스로 측정하지 않았고, 두 번째 글의 상당 부분은 Claude Code 팀 원문 인용이다 ([[2026-08-14-practical-loop-engineering]] 배너). 조정 구조에 대한 **독립 측정**은 여전히 0이다.
 
 ## Related
 
@@ -171,6 +177,7 @@ status: draft
 - [[managed-agents]] — TTFT 수치가 나온 실제 시스템.
 - [[agent-containment]] — 에이전트를 여럿 굴릴 때 blast radius가 곱해지는 문제.
 - [[prompt-injection]] — 신뢰 경계가 늘어날 때 생기는 trust escalation.
+- [[loop-engineering]] — 다섯 번째 축(시간). 사람이 조종하는 병렬의 운용 사례와 위임 경계. Contradiction 가설 ①의 추가 증거.
 
 ## Sources
 
@@ -179,3 +186,5 @@ status: draft
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — 세 실패 모드, 조정 주체의 네 번째 범주, 경제성 재확인. Contradiction 축 1·2 판정의 근거.
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 스케일의 인프라 비용 절.
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 신뢰 경계 비용과 감독의 한계.
+- [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). 시간 축 (2026-11-25)
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (2026-08-14). 사람이 조종하는 병렬의 운용 사례, 위임 경계 (2026-11-25)

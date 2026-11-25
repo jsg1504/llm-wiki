@@ -2,7 +2,7 @@
 title: Wiki Index
 type: meta
 created: 2026-04-28
-updated: 2026-09-30
+updated: 2026-11-25
 status: mature
 ---
 
@@ -16,8 +16,8 @@ status: mature
 
 ## 🧠 Topics (큰 주제 영역)
 
-- [[ai-native-sdlc]] — SDLC 6단계를 선형 핸드오프에서 커밋된 아티팩트가 다음 단계를 트리거하는 루프로 재설계한 것 (소스 4개, updated 2026-09-21) ⚠️ 모순 1건 *부분 판정*
-- [[multi-agent-systems]] — 여러 에이전트가 협력하는 시스템. 중심 질문은 "어떻게"가 아니라 "언제 15배 토큰을 낼 가치가 있는가" + 인프라 비용 + 신뢰 경계 비용 (소스 5개, updated 2026-09-21) ⚠️ 모순 1건 *부분 판정 (적합성 ✅ / 경제성 ✅, 잔여 질문 5건)*
+- [[ai-native-sdlc]] — SDLC 6단계를 선형 핸드오프에서 커밋된 아티팩트가 다음 단계를 트리거하는 루프로 재설계한 것 (소스 7개, updated 2026-11-25) ⚠️ 모순 1건 *부분 판정*
+- [[multi-agent-systems]] — 여러 에이전트가 협력하는 시스템. 중심 질문은 "어떻게"가 아니라 "언제 15배 토큰을 낼 가치가 있는가" + 인프라 비용 + 신뢰 경계 비용 (소스 7개, updated 2026-11-25) ⚠️ 모순 1건 *부분 판정 (적합성 ✅ / 경제성 ✅, 잔여 질문 5건)*
 
 ---
 
@@ -28,7 +28,7 @@ status: mature
 - [[agent-evaluation]] — 경로가 매번 달라지는 에이전트를 결과 기준으로 평가하는 법. LLM-as-judge, end-state evaluation, 판정자 분리, **사람은 eval을 만들지 않고 보정한다 + 프로덕션 A/B** (소스 6개, updated 2026-09-30) ⚠️ 정정 1건 — `/goal` evaluator는 룰 체커
 - [[agent-orchestration-patterns]] — 여러 에이전트를 엮는 여섯 가지 제어 구조. classify / fan-out / adversarial verification / generate-filter / tournament / loop-until-done. 카탈로그에 없는 것: cadence (소스 4개, updated 2026-09-21)
 - [[agentic-governance]] — 통제 계층(skill/hook/managed settings), production gate 경계, quarantine, 자격증명 격리, 환경 층위 우선 (소스 4개, updated 2026-09-21) ⚠️ quarantine 정정 1건
-- [[artifact-chain]] — 각 단계가 커밋된 파일로 끝나고 다음 단계가 그것을 읽는 패턴. 커밋 체인이 곧 audit trail. **지속성은 공격 표면이기도 하다** (소스 3개, updated 2026-09-21)
+- [[artifact-chain]] — 각 단계가 커밋된 파일로 끝나고 다음 단계가 그것을 읽는 패턴. 커밋 체인이 곧 audit trail. **지속성은 공격 표면이기도 하다** (소스 5개, updated 2026-11-25)
 - [[dynamic-workflows]] — 에이전트가 태스크별 harness를 즉석에서 작성. 조정이 LLM 컨텍스트에서 결정론적 코드로 이동한다 (소스 4개, updated 2026-09-21)
 - [[loop-engineering]] — 프롬프트를 던지는 사람 자리를 시스템으로 대체한다. 다섯 primitive + 외부 state, 네 종류의 루프, 위임 경계. **실행 하나가 아니라 실행 사이를 설계하는 층.** OODA와 두 번째 루프 (소스 5개, updated 2026-09-30) ⚠️ 모순 1건 — taste는 루프에 맞는가
 - [[meta-harness]] — harness의 가정은 모델이 좋아지면 썩는다. 더 좋은 harness 대신 **harness보다 오래 사는 인터페이스**를 고정한다 (소스 5개, updated 2026-09-30)
@@ -69,6 +69,7 @@ status: mature
 
 - [[log]] — 시간순 활동 기록
 - [[lint-2026-09-12]] — 2026-09-12 건강 검진 보고서 (기계적 0건, 의미 층위 2건 High)
+- [[lint-2026-11-25]] — 2026-11-25 건강 검진 보고서 (기계적 0건, loop 클러스터 단절 High, GEPA 미통합)
 - [[glossary]] — 이 위키 안에서 자주 쓰는 용어 정의
 - [[index]] — (이 페이지)
 

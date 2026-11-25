@@ -2,8 +2,8 @@
 title: Artifact Chain
 type: concept
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-05-25-how-we-contain-claude]
+updated: 2026-11-25
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product]
 tags: [sdlc, agentic-coding, audit-trail, version-control, ai-native]
 status: draft
 ---
@@ -25,6 +25,8 @@ artifact chain은 이 인터페이스를 **커밋된 파일 하나**로 고정�
 에이전트 맥락에서 특히 중요한 이유는 **에이전트가 상태를 갖지 않기 때문**이다. 비대화형으로 도는 세션은 이전 세션의 대화를 기억하지 못한다. 커밋된 아티팩트는 세션 사이에 살아남는 유일한 기억이다. 대화가 아니라 파일이 프로세스를 잇는다.
 
 > 💡 **같은 통찰의 다른 층위:** 멀티에이전트 리서치 시스템도 독립적으로 같은 결론에 도달했다 — subagent의 결과를 부모 에이전트를 통해 전달하면 정보가 손실되고(*"game of telephone"*) 큰 출력이 대화 히스토리에 복사되며 토큰을 낭비한다. 처방도 같다: **subagent가 산출물을 파일시스템에 저장하고 부모에게는 참조만 넘긴다.** artifact chain은 *세션 사이의* 기억 손실을, 이쪽은 *단일 세션 내부의* 전달 손실을 다루지만 둘 다 "대화가 아니라 파일이 인터페이스가 되게 하라"로 수렴한다. → [[orchestrator-worker]], [[subagent]] ([[2025-06-13-multi-agent-research-system]])
+>
+> **세 번째와 네 번째 층위 (2026-11-25).** 같은 처방이 시간 축에서도 나온다. [[2026-06-07-loop-engineering]]은 루프에 필요한 여섯 번째 요소로 **대화 바깥에 사는 state**를 꼽는다. *"The agent forgets, the repo doesn't."* 그쪽은 이것을 *실행과 실행 사이의* 기억으로 쓴다. [[2026-09-30-loop-is-the-product]]는 한 걸음 더 간다. 루프의 교훈(eval, skill, prompt, harness profile)을 git에 버전 관리한 **agent recipe**로 증류한다. 이 페이지가 **산출물**을 파일로 빼고 loop state가 **진행 상황**을 빼는 것과 달리, recipe는 **판단**을 뺀다. 무엇을 밖에 두는지의 대비표는 [[agent-recipe]]에 있다. → [[loop-engineering]]
 
 ## 체인의 형태
 
@@ -122,8 +124,12 @@ Build 이후로는 아티팩트가 코드와 그 기록(테스트, PR, 체크 �
 - [[agent-containment]] — 신뢰 경계 이전에 설정 파일이 로드되는 문제
 - [[orchestrator-worker]] — subagent 출력을 파일시스템으로 보내는 같은 처방의 세션 내부 판본
 - [[subagent]] — 그 처방이 적용되는 단위
+- [[loop-engineering]] — 같은 처방의 시간 축 판본. 외부 state가 "루프의 척추"인 이유
+- [[agent-recipe]] — 산출물이 아니라 **판단**을 커밋하는 같은 계열의 처방
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). 지속 아티팩트의 공격 표면
+- [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). 실행 사이의 외부 state (2026-11-25)
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). 판단을 커밋하는 agent recipe (2026-11-25)

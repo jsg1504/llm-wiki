@@ -2,8 +2,8 @@
 title: AI-Native SDLC
 type: topic
 created: 2026-09-11
-updated: 2026-09-21
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude]
+updated: 2026-11-25
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
 tags: [sdlc, agentic-coding, enterprise-ai, governance, ai-native]
 status: draft
 ---
@@ -81,6 +81,7 @@ status: draft
 - **skills as institutional knowledge** — 일관되게 적용되어야 하는 조직 지식을 skill로. 판단 기준: `CLAUDE.md`나 프롬프트에 속할 것은 skill로 쓰지 않는다.
 - **hooks as build-time guardrails** — 보호 경로 편집 차단, 편집 후 포매터·린터 실행, 자격증명 유출 방지. 빠르고 변경된 파일에 스코프되어야 한다. 무거운 검사는 commit이나 PR로.
 - **parallel sessions and subagents** — worktree로 격리된 병렬 세션 vs 세션 내부의 스코프된 subagent. → [[claude-code]], [[subagent]]. 에이전트를 여럿 굴리는 것의 일반적 비용과 적합 조건은 [[multi-agent-systems]] — 그쪽에 이 단계와 직결된 **미판정 모순 1건**이 기록되어 있다.
+  > ℹ️ **병렬 세션 수 (2026-11-25).** [[2026-08-14-practical-loop-engineering]]의 저자는 매일 5~10개 에이전트를 쓰고 동시 실행은 보통 **최대 5개**다. 이 플레이북의 "2~3개"와 어긋나 보이지만 모순은 아니다. 이쪽은 엔터프라이즈 도입 초기의 권고이고 그쪽은 숙련자 개인의 상한이다. **양쪽 다 천장을 사람의 리뷰 능력에 둔다.** 그쪽은 여기에 축을 하나 더한다. 몇 개를 돌리느냐가 아니라 **무엇을 완전 위임하고 무엇을 밀착 감시하느냐**(태스크 민감도)다. → [[loop-engineering]]
 
 ### Stage 4 — Test: 세션이 스스로 검증한다
 
@@ -118,6 +119,10 @@ Claude는 리뷰를 **주기도 하고 받기도 한다.** 모든 PR이 동일�
 5. 에이전트는 진단을 Stage 1 형식의 `intent.md`로 쓴다. 거기서부터는 다른 모든 것과 같은 파이프라인을 탄다.
 6. 서비스 오너가 큐를 triage한다 — 지금 고칠지, 스케줄할지, 기각할지. **기각은 band를 튜닝해 노이즈를 줄인다.**
 7. 수정이 나가면 해당 사건에 대한 eval을 추가한다.
+
+> 🔁 **이 단계는 [[loop-engineering]]의 조직 규모 판본이다 (2026-11-25).** Osmani는 루프를 루프로 만드는 것으로 두 가지를 꼽는다. 스스로 발동하는 **automations**(심장박동)와 대화 바깥에 사는 **state**다 ([[2026-06-07-loop-engineering]]). Stage 6에서는 탐지 스크립트가 심장박동이고, `bands.yaml`과 `intent.md` 큐가 state다. *"The agent forgets, the repo doesn't."* 위 4번의 "stateless·비대화형 Claude"가 정확히 그 전제다. *(추론: 플레이북과 Osmani는 서로를 언급하지 않는다. 대응은 이 위키가 맞붙인 것이다.)*
+>
+> 7번(사건마다 eval 추가)과 6번(기각이 band를 튜닝)은 **루프의 산출물이 루프를 고치는** 구조다. [[2026-09-30-loop-is-the-product]]가 "두 번째 루프"라 부르고, 그 누적물을 [[agent-recipe]]라 부르는 것과 같은 모양이다. 이 플레이북은 그것을 손으로 한 단계씩 하고, 그쪽은 그 과정 자체를 자동화하려 한다. *(추론)*
 
 같은 패턴의 변주 둘:
 - **recurring codebase scans** — 보안 스캔은 "특정 시점, 특정 모델 기준의 진술"이라 양쪽 다 낡는다. 코드는 매주 바뀌고, 각 모델 세대는 이전 세대가 놓친 취약점을 찾는다. 답은 스케줄 스캔. 한 PR에 들어가는 수정은 리뷰 게이트로, 그보다 큰 것은 `intent.md`로. Claude Security가 호스팅 형태.
@@ -161,6 +166,7 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - product owner가 spec을 "리뷰하되 쓰지 않는다"면, 리뷰 품질을 유지하는 역량은 어떻게 길러지나? 쓰지 않으면서 읽는 눈이 유지될까?
 - "리뷰가 따라가는 동안에만 세션을 늘린다"는 실용적이지만, 리뷰 능력 자체를 측정하는 지표는 제시되지 않는다.
 - eval suite의 유지 비용 — "모델이 좋아지면 변별력 잃은 케이스를 교체"해야 한다면 suite 자체가 지속적 부담 아닌가?
+- **comprehension debt에 대한 경계가 없다 (2026-11-25).** [[2026-06-07-loop-engineering]]은 루프가 내가 쓰지 않은 코드를 빨리 내보낼수록 *존재하는 것과 내가 아는 것의 간격*이 벌어지고, 줄이는 방법은 루프가 만든 걸 읽는 것밖에 없다고 쓴다. 이 플레이북의 처방은 아티팩트 체인이 **감사 가능하다**는 데서 멈춘다. 감사 가능하다는 것과 **사람이 실제로 읽는다**는 것은 다른 명제다. Stage 6처럼 사람이 호출 경로에서 빠지는 단계일수록 이 간격은 커진다. → [[loop-engineering]]
 
 ## Contradiction: 코딩은 멀티에이전트에 맞는가
 
@@ -183,9 +189,14 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - [[dynamic-workflows]] — 마이그레이션·리팩터와 리뷰 pass를 워크플로로 돌리는 접근. Stage 3·5의 확장 경로
 - [[agent-evaluation]] — Stage 4 연속 eval의 일반 원리
 - [[subagent]] — Stage 3의 subagent·병렬 세션이 속한 개념
+- [[loop-engineering]] — 같은 루프 구조의 개인 개발자 판본. Stage 6의 automations·state 대응, 병렬 세션의 위임 경계, comprehension debt
+- [[agent-recipe]] — Stage 6의 "사건마다 eval 추가"가 누적된 결과물. 루프가 남기는 판단을 버전 관리하는 단위
 
 ## Sources
 
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Louis Claxton, Anthropic / Claude Blog (2026-08-21)
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). auto mode 전제 보강
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Contradiction 절에서 인용. 코딩 태스크의 에이전트 조정 실증과 경제성 재확인.
+- [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). Stage 6의 루프 대응, comprehension debt (2026-11-25)
+- [[2026-08-14-practical-loop-engineering]] — Addy Osmani (2026-08-14). 병렬 세션 수와 위임 경계 (2026-11-25)
+- [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). 두 번째 루프와 recipe (2026-11-25)
