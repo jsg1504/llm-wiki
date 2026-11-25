@@ -133,6 +133,8 @@ classifier는 사용자 의도에 닻을 내린다. 사용자가 직접 친 지�
 
 저자들의 전망: *"세션 시작 시의 좋은 classifier가 더 일반화되어야 할 것이다."*
 
+창 밖에 무언가를 남기는 모든 방식(memory 저장소, 세션 로그, 외부 state, 커밋된 파일)이 이 벡터의 착륙 지점이다. 그 방식들을 한자리에 놓고 쓰기 경로가 리뷰를 거치는지로 가른 정리는 [[context-and-memory]] "위험" 절에 있다.
+
 > **사람을 거치지 않는 쓰기 경로 (2026-11-26).** 위 목록의 product memory를 구조로 보면 이렇다. [[2023-10-12-memgpt]]에서는 **모델이 사용자 메시지와 검색 결과를 읽고 스스로** working context와 archival storage에 쓴다. memory 편집은 *"entirely self-directed"* 다. 이 경로에는 리뷰 단계가 없어서 대화나 문서에 섞인 지시문이 그대로 영구 memory가 될 수 있다. 아래 노트의 방어(악성 변경이 PR에서 보인다)가 작동하지 않는 경로다. 논문은 보안을 다루지 않는다. *(추론)* → [[agent-memory]]
 >
 > **memory 연구 쪽의 직접 경고 (2026-11-26).** [[2024-10-14-longmemeval]]의 저자들은 윤리 절에서 이 위험을 직접 적는다. 악의적 사용자가 memory 저장소에 **유해 콘텐츠를 넣어** 추론 시 jailbreak를 일으킬 수 있고, 저장된 사용자 정보가 샐 수 있으며, memory **"deletion" 연산이 없으면** 신뢰를 해친다. 처방은 memory의 **읽기/쓰기 흐름을 감시하는 moderation**이다. 위 저자들의 "세션 시작 시 classifier"가 **읽기** 쪽을 지킨다면, 이쪽은 **쓰기** 쪽도 지키라고 말한다. 두 소스 모두 공격을 실험하지는 않았다.
@@ -227,6 +229,7 @@ classifier는 사용자 의도에 닻을 내린다. 사용자가 직접 친 지�
 - [[agent-memory]] — 모델이 스스로 memory에 쓰는 구조. 리뷰를 거치지 않는 memory poisoning 쓰기 경로. 쓰기 흐름 감시 권고
 - [[multi-agent-systems]] — 에이전트를 여럿 굴릴 때 신뢰 경계가 늘어나는 문제
 - [[prompt-optimization]] — 적응적 공격 문장을 자동으로 찾는 엔진의 이웃. 위협 모델은 다르다 (열린 질문 절)
+- [[context-and-memory]] — 창 밖에 두는 방식들의 지도. memory poisoning의 착륙 지점 목록
 
 ## Sources
 

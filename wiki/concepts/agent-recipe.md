@@ -74,7 +74,7 @@ recipe의 핵심 내용물은 **제작자의 taste**다. 남의 recipe를 받아
 
 셋 다 상태를 모델과 context window **밖**에 두는 처방이다. 무엇을 밖에 두는지가 다르다. meta-harness는 경계선을, artifact-chain은 산출물을, recipe는 **판단**을 밖에 둔다.
 
-> **네 번째 행 (2026-11-26).** [[agent-memory]]는 **사실**을 밖에 둔다. memory가 "무엇을 아는가"라면 recipe는 "어떻게 판단하는가"다. 쓰는 방식도 다르다. [[2023-10-12-memgpt]]에서는 모델이 실행 중에 혼자 memory에 쓴다. recipe는 offline eval과 A/B를 거쳐 promote된다. *(대비는 이 위키의 정리다.)*
+> **네 번째 행 (2026-11-26).** [[agent-memory]]는 **사실**을 밖에 둔다. memory가 "무엇을 아는가"라면 recipe는 "어떻게 판단하는가"다. 쓰는 방식도 다르다. [[2023-10-12-memgpt]]에서는 모델이 실행 중에 혼자 memory에 쓴다. recipe는 offline eval과 A/B를 거쳐 promote된다. *(대비는 이 위키의 정리다.)* 창 밖에 두는 방식 전체(memory, 세션 로그, 외부 state, 커밋된 파일)의 지도는 [[context-and-memory]]에 있다. 그 지도에서 recipe는 "실행 사이에 남는 것" 중 판단을 담는 쪽이다.
 
 > **recipe 안에서도 수명이 다르다 (2026-11-26).** [[meta-harness]]가 세운 기준을 recipe 부품에 적용하면 순서가 생긴다. *"모델은 X를 못 한다"* 는 **능력 가정**은 모델이 좋아지면 썩고, **과제 규칙**은 모델을 바꿔도 남는다. eval과 judge는 과제 규칙에 가깝고 오래 산다. 사용자 불만에서 나온 harness profile은 능력 가정을 담기 쉬워 가장 빨리 낡는다. 그래서 harness profile을 모델별로 따로 두는 것이다. 부품별 수명 표와 능력 가정에 유효기간을 다는 방법은 [[what-to-accumulate-outside-the-model]]에 있다. *(추론)*
 
@@ -93,6 +93,7 @@ recipe의 핵심 내용물은 **제작자의 taste**다. 남의 recipe를 받아
 - [[claude-code]] — skill, CLAUDE.md, hook 같은 recipe 부품의 한 구현
 - [[agent-memory]] — 판단이 아니라 사실을 밖에 두는 처방. 검증 없이 실행 중에 쓰인다는 점이 recipe와 다르다
 - [[prompt-optimization]] — recipe 부품 중 prompt를 trace에서 자동으로 증류하는 방법들. GEPA가 대표
+- [[context-and-memory]] — 창 밖에 두는 방식들의 지도. recipe는 실행 사이에 판단을 남기는 쪽
 - [[what-to-accumulate-outside-the-model]] — recipe 부품을 수명 순으로 정렬한 synthesis. 무엇을 로컬에 쌓고 무엇에 유효기간을 다는가
 
 ## Sources

@@ -2,8 +2,8 @@
 title: 에이전트 오케스트레이션 패턴
 type: concept
 created: 2026-09-12
-updated: 2026-09-21
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering]
+updated: 2026-11-26
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models]
 tags: [orchestration, multi-agent, agent-design, patterns, evaluation, dynamic-workflows]
 status: draft
 ---
@@ -37,6 +37,7 @@ status: draft
 - **막는 것:** agentic laziness(프로그램이 항목 목록을 들고 있으므로 빠뜨릴 자리가 없다), 컨텍스트 교차오염.
 - **관계:** [[orchestrator-worker]]가 바로 이 패턴을 **lead agent가 조정하는 형태**로 구현한 것이다. 차이는 barrier를 누가 들고 있는가 — 거기서는 lead의 컨텍스트, 여기서는 프로그램.
 - **비용 구조:** barrier가 있으므로 **가장 느린 하나가 전체를 막는다.** [[orchestrator-worker]]가 "동기 실행 병목"으로 기록한 한계가 그대로 상속된다.
+- **극단 (2026-11-26):** [[recursive-language-model]]은 fan-out 단위를 에이전트가 아니라 **입력 조각 하나에 대한 LM 호출**로 낮춘다. 모델이 쓴 코드 루프가 조각마다 하위 호출을 내고 결과를 변수에 모은다. 정답 궤적에서 평균 약 500회를 부른 경우도 있었다 ([[2025-12-31-recursive-language-models]]). 종합이 barrier라는 점은 같고, 실제로 sub-call이 동기 실행이라 꼬리 지연이 컸다. 저자들은 이 카탈로그와 비교하지 않는다. *(대응은 이 위키의 해석이다.)*
 
 ### 3. Adversarial verification
 
@@ -109,6 +110,7 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[agent-evaluation]] — adversarial verification과 tournament가 평가 방법론으로서 갖는 함의
 - [[multi-agent-systems]] — 이 패턴들을 쓸 경제적 조건
 - [[loop-engineering]] — 이 패턴들을 *주기적으로* 돌리는 한 층 위. cadence와 외부 state를 더한다
+- [[recursive-language-model]] — fan-out 단위를 입력 조각 하나의 LM 호출로 낮춘 극단
 
 ## Sources
 
@@ -116,3 +118,4 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[2025-06-13-multi-agent-research-system]] — subagent 간 협력 제약, 동기 실행 병목, 프로덕션 요건(resume·checkpoint·retry)의 출처
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/goal`의 loop-until-done 구현, 카탈로그에 없는 cadence
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). #6의 실무 판정 기준과 evaluator 성격의 정정
+- [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). fan-out의 극단 노트 (2026-11-26)

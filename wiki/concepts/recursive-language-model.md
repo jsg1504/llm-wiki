@@ -86,7 +86,7 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 
 부록 B의 실패 목록은 [[agent-memory]] §6과 [[meta-harness]]가 말하는 **능력 가정**의 사례다 ([[2025-12-31-recursive-language-models]]).
 
-- 같은 시스템 프롬프트가 모델마다 다르게 작동했다. Qwen3-Coder는 sub-call을 남발해 한 문장을 더해야 했다.
+- 같은 시스템 프롬프트가 모델마다 다르게 작동했다. Qwen3-Coder는 sub-call을 남발해 한 문장을 더해야 했다. GEPA의 지시문이 모델 간에 전이된 것과 대비된다. 더한 문장은 과제 규칙이 아니라 모델의 버릇을 다루는 운용 규칙이었다 → [[prompt-optimization]] §5
 - 코딩 능력이 약한 모델은 RLM으로 작동하지 않는다.
 - thinking token이 호출당 출력 한도를 넘기면 궤적이 끊긴다.
 - 최종 답과 생각을 `FINAL()` 태그로 가르는 방식이 불안정하다.
@@ -137,6 +137,8 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 - [[meta-harness]] — compaction 처방 표의 (d) 행. Managed Agents가 이 논문을 선행 연구로 인용한다. 학습으로 scaffold를 가중치에 넣는 반대 방향 사례
 - [[dynamic-workflows]] — 조정을 프로그램 변수에 두는 같은 원리. 한 번 쓰는 코드 vs 계속 고치는 코드
 - [[subagent]] — 말로 하는 위임 vs 코드로 하는 위임. 표현력 비판의 대상
+- [[prompt-optimization]] — 전이된 prompt(GEPA)와 전이되지 않은 시스템 프롬프트(RLM)의 대비
+- [[agent-orchestration-patterns]] — fan-out-and-synthesize의 극단으로 읽을 수 있는 자리
 - [[orchestrator-worker]] — 말로 위임하는 대표 아키텍처. 하위 단위가 무거운 에이전트라 적용 범위가 다르다
 - [[agent-memory]] — 창 밖 저장소를 모델이 관리하는 극단. 능력 가정의 사례
 - [[multi-agent-systems]] — 단일 에이전트가 길어질 때의 실패와 그 경제성

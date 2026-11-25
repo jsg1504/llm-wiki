@@ -102,6 +102,8 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 
 **모순이 아니라 표현력의 상한 지적이다.** [[dynamic-workflows]]와 [[meta-harness]]의 처방 (b) "subagent 격리로 애초에 compaction에 도달하지 않는다"는 여전히 맞다. RLM은 그 격리가 **위임 수**에서 모자란다고 말한다. OOLONG-Pairs에서 offloading한 Claude Code는 F1 6.5, RLM은 58~76이었다. 다만 Claude Code 행은 모델(Opus 4.1)이 달라 harness 차이만의 효과는 아니다. 넷째 층위(dynamic workflow)는 코드로 위임하므로 이 비판에서 벗어나지만, 하위 단위가 무거운 subagent라 Ω(|P|)개를 부를 경제성은 따로 따져야 한다. *(표의 분류는 이 위키의 정리다.)*
 
+두 위임 방식은 context window를 넘기는 처방으로 보면 각각 (b) "도달하지 않는다"와 (d) "애초에 넣지 않는다"에 해당한다. 네 처방의 지도는 [[context-and-memory]]에 있다.
+
 > ✅ **판정 (2026-09-12):** [[multi-agent-systems]]의 모순은 **두 축으로 나뉘어 부분 판정됐다.**
 >
 > - **적합성 축** — 코딩에서 에이전트를 여럿 조정하는 것은 **가능해졌다.** 단 2025-06의 판단이 **반증된 것이 아니라 우회됐다** — 네 번째 층위는 LLM의 조정 능력에 의존하지 않는다. 세 번째 층위(LLM이 LLM에게 실시간 위임)에 대한 데이터는 세 소스 어디에도 **여전히 없다.**
@@ -163,6 +165,7 @@ subagent의 결과가 전부 부모를 통과하면 두 가지가 나빠진다 �
 - [[prompt-injection]] — subagent 경계에서 일어나는 trust escalation
 - [[agent-containment]] — 에이전트를 여럿 굴릴 때의 환경 층위 격리
 - [[loop-engineering]] — 조정 주체 네 층위에 시간 축(누가 실행을 *시작시키는가*)을 더하는 자리
+- [[context-and-memory]] — 위의 두 위임 방식이 compaction 처방 (b)·(d)로 놓인 topic
 - [[recursive-language-model]] — 위임을 말이 아니라 코드로 내는 반대편. subagent 방식의 표현력 비판
 
 ## Sources

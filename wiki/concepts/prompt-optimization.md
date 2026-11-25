@@ -99,6 +99,8 @@ Qwen3 8B로 최적화한 prompt를 **GPT-4.1 Mini에 그대로** 쓰면 +9.00%�
 
 이 위키에서 이 결과가 중요한 이유: [[agent-recipe]]는 누적된 판단이 **provider-agnostic**해야 한다고 주장했는데 근거가 없었다. 이것이 그 주장의 첫 정량 근거다. 다만 한 방향(약한 모델 → 강한 모델), 모델 두 개만 확인됐다.
 
+> **전이되지 않은 prompt (2026-11-26).** 반대 사례가 있다. [[2025-12-31-recursive-language-models]]의 RLM 시스템 프롬프트는 GPT-5용으로 쓴 것을 Qwen3-Coder에 그대로 쓰자 sub-call을 남발하게 했고, 한 문장을 더해야 했다. 모순은 아니다. 방향(강→약)과 종류가 다르다. GEPA 지시문은 **과제 규칙**("이 과제에서는 X를 확인하라")이고, RLM 프롬프트에 더한 문장은 특정 모델의 버릇을 다루는 **운용 규칙**("sub-call을 너무 많이 쓰지 마라")이다. [[what-to-accumulate-outside-the-model]]의 기준(능력 가정은 썩고 과제 규칙은 남는다)과 맞는다. *(구분은 이 위키의 해석이다.)* → [[recursive-language-model]]
+
 ### 6. 보상을 뒤집으면 red-teaming이 된다
 
 같은 엔진으로 성능을 **떨어뜨리는** 지시문을 찾게 하면, 과제 내용은 그대로 둔 채 잡담 몇 줄을 끼워 넣은 지시문 하나가 나온다. GPT-5 Mini의 AIME-2025 정답률이 76%에서 10%로 떨어졌다. 원인은 잡담과 엄격한 출력 형식 규칙의 상호작용이었다. 모델이 `### <final answer>`를 글자 그대로 출력했다.
@@ -144,6 +146,7 @@ GEPA는 trace에서 배운 것을 **창 밖의 지시문**으로 남긴다. 같�
 - [[prompt-injection]] — adversarial prompt search와 위협 모델이 다른 이웃
 - [[agent-memory]] — 반성의 결과를 지시문이 아니라 episodic memory에 두는 쪽(Reflexion)
 - [[context-and-memory]] — 밖에 쌓기 vs 가중치에 넣기 축. 이 페이지는 밖에 쌓는 쪽
+- [[recursive-language-model]] — 모델 간에 전이되지 않은 시스템 프롬프트 사례. 과제 규칙과 운용 규칙의 구분
 
 ## Sources
 

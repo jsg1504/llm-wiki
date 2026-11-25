@@ -3,7 +3,7 @@ title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep, 2026-03-03-reproducing-recursive-language-models]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -132,6 +132,8 @@ status: draft
 > **교체 대신 늘린다 (2026-11-26).** [[2024-10-14-longmemeval]]은 변별력 문제를 벤치마크 설계에서 푼다. 기존 장기 memory 벤치마크의 이력이 짧고 고정돼 있어 *"시스템이 계속 좋아지면서 난이도를 제한한다"* 고 보고, 증거 세션을 무관한 세션들 사이에 넣는 방식으로 **이력 길이를 자유롭게 늘릴 수 있게** 만든다. 표준은 약 115k token과 약 1.5M token 두 가지다. 케이스를 새로 쓰지 않고 **같은 질문의 난이도를 올리는** 길이다. 다만 길이라는 축 하나로만 늘어나므로 모든 과제에 쓸 수 있는 방법은 아니다. *(뒤 문장은 추론이다.)*
 >
 > **판정자를 사람과 대조한다.** 같은 소스는 GPT-4o 판정자를 유형별 30문항, 두 생성 모델에 대해 사람 전문가 판정과 비교해 평균 97~98% 일치를 확인하고 결과를 공개한다. 답이 열린 유형(preference, abstention)에서 가장 많이 어긋났다. §2의 LLM-as-judge를 쓸 때 **판정자 자체의 정확도를 따로 보고하는** 사례다. 대조적으로 [[2023-10-12-memgpt]]는 판정자에게 *"후하게 채점하라"* 고 지시하고, GPT-4가 사람과 잘 일치한다는 선행 연구를 인용할 뿐 **자체 대조 결과는 내지 않는다.**
+>
+> **채점이 형식과 능력을 섞으면 결론이 뒤집힌다 (2026-11-26).** [[2026-03-03-reproducing-recursive-language-models]]는 RLM의 핵심 이득(DeepSeek v3.2 OOLONG 0.0 → 42.1)을 재현했다고 보고한다. 그런데 부록에서 저자 스스로 base의 0%는 **답을 찾고도** *"Answer: number"* 형식 대신 서술로 답한 결과라고 적는다. 채점 함수가 형식 실패와 오답을 같은 0점으로 접었기 때문에, 이 수치로는 "RLM이 추론을 도왔다"와 "RLM scaffold가 형식을 맞추게 했다"를 가를 수 없다. 같은 논문의 RLM 실패 중 하나(최종 답 대신 `print()` 코드를 반환)도 같은 칸에 들어간다. 처방은 위의 판정자 대조와 같은 방향이다. **점수만이 아니라 실패의 종류를 따로 집계한다.** §7의 feedback_text가 그 그릇이다. *(처방은 이 위키의 추론이다.)*
 
 ### 7. 채점 함수는 점수와 함께 텍스트를 내야 한다 (2026-11-25)
 
@@ -156,6 +158,7 @@ status: draft
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 - [[prompt-optimization]] — eval 출력을 판정이 아니라 개선 재료로 쓰는 방법. §7의 feedback_text와 adversarial 회귀 suite
 - [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory. LongMemEval로 memory를 재는 법
+- [[context-and-memory]] — memory·long-context 클러스터의 측정과 재현을 모은 topic. 남이 다시 잰 주장 2건이 §6의 두 노트(DMR이 낡은 사례, 형식과 능력을 섞은 채점)와 겹친다
 
 ## Sources
 
@@ -170,3 +173,4 @@ status: draft
 - [[2024-10-14-longmemeval]] — Wu 외 5인 (ICLR 2025). §6의 "교체 대신 늘린다"·판정자 대조 노트만 이 소스에서 왔다 (2026-11-26)
 - [[2023-10-12-memgpt]] — Packer 외 6인 (arXiv 2310.08560). §6 노트의 대조 사례(검증 없는 관대한 판정자), DMR 원 출처 (2026-11-26)
 - [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI, arXiv 2501.13956). §6의 "벤치마크가 낡는 실제 사례"(DMR 재측정)만 이 소스에서 왔다 (2026-11-26)
+- [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). §6의 "형식과 능력을 섞은 채점" 노트만 이 소스에서 왔다 (2026-11-26)

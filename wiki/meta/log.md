@@ -296,3 +296,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-26 01:50] manual | CLAUDE.md §1.3 — source·meta 페이지 frontmatter 예외 명시
 - touched: `CLAUDE.md`
 - notes: lint 2026-11-25·11-26 연속 지적. source 페이지는 `sources:` 대신 `source_file:`·`source_url:`·`author:`·`source_date:`를 쓴다는 관례와, meta 페이지의 `sources:`는 비우거나 생략할 수 있다는 점을 스키마에 적었다. validate-frontmatter.sh는 이미 이 관례대로 동작한다. 사용자 승인.
+
+## [2026-11-26 01:53] curate | lint 2026-11-26 액션 #5 + context-and-memory 역링크 5개
+- updated: [[prompt-optimization]], [[recursive-language-model]], [[agent-evaluation]], [[agent-orchestration-patterns]], [[agent-recipe]], [[dynamic-workflows]], [[prompt-injection]], [[subagent]]
+- notes: (#5) cross-ref 셋. prompt-optimization §5에 "전이되지 않은 prompt" 노트(RLM 시스템 프롬프트, 과제 규칙 vs 운용 규칙 구분, 모순 아님)와 RLM 쪽 대응 문장. agent-evaluation §6에 "채점이 형식과 능력을 섞으면 결론이 뒤집힌다" 노트(재현 논문 base 0%, 처방은 *(추론)*)와 sources 추가. agent-orchestration-patterns의 fan-out에 RLM을 극단으로 놓는 노트(*(해석)*)와 sources 추가, 09-21 이후 첫 갱신. 역링크: agent-evaluation·agent-recipe·dynamic-workflows·prompt-injection·subagent 본문에 [[context-and-memory]] 연결 문장. 이로써 topic이 링크하는 concept·synthesis 중 역링크가 없는 것은 what-to-accumulate-outside-the-model(synthesis, 의도적 생략)만 남는다.
