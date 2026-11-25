@@ -99,9 +99,9 @@ Claude는 항상 다음 4가지 작업 중 하나를 수행한다고 명확히 �
 
 ### 2.2 QUERY — 위키에 질문하기
 
-**Trigger:** 사용자가 위키에 대해 질문하거나, "X에 대해 알려줘"라고 한다.
+**Trigger:** 사용자가 위키에 대해 질문하거나, "X에 대해 알려줘"라고 하거나, `/query <질문>`을 입력한다.
 
-**Flow:**
+**Flow:** `wiki-query` 스킬을 호출한다. 요약:
 1. 먼저 `wiki/meta/index.md`를 읽어 관련 페이지를 찾는다 (RAG 임베딩 대신 인덱스 우선).
 2. 관련 페이지들을 읽고 **출처를 명시(citation)하며** 답한다.
 3. 답변은 형식이 다양할 수 있다: 마크다운 페이지, 비교 표, 다이어그램, 코드.
@@ -223,6 +223,7 @@ Claude는 항상 다음 4가지 작업 중 하나를 수행한다고 명확히 �
 | `wiki-page` | skill | 새 위키 페이지 생성 또는 기존 페이지 대대적 개편 |
 | `wiki-link` | skill | 페이지 이름 변경, 링크 무결성 검사, cross-reference 추가 |
 | `wiki-lint` | skill | `/lint` 명령 또는 위키 건강 검진 요청 |
+| `wiki-query` | skill | `/query` 명령 또는 위키 내용에 대한 질문 |
 | `librarian` | agent | 큰 ingest 작업(여러 소스 동시), 멀티 페이지 리팩터링 |
 | `editor` | agent | 페이지 작성/리라이트 전담 |
 | `linker` | agent | 그래프 구조 분석, cross-reference 추천 |

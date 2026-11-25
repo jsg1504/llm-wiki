@@ -150,3 +150,7 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
   - [[agent-evaluation]] §3b 신설. 사람은 eval을 **만들지 않고 보정한다.** eval의 내용물이 공통 기준이 아니라 **제작자의 taste**다. **세 번째 검증 층(프로덕션 A/B)**이 들어왔다. §3의 "SEO 콘텐츠팜" 편향과 이 소스의 "빅테크만" 편향이 같은 모양이다. 차이는 발견 경로(사람 테스터 vs trace 클러스터링)다.
   - [[anthropic]]: **Anthropic을 발행처로도 인용 경로로도 거치지 않는 첫 소스.** 순환 참조는 풀렸지만 편향의 종류가 스타트업 제품 편향으로 바뀌었을 뿐이다.
   - 자동 생성 자막이다("Cloud Code" = Claude Code, "Pie Harness" = pi harness). 정량 데이터 0. valued work per watt는 정의되지 않은 구호다.
+
+## [2026-11-25 22:47] manual | Query operation 도구화 — `/query` + `wiki-query` skill
+- touched: CLAUDE.md (§2.2 Trigger/Flow, §8 표), `.claude/skills/wiki-query/SKILL.md` (신규), `.claude/commands/query.md` (신규)
+- notes: Karpathy 패턴 3 operation 중 Query만 전용 skill/명령이 없었고, syntheses 0개·log의 query 항목 0건이었다. 새 skill은 인덱스 우선, 주장마다 출처, 위키 근거/*(추론)*/*(위키 외)* 구분, 모순 노출, 답변마다 synthesis 보존 판단(§3.1 기준)을 강제한다. log 기록은 기존 규칙대로 synthesis 저장 시에만.
