@@ -3,7 +3,7 @@ title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt]
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -148,6 +148,8 @@ Managed Agents에서 **session이 그 객체 역할을 한다.** 단 sandbox나 
 
 > **선행 사례: MemGPT (2023, 2026-11-26 추가).** [[2023-10-12-memgpt]]는 (a)와 (c)를 이미 함께 썼다. FIFO queue에서 밀려난 메시지는 재귀 요약으로 압축되고(a), 원본은 recall storage에 무기한 남아 함수로 다시 검색된다(c). 차이는 **누가 다시 가져오는가**다. Managed Agents는 그 결정을 harness로 밀어내고 인터페이스에는 "durable하고 interrogable하다"만 남긴다. MemGPT는 결정을 **모델**에게 맡긴다. 그 대가로 성능이 모델의 function calling 능력에 묶였다. 비교는 [[agent-memory]]에 있다. *(대응은 이 위키의 해석이다.)*
 
+> **(a)만 썼을 때의 제품 실측 (2026-11-26).** [[2024-10-14-longmemeval]]이 2024년 8월에 ChatGPT memory를 사람이 직접 대화하며 쟀다. 대화 원문을 통째로 읽힌 GPT-4o(0.918)보다 37% 낮은 0.577이었다. ChatGPT는 증거를 처음엔 기록했지만 대화가 이어지며 **이력을 압축할 때 그 정보를 바꿔 버렸다.** 처방 (a)의 약점("요약이 lossy")이 제품에서 측정된 첫 사례다. 같은 소스의 설계 실험도 원본을 남기고 추출한 사실을 **찾는 길(key)** 로 덧붙일 때 가장 좋았다. (c)가 (a)를 안전하게 만든다는 위 문장과 같은 방향이다. → [[agent-memory]]
+
 ### Many brains — 스케일의 병목은 인텔리전스가 아니라 provisioning이었다
 
 brain을 컨테이너에 두면 brain 수만큼 컨테이너가 필요하고, 그것이 provision될 때까지 추론이 시작되지 못한다. **sandbox를 영영 쓰지 않을 세션도** repo clone·프로세스 부팅·대기 이벤트 fetch를 선불했다.
@@ -243,3 +245,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). 층위 다이어그램 맨 위 칸(loop)의 출처
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). prompt 층 자동화와 모델 간 전이 (2026-11-25)
 - [[2023-10-12-memgpt]] — Packer 외 (UC Berkeley, arXiv 2310.08560). compaction 처방 (a)+(c)의 선행 사례, context 한계 경고가 기능이었던 사례 (2026-11-26)
+- [[2024-10-14-longmemeval]] — Wu 외 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 처방 (a)만 쓴 제품(ChatGPT memory)의 실측 노트만 이 소스에서 왔다 (2026-11-26)

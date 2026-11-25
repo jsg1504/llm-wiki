@@ -3,7 +3,7 @@ title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않�
 type: synthesis
 created: 2026-11-26
 updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion]
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval]
 question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
 aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
 tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
@@ -35,7 +35,7 @@ status: draft
 | **Eval / judge** | 실패 패턴, 제작자의 taste를 코드화한 것 | "좋은 결과란 무엇인가"는 모델이 바뀌어도 그대로다. 오히려 새 모델을 검증하는 도구가 된다 *(추론)* | [[agent-recipe]], [[agent-evaluation]] §3b |
 | **Skill / prompt** | 반복 행동, 에이전트가 짐작해야 했을 프로젝트 지식 | trace에서 증류한 지시문이 모델 간에 전이됐다 (+9%) | [[prompt-optimization]] §5, [[loop-engineering]] |
 | **외부 state / artifact** | 무엇이 끝났고 무엇이 남았는가, 단계별 산출물 | *"The agent forgets, the repo doesn't."* 메모리는 컨텍스트가 아니라 디스크에 둔다 | [[loop-engineering]], [[artifact-chain]] |
-| **Memory 내용** | 사용자에 대한 사실, 과거 대화 원본 | 모델과 무관한 사실이다. 단 그것을 **언제 넣고 뺄지 정하는 정책**은 능력 가정이라 수명이 짧다 *(추론)* | [[agent-memory]] |
+| **Memory 내용** | 사용자에 대한 사실, 과거 대화 원본 | 모델과 무관한 사실이다. 단 그것을 **언제 넣고 뺄지 정하는 정책**은 능력 가정이라 수명이 짧다 *(추론)*. 저장은 **원문을 남기고 추출한 사실로 색인을 보강**하는 쪽이 가장 좋았다. 요약만 남긴 상용 memory는 원문보다 37% 낮았다 | [[agent-memory]], [[2024-10-14-longmemeval]] |
 | **Trace / session log (원본)** | 실행 기록 전체 | 두 번째 루프의 signal이 된다. compaction은 되돌릴 수 없으니 원본을 창 밖에 둔다 | [[meta-harness]], [[agent-evaluation]] §5 |
 | **인터페이스** | session / harness / sandbox 경계 | harness는 갈아 끼우고 경계선만 고정한다 | [[meta-harness]] |
 | **Harness profile / memory** | 사용자 불만에서 나온 harness 확장 | 가장 빨리 낡는다. 모델별로 따로 둔다 | [[agent-recipe]] |
@@ -49,6 +49,7 @@ status: draft
 ### 1. Eval이 가장 중요한 자산이다
 
 - **production incident 하나마다 eval을 하나** 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아져 변별력을 잃은 케이스는 교체한다. eval suite는 계속 고쳐 쓰는 대상이다 ([[agent-evaluation]] §6, [[2026-08-21-the-ai-native-sdlc-playbook]]).
+- 케이스를 교체하는 대신 **난이도를 올릴 수 있게** 설계하는 길도 있다. LongMemEval은 같은 질문의 대화 이력 길이를 자유롭게 늘려, 시스템이 좋아져도 벤치마크가 쉬워지지 않게 했다 ([[agent-evaluation]] §6, [[2024-10-14-longmemeval]]). 판정자를 쓴다면 사람과 대조한 일치율을 함께 남긴다(97~98%). 판정자도 모델이 바뀌면 다시 확인할 대상이다. *(뒤 문장은 추론이다.)*
 - 채점 함수는 **점수와 함께 텍스트**를 돌려준다. 컴파일러 에러, 통과 못 한 루브릭 항목, 사람이 쓴 채점 근거 같은 것이다. 이 텍스트를 반성해 prompt를 고치면 train rollout 6~179회로 가중치 RL(24,000 rollout)의 최고 점수에 도달했다 ([[agent-evaluation]] §7, [[prompt-optimization]]). 단, 텍스트를 끄고 돌린 직접 비교는 논문에 없다.
 - 사람은 eval을 직접 쓰지 않고 **보정**한다. 에이전트가 trace를 클러스터링해 judge를 만들고, 사람은 그 판정에 동의하는지만 답한다 ([[agent-evaluation]] §3b).
 - 보상을 뒤집어 성능을 떨어뜨리는 지시문을 찾으면, 사고가 나기 **전에** 회귀 케이스를 만들 수 있다 ([[agent-evaluation]] §7).
@@ -89,7 +90,7 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 
 - ~~**장기 memory 시스템** 자체를 다룬 소스가 없다.~~ **부분적으로 채워짐 (2026-11-26):** [[2023-10-12-memgpt]]가 들어와 [[agent-memory]]가 생겼다. 무엇을 어떻게 저장하고 다시 가져오는가는 다룬다. **무엇을 잊어야 하는가**(삭제, 갱신, 모순된 사실)와 memory 검색 품질의 측정은 여전히 비어 있다.
 - **모델 간 전이의 근거가 얇다.** prompt 하나, 모델 두 개, 약한 모델에서 강한 모델 방향만 확인됐다. skill·harness profile·eval의 전이와 Claude 계열 데이터는 없다 ([[agent-recipe]]).
-- **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다.
+- **recipe를 묶음으로 도입한 전후 비교**도, eval suite가 시간이 지나며 변별력을 잃는 속도에 대한 수치도 없다. 변별력을 **지키는 설계** 하나(이력 길이를 늘릴 수 있는 벤치마크)는 [[2024-10-14-longmemeval]]로 생겼다.
 - 채울 만한 소스 후보: agent memory 관련 논문이나 글, eval suite를 모델 교체에 걸쳐 유지한 실무 회고.
 
 ## Related
@@ -116,3 +117,4 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[2025-06-13-multi-agent-research-system]] — production tracing과 관측성
 - [[2023-10-12-memgpt]] — memory 계층, 능력 가정이 새 모델에서 거꾸로 작용한 사례 (2026-11-26)
 - [[2023-03-20-reflexion]] — 모델의 강점에 올라타는 구조, 인스턴스용 반성문 (2026-11-26)
+- [[2024-10-14-longmemeval]] — 원문 + 사실로 저장하기, 난이도를 늘릴 수 있는 eval, 판정자 대조 (2026-11-26)

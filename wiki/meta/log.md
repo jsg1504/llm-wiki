@@ -243,3 +243,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 - updated: [[prompt-optimization]], [[agent-memory]], [[agent-evaluation]], [[loop-engineering]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
 - contradictions: 없음. 저자들의 전망("모델이 좋아질수록 더 좋아진다")과 MemGPT의 관측(새 모델이 더 나빴다)은 사용자 합의에 따라 모순이 아니라 "전망 vs 관측"으로 synthesis에 나란히 기록했다.
 - notes: raw는 arXiv v4 PDF를 내려받았다(파일명 날짜는 v1 기준). 새 concept 페이지 없이 흡수했다. 반성 엔진의 결과를 어디에 두는가(Reflexion은 episodic memory, GEPA는 지시문)로 agent-memory와 prompt-optimization을 이었다. self-generated test의 false positive 16.3%와 테스트 없는 반성의 역효과(0.52 < 0.60)를 agent-evaluation §2b에 정량 사례로 넣었다. 재시도 루프와 두 번째 루프를 구분했다. agent-memory 초안에 원문에 없는 반성문 예시를 썼다가 원문 Figure 1 예시로 바로잡았다. 역링크 점검: agent-containment는 source 페이지의 단순 언급(격리 실행 권고)이라 생략했다.
+
+## [2026-11-26 00:59] ingest | LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory
+- source: [[wiki/sources/2024-10-14-longmemeval|LongMemEval (Wu 외, ICLR 2025)]]
+- created: [[2024-10-14-longmemeval]]
+- updated: [[agent-memory]], [[meta-harness]], [[agent-evaluation]], [[prompt-injection]], [[what-to-accumulate-outside-the-model]], [[anthropic]], [[glossary]], [[index]]
+- contradictions: 없음. MemGPT의 재귀 요약과 "압축하면 나빠진다"는 결과는 MemGPT가 원본도 보존하므로 일치로 기록했다.
+- notes: raw는 arXiv v2 PDF를 내려받았다(파일명 날짜는 arXiv 페이지에서 확인한 v1 제출일). 새 concept 없이 agent-memory에 흡수했고 페이지가 약 120줄에서 189줄로 커졌다(사용자 승인). 세 단계·네 조정점 틀로 MemGPT·Reflexion을 다시 놓았고, 다섯 능력, 설계 실험 표, 모델 순서가 뒤집힌 세 번째 사례(GPT-4o-mini > GPT-4o, Llama 70B < 8B)를 넣었다. memory poisoning은 *(추론)*에서 소스 근거로 올렸다. agent-evaluation §6에 "교체 대신 늘린다"와 판정자 대조(97~98%)를 넣으면서 MemGPT도 대조 사례로 인용해 sources에 추가했다.

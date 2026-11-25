@@ -3,7 +3,7 @@ title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
 updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -127,6 +127,10 @@ status: draft
 
 위 지침들은 **제품 에이전트를 개선하기 위한** 평가다. [[2026-08-21-the-ai-native-sdlc-playbook]]은 같은 도구를 다른 자리에 놓는다 — **에이전트의 설정 자체**(`CLAUDE.md`·skills·hooks)가 바뀔 때 CI에서 eval suite를 돌려 통과율을 보고하게 한다. 실제 작업 20~50개를 eval로 만들라는 권고는 위 "20개 쿼리로 시작"과 규모가 같고, 여기에 하나를 더한다: **production incident 하나당 eval 하나**를 추가해 영구 회귀 테스트로 남긴다. 모델이 좋아지면 변별력을 잃은 케이스를 교체해야 하는 살아있는 suite다.
 
+> **교체 대신 늘린다 (2026-11-26).** [[2024-10-14-longmemeval]]은 변별력 문제를 벤치마크 설계에서 푼다. 기존 장기 memory 벤치마크의 이력이 짧고 고정돼 있어 *"시스템이 계속 좋아지면서 난이도를 제한한다"* 고 보고, 증거 세션을 무관한 세션들 사이에 넣는 방식으로 **이력 길이를 자유롭게 늘릴 수 있게** 만든다. 표준은 약 115k token과 약 1.5M token 두 가지다. 케이스를 새로 쓰지 않고 **같은 질문의 난이도를 올리는** 길이다. 다만 길이라는 축 하나로만 늘어나므로 모든 과제에 쓸 수 있는 방법은 아니다. *(뒤 문장은 추론이다.)*
+>
+> **판정자를 사람과 대조한다.** 같은 소스는 GPT-4o 판정자를 유형별 30문항, 두 생성 모델에 대해 사람 전문가 판정과 비교해 평균 97~98% 일치를 확인하고 결과를 공개한다. 답이 열린 유형(preference, abstention)에서 가장 많이 어긋났다. §2의 LLM-as-judge를 쓸 때 **판정자 자체의 정확도를 따로 보고하는** 사례다. 대조적으로 [[2023-10-12-memgpt]]는 판정자에게 *"후하게 채점하라"* 고 지시하고, GPT-4가 사람과 잘 일치한다는 선행 연구를 인용할 뿐 **자체 대조 결과는 내지 않는다.**
+
 ### 7. 채점 함수는 점수와 함께 텍스트를 내야 한다 (2026-11-25)
 
 지금까지 이 페이지의 eval은 **판정**을 위한 것이었다. 통과했는가, 몇 점인가. [[2025-07-25-gepa-reflective-prompt-evolution]]은 eval의 출력을 **개선의 재료**로 쓴다. 그러려면 점수 하나로는 부족하다.
@@ -149,7 +153,7 @@ status: draft
 - [[agent-recipe]] — judge와 eval이 recipe의 핵심 구성물로 누적되는 자리. §3b의 절차가 곧 recipe 개선 절차다
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 - [[prompt-optimization]] — eval 출력을 판정이 아니라 개선 재료로 쓰는 방법. §7의 feedback_text와 adversarial 회귀 suite
-- [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory
+- [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory. LongMemEval로 memory를 재는 법
 
 ## Sources
 
@@ -161,3 +165,5 @@ status: draft
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). 같은 절의 ⚠️ 정정 — evaluator는 룰 체커이지 품질 판정자가 아니다.
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). §7만 이 소스에서 왔다 (2026-11-25)
 - [[2023-03-20-reflexion]] — Shinn 외 5인 (arXiv 2303.11366). §2b의 "분리하지 않았을 때의 수치" 노트만 이 소스에서 왔다 (2026-11-26)
+- [[2024-10-14-longmemeval]] — Wu 외 5인 (ICLR 2025). §6의 "교체 대신 늘린다"·판정자 대조 노트만 이 소스에서 왔다 (2026-11-26)
+- [[2023-10-12-memgpt]] — Packer 외 6인 (arXiv 2310.08560). §6 노트의 대조 사례(검증 없는 관대한 판정자) (2026-11-26)
