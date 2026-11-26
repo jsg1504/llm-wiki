@@ -3,7 +3,7 @@ title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
 updated: 2026-11-27
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2022-10-06-react, 2024-12-19-building-effective-agents]
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2022-10-06-react, 2024-12-19-building-effective-agents, 2026-11-23-working-with-ai]
 aliases: [inner loop, outer loop, 두 번째 루프]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
@@ -146,6 +146,8 @@ meta-harness      ← 인터페이스 (session / harness / sandbox). 가장 느�
 > 양쪽 모두 정량 근거가 없다. 어느 쪽이 맞는지보다 **어떤 조건에서 taste를 코드화할 수 있는가**가 남은 질문이다.
 >
 > **2026-11-25:** [[2025-07-25-gepa-reflective-prompt-evolution]]이 들어왔지만 판정 상태는 바꾸지 않는다. 정답이 있는 과제에서 증류가 효율적으로 자동화된다는 것만 보였다. taste 영역의 데이터는 아니다. 위 "두 번째 루프" 절의 노트 참조.
+>
+> **2026-11-27:** [[2026-11-23-working-with-ai]]에 Osmani 쪽에 서는 현장 증언이 하나 있다. 한 CTO가 PM을 product-market fit을 알아보는 일로 돌리며 이렇게 말했다. *"Claude is a terrible product manager... So it's a lot of taste deciding what features are important."* 판정은 바꾸지 않는다. 증언 하나이고, 이것은 *지금의 모델*이 taste를 못 한다는 말이다. Gavrilescu의 주장은 taste를 judge로 **코드화할 수 있다**는 것이라 정면으로 반박되지 않는다. 같은 소스는 판단 업무가 사람에게 넘어가는 이동을 여러 조직에서 기록한다(*"from writing code to making decisions"*). → [[ai-in-organizations]] §4.2
 
 그리고 이미 도는 루프를 끊는 신호 하나 — **같은 명령이 결과 변화 없이 반복되는 것.** 세 번째에도 두 번째와 같으면 멈출 때다.
 
@@ -241,6 +243,8 @@ maker/checker를 분리하는 이유가 루프의 "끝났다"를 의미 있게 �
 
 > 이 위키의 [[ai-native-sdlc]]가 "커밋된 아티팩트가 다음 단계를 트리거하는 루프"를 처방하는데, 그쪽에는 이 항목에 대응하는 경계가 없다. 아티팩트 체인이 감사 가능하다는 것과 **사람이 실제로 읽는다는 것**은 다른 명제다.
 
+> **읽기를 실제로 운영한 사례 (2026-11-27).** [[2026-11-23-working-with-ai]]의 한 엔지니어는 장애 알림 응답을 에이전트로 자동화한 뒤 **두 달간 모든 대화 전사본을 읽었다.** 그 과정에서 prompt를 고치고, 깨진 integration을 고치고, 빠진 벤더 문서를 채우고, 에이전트의 권한 요청을 승인했다. 6개월 뒤 시스템이 잘 돌 때도 **2주마다 표본을 읽었다.** "루프가 만든 걸 읽는다"가 실제로는 *전수 → 표본*으로 밀도를 낮추는 운영 일정이 된다는 것을 보여 준다. 소스는 이 일이 그 엔지니어의 역할을 넓혔고 해고 불안을 줄였다고 쓴다. 읽기가 부채 상환이면서 직무가 된 셈이다. *(해석은 이 위키의 것이다. 소스는 comprehension debt라는 말을 쓰지 않는다.)* → [[ai-in-organizations]] §4.1
+
 ### 편안한 자세가 위험한 자세다 (cognitive surrender)
 
 루프가 알아서 돌면 의견 갖기를 그만두고 나온 걸 그대로 받게 된다. 소스의 핵심 문장:
@@ -311,6 +315,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[ai-native-sdlc]] — 커밋된 아티팩트가 다음 단계를 트리거하는 루프. comprehension debt 경계가 빠져 있는 곳
 - [[multi-agent-systems]] — 루프가 주기적으로 지불하게 되는 토큰 비용의 근거
 - [[anthropic]] — 이 위키 최초의 비-Anthropic 소스가 들어온 지점. 두 번째 소스가 벤더 원문을 실어 나르는 경로이기도 하다
+- [[ai-in-organizations]] — 루프를 조직에서 운영하는 사람. 전사본 전수 → 표본 읽기, taste 모순의 현장 증언
 - [[agent-loop]] — 실행 *안*의 루프. 이 페이지는 실행 *사이*의 루프다. 반복 실패 신호를 공유한다
 
 ## Sources
@@ -325,3 +330,4 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 두 번째 루프의 signal 품질에 대한 첫 수치. taste 모순은 판정하지 못함 (2026-11-25)
 - [[2022-10-06-react]] — Yao 외 (ICLR 2023). "루프라는 말의 두 층" 노트만 이 소스에서 왔다 (2026-11-27)
 - [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic, 2024-12-19). 같은 노트의 agent 정의만 이 소스에서 왔다 (2026-11-27)
+- [[2026-11-23-working-with-ai]] — Wilmers 외 (Anthropic Institute, 2026-11-23). comprehension debt 절의 운영 사례, taste 모순의 현장 증언 (2026-11-27)

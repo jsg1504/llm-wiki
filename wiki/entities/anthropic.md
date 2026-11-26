@@ -3,14 +3,14 @@ title: Anthropic
 type: entity
 created: 2026-09-11
 updated: 2026-11-27
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react, 2023-02-09-toolformer]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react, 2023-02-09-toolformer, 2026-11-23-working-with-ai]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **19개 중 6개**가 Anthropic 발행이다. 비-Anthropic 13개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **20개 중 7개**가 Anthropic 발행이다(2026-11-27 기준). 비-Anthropic 13개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -20,6 +20,7 @@ status: draft
 - **엔터프라이즈 조력자로서** — Applied AI 팀이 고객사와 일하며 얻은 패턴을 플레이북으로 낸다 ([[2026-08-21-the-ai-native-sdlc-playbook]]).
 - **플랫폼 제공자로서** — 남의 에이전트 워크로드를 호스팅하며 겪은 아키텍처 전환을 공개한다 ([[2026-04-08-scaling-managed-agents]]). 앞의 둘과 성격이 다르다. 여기서는 Anthropic이 *에이전트를 만드는 쪽*이 아니라 **에이전트가 돌아갈 바닥을 까는 쪽**이다.
 - **보안 사고 보고자로서** — 세 제품을 2년간 운영하며 **깨진 것들을 이름과 수치와 함께** 공개한다 ([[2026-05-25-how-we-contain-claude]]). 책임공개로 받은 취약점 3건, 자사 직원이 피싱당한 red-team, 서드파티가 찾아낸 유출 경로, 엔터프라이즈 도입 장애물. Anthropic 발행 다섯 소스 중 **홍보 인센티브와 가장 반대 방향으로 쓰인 글**이다.
+- **고객을 연구하는 연구 조직으로서 (2026-11-27)** — The Anthropic Institute의 경제·조직 연구자들이 자사 엔터프라이즈 고객 58곳을 인터뷰한 질적 보고서를 낸다 ([[2026-11-23-working-with-ai]]). 이 위키에서 처음으로 **엔지니어링이 아닌** Anthropic 글이다. 자사 Usage Policy(직원 감시의 고지·범위 제한, 고용 결정의 human-in-the-loop)를 본문에서 직접 인용하는 것도 처음이다. → [[ai-in-organizations]]
 
 ## Key Points
 
@@ -53,6 +54,13 @@ status: draft
 > - [[2026-05-25-how-we-contain-claude]]는 **홍보 인센티브와 반대 방향**이다. 자사 취약점·red-team 실패·도입 장애물을 구체적으로 공개한다. 이 소스에는 그 경계가 덜 적용된다.
 > - **대신 다른 경계가 필요하다:** 여기 공개된 것은 **발견되고 수정된 것들**이다. 발견되지 않은 것의 분포는 알 수 없다. 그리고 **완화 이후의 재측정이 없다** — 93%, 84%, 83%, 0.1% 같은 숫자는 전부 문제를 진단하는 쪽이고 해결을 검증하는 쪽이 아니다.
 > - 같은 소스가 이 위키에 들어온 소스 중 **처음으로 외부 기관을 참조 지점으로 제시한다** — NIST의 AI agent identity/authorization 프로젝트, 호주 ACSC·CISA·영국 NCSC 등 6개 기관의 agentic AI 도입 지침, ISO/IEC 42001. *"partners and competitors 양쪽과 함께 일하기를 기대한다"* 고 쓴다. 외부 관점 부재를 메울 **구체적 단서**다.
+
+> **자기 고객을 연구한 소스 (2026-11-27) — 편향이 두 겹이다.** [[2026-11-23-working-with-ai]]는 Anthropic 연구자가 **Anthropic 고객**을 인터뷰했다. 응답자 전원이 Claude를 쓰고(다른 도구도 쓴다), 표본은 연구자가 다양성 기준으로 골랐고, 연락한 회사 중 일부만 응했다. 가치 평가는 자기 보고이고 분류는 자동 코더가 했다. 경계할 것은 둘이다.
+>
+> - **선택 편향.** AI 도입에 적극적인 고객이 더 응했을 가능성이 있다. 저자들은 Census BTOS와 비교해 규모·산업 편향을 스스로 밝힌다(소프트웨어·금융 과대, 소매·운송 과소).
+> - **톤은 홍보 쪽이 아니다.** 해고 사례, 감시의 *"panopticon effect"*, 깨지기 쉬운 자동화, *"Claude grenades"*, *"Claude is a terrible product manager"* 같은 자사 제품에 불리한 증언을 그대로 싣는다. [[2026-05-25-how-we-contain-claude]]와 같은 방향의 공개다. 다만 결론(조직 재편이 해법이고 Anthropic이 교육과 지원으로 도와야 한다)은 벤더의 이해와 어긋나지 않는다.
+>
+> 이 소스의 퍼센트(80%, 3분의 2, 4배)는 **측정값이 아니라 응답 분포**로 세야 한다. 이 위키에서 Claude를 외부에서 잰 데이터의 목록에는 넣지 않는다.
 
 > **첫 외부 소스가 들어왔다 (2026-09-21) — 그러나 관점의 외부성이지 증거의 외부성은 아니다.** [[2026-06-07-loop-engineering]](Addy Osmani, 개인 블로그)이 이 위키 최초의 비-Anthropic 소스다. 무엇을 메우고 무엇을 못 메우는지를 구분해 기록한다.
 >
@@ -149,6 +157,7 @@ status: draft
 - [[agent-memory]] — 두 번째 학술·정량 독립 소스(MemGPT)가 들어온 개념. GEPA와 같은 연구 그룹 계열이다.
 - [[recursive-language-model]] — Claude Code(Opus 4.1)를 외부에서 잰 데이터가 들어온 개념. 측정자는 경쟁 scaffold의 저자다.
 - [[agent-fundamentals]] — workflow vs agent 정의가 Anthropic 글에서 왔다. 처음으로 Google·Meta 원전이 함께 들어온 topic.
+- [[ai-in-organizations]] — Anthropic Institute가 자사 고객을 연구한 소스로 세운 topic. 편향이 두 겹이다.
 
 ## Sources
 
@@ -158,6 +167,7 @@ status: draft
 - [[2026-04-08-scaling-managed-agents]] — Anthropic Engineering 블로그, Lance Martin·Gabe Cemaj·Michael Cohen (2026-04-08).
 - [[2026-05-25-how-we-contain-claude]] — Anthropic Engineering 블로그, Max McGuinness·Mikaela Grace·Jiri De Jonghe·Jake Eaton·Abel Ribbink (2026-05-25). Jake Eaton은 앞 소스의 감사문에도 등장.
 - [[2024-12-19-building-effective-agents]] — Anthropic Engineering 블로그, Erik S.·Barry Zhang (2024-12-19). 2026-11-27 받은 개정판. 편향 노트: 정의를 제공하지만 수치가 없고, 개정 주석이 자사 제품을 가리킨다 (2026-11-27)
+- [[2026-11-23-working-with-ai]] — The Anthropic Institute, Nathan Wilmers·Maxim Massenkoff·Peter McCrory (2026-11-23). 편향 노트: 자사 고객 58곳 인터뷰, 자기 보고 가치, 엔지니어링이 아닌 첫 Anthropic 소스 (2026-11-27)
 
 **비-Anthropic 소스 (대조군):**
 

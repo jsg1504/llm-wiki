@@ -3,7 +3,7 @@ title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
 updated: 2026-11-27
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react]
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react, 2026-11-23-working-with-ai]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -117,6 +117,8 @@ status: draft
 
 > ⚠️ 이 절차는 [[loop-engineering]]이 기록한 *"taste는 루프에 맞지 않는다"* 와 부딪힌다. 그 페이지의 Contradiction 절 참조. 이 소스도 결과 수치(응답률, A/B 효과 크기)를 제시하지 않는다.
 
+> **보정할 사람은 협조해야 한다 (2026-11-27).** 이 절차는 사람의 보정을 공짜 입력으로 둔다. [[2026-11-23-working-with-ai]]는 조직에서 그 입력이 공짜가 아님을 기록한다. 효과적인 workflow는 **전문가가 prompt를 설계하고 출력을 평가해야** 서는데, 그 workflow가 전문가를 대체할 수 있으면 전문가는 저항한다. *"If I'm open to this, I'm essentially building my own coffin."* 리뷰어 채용을 90% 넘게 줄이려던 회사에서는 리뷰어들이 속도를 올리지 않았다. 반대쪽 사례도 같은 소스에 있다. CPA가 금융 에이전트의 출력을 채점하는 일이 **새 업무로** 생겼다. 평가가 대체의 도구가 될 때와 넓어진 역할의 일부가 될 때 협조가 갈린다. 그리고 채점기도 낡는다. 상담원을 **2년 된 모델**로 채점하는 시스템은 관리자들이 진지하게 받아들이지 않았다. *(평가 설계와 조직 협조의 연결은 이 위키의 추론이다.)* → [[ai-in-organizations]] §2
+
 ### 4. 상태를 바꾸는 에이전트는 end-state로 평가한다
 
 읽기 전용 리서치와 달리, 여러 턴에 걸쳐 영속 상태를 수정하는 에이전트는 각 행동이 다음 스텝의 환경을 바꾼다. 이때는 **턴별 분석 대신 최종 상태(end state)가 옳은가**를 본다. 에이전트가 다른 경로로 같은 목표에 도달할 수 있음을 인정하면서도 의도한 결과는 보장하는 방식이다. 복잡한 워크플로는 모든 중간 단계를 검증하려 들지 말고 **상태 변화가 일어나야 할 지점을 discrete checkpoint로 쪼개** 검사한다.
@@ -164,6 +166,7 @@ status: draft
 - [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory. LongMemEval로 memory를 재는 법
 - [[agent-loop]] — 매 단계 ground truth가 판정자 분리를 루프 한 단계 단위로 적용한 것이다. ReAct 실패 분류의 대상
 - [[agent-fundamentals]] — 단순성 원칙("결과가 나아질 때만 복잡도를 올린다")을 지키는 수단이 측정이다
+- [[ai-in-organizations]] — 보정·채점을 맡을 전문가가 조직에서 협조하는가. 채점이 새 직무가 되는 경우와 낡은 채점기
 - [[context-and-memory]] — memory·long-context 클러스터의 측정과 재현을 모은 topic. 남이 다시 잰 주장 2건이 §6의 두 노트(DMR이 낡은 사례, 형식과 능력을 섞은 채점)와 겹친다
 
 ## Sources
@@ -182,3 +185,4 @@ status: draft
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). §6의 "형식과 능력을 섞은 채점" 노트만 이 소스에서 왔다 (2026-11-26)
 - [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). §2b의 evaluator-optimizer 노트만 이 소스에서 왔다 (2026-11-27)
 - [[2022-10-06-react]] — Yao 외 (Princeton·Google, ICLR 2023). §3의 궤적 실패 분류만 이 소스에서 왔다 (2026-11-27)
+- [[2026-11-23-working-with-ai]] — Wilmers 외 (Anthropic Institute, 2026-11-23). §3b의 "보정할 사람은 협조해야 한다" 노트만 이 소스에서 왔다 (2026-11-27)

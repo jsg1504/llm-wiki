@@ -311,3 +311,10 @@ grep "^## \[.*\] ingest" wiki/meta/log.md
 ## [2026-11-27 02:20] curate | 에이전트 기초 ingest의 범위 밖 역링크 5개
 - updated: [[context-and-memory]], [[what-to-accumulate-outside-the-model]], [[recursive-language-model]], [[prompt-optimization]], [[agent-containment]], [[index]]
 - notes: 바로 앞 ingest의 §4.4 점검에서 승인 범위 밖으로 남긴 후보. 사용자 승인으로 모두 본문 문장으로 넣었다. context-and-memory "밖에 쌓기 vs 가중치에 넣기"에 Toolformer(가중치)·ReAct(prompt) 대비. what-to-accumulate 판별 기준에 "도구를 주는 것도 능력 가정이다"(775M 문턱, 세 층위 수명) *(추론)*. recursive-language-model에 ReAct의 scaffold 손해 노트와 Toolformer를 학습 절의 선례로. prompt-optimization에 "도구 설명도 최적화 대상이다" 절(40% 단축, 사람이 고치던 2024년 판본). agent-containment에 ReAct 윤리 절의 행동 공간 축소를 blast radius 원리의 이른 판본으로. 모두 *(해석)* 표시. 각 페이지 sources·updated 갱신, index 소스 수 재계산.
+
+## [2026-11-27 02:27] ingest | Working with AI (Anthropic Institute)
+- source: [[wiki/sources/2026-11-23-working-with-ai|Working with AI]]
+- created: [[ai-in-organizations]]
+- updated: [[ai-native-sdlc]], [[loop-engineering]], [[meta-harness]], [[agent-evaluation]], [[anthropic]], [[index]]
+- contradictions: 없음. [[ai-native-sdlc]] Stage 5에 "공식 코드 리뷰를 없애고 Claude와 페어링한 회사" ℹ️ 노트(독자·맥락이 다르고, 비동기 게이트 → 동기 페어링으로 읽음). [[loop-engineering]] taste 모순에 Osmani 쪽 현장 증언 추가, 판정 유지(미해결)
+- notes: URL(assets.claude.com PDF)로 받은 기술 보고서. 이 위키의 첫 조직·노동경제 소스이자 첫 Institute 소스. 사용자 합의로 안 A(새 topic) 채택, 고용 영향은 source 페이지에 두고 topic에는 짧게. raw 복사는 권한에서 막혀 사용자가 `raw/papers/2026-11-23-working-with-ai.pdf`로 직접 넣기로 함. 퍼센트는 측정값이 아니라 응답 분포로 표기. ai-native-sdlc Open Question 두 개(정량 데이터, PO의 읽는 눈)에 부분 답을 달았다. 역링크(§4.4): 합의된 ai-native-sdlc·loop-engineering·meta-harness·agent-evaluation·anthropic은 본문 문장으로. source 페이지 4개는 규칙상 생략. 범위 밖 후보 topic 3개(context-and-memory, agent-fundamentals, multi-agent-systems)와 concept 다수(agentic-governance, artifact-chain, subagent 등)는 사용자 확인 대기.

@@ -3,7 +3,7 @@ title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
 updated: 2026-11-27
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents]
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2026-11-23-working-with-ai]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -36,6 +36,8 @@ Claude Opus 4.5
 ```
 
 harness의 코드는 그대로인데 그것이 방어하던 실패가 사라졌다. 저자들은 이것을 [Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html)의 사례로 제시한다 — **모델의 부족분을 메우려고 넣은 구조는, 모델이 그 부족분을 없애는 순간 순비용이 된다.**
+
+> **조직 규모에서 썩는 가정 (2026-11-27).** [[2026-11-23-working-with-ai]]는 같은 노후화를 엔터프라이즈 도입 현장에서 기록한다. 고객 상담원을 수십 개 차원으로 채점하는 시스템이 **2년 된 모델**로 돌고, 관리자들은 그 점수를 진지하게 받아들이지 않는다. 특정 산업·기능을 겨냥한 벤더 솔루션은 *"3개월이면 obsolete"* 다. 한 경영자는 모델이 빨리 좋아지는 동안 top-down workflow에 선투자하는 것을 *"돌아가는 다트판에 다트를 던지는 것"* 이라 했다. 위 context anxiety 사례와 방향이 반대다. 거기서는 harness가 막던 실패가 사라져 harness가 짐이 됐다. 여기서는 모델을 갈아 끼우지 않아 **새 모델이 할 수 있는 일을 못 쓰게** 됐다. 갈아 끼울 수 있는 인터페이스가 없으면 노후화는 양쪽으로 온다. 그 소스의 처방도 이 페이지와 구조가 같다. 고정된 workflow 대신 역할 변경을 쉽게 만드는 scaffolding을 둔다. *(대응은 이 위키의 해석이다.)* → [[ai-in-organizations]] §2
 
 > **같은 신호의 반대 사례 (2026-11-26).** [[2023-10-12-memgpt]]는 window의 70%에서 "memory pressure" 경고를 넣고, *"context 한계를 의식하는 것이 자기 편집이 작동하는 핵심"* 이라고 쓴다. GPT-4 계열에서는 이 경고가 기능이었다. Sonnet 4.5에서는 같은 인식이 조기 종료를 불렀다. 정면 모순은 아니다(모델과 과제가 다르다). **"한계를 알려 주면 모델이 잘 대처한다"는 것도 능력 가정**이라는 두 번째 사례다. 같은 소스에는 하나가 더 있다. MemGPT 위에서는 더 새로운 GPT-4 Turbo가 GPT-4보다 nested KV를 못 했다. 가정은 모델이 좋아지는 방향으로만 썩지 않는다. → [[agent-memory]] *(추론)*
 
@@ -265,6 +267,7 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[context-and-memory]] — compaction 처방 (a)~(d)와 memory를 묶은 상위 topic. 누가 가져오나의 네 주체
 - [[recursive-language-model]] — compaction 처방 (d). Managed Agents가 인용한 "창 밖 객체" 선행 연구. scaffold를 가중치로 옮기는 반대 방향
 - [[agent-fundamentals]] — 2024년 framework 경고와 단순성 원칙. 부분 판정 모순의 다른 쪽
+- [[ai-in-organizations]] — 조직에 배포된 top-down 자동화가 모델 개선으로 낡는 사례. 같은 원리의 조직 규모
 - [[tool-use]] — tool 배선은 harness의 일부다. 도구 사용의 규모 문턱은 "도구를 준다"도 능력 가정임을 보여 준다
 
 ## Sources
@@ -280,3 +283,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). compaction 처방 (d), scaffold를 가중치로 옮기는 반대 방향 (2026-11-26)
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 강한 모델에서 scaffold가 짐이 된 Kimi K2 사례만 이 소스에서 왔다 (2026-11-26)
 - [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). "framework 경고와 호스팅 harness" 절의 부분 판정 모순 (2026-11-27)
+- [[2026-11-23-working-with-ai]] — Wilmers 외 (Anthropic Institute, 2026-11-23). "조직 규모에서 썩는 가정" 노트만 이 소스에서 왔다 (2026-11-27)

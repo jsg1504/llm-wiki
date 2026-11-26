@@ -2,8 +2,8 @@
 title: AI-Native SDLC
 type: topic
 created: 2026-09-11
-updated: 2026-11-25
-sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product]
+updated: 2026-11-27
+sources: [2026-08-21-the-ai-native-sdlc-playbook, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2026-11-23-working-with-ai]
 tags: [sdlc, agentic-coding, enterprise-ai, governance, ai-native]
 status: draft
 ---
@@ -23,6 +23,8 @@ status: draft
 3. **거버넌스 비용이 오히려 오른다.** 예외는 여전히 주·월 단위로 모이는 회의와 위원회를 통과해야 한다.
 
 보안 팀이 전형적인 예다. 사람 산출량에 맞춰 인원이 잡혀 있으므로, 에이전트가 코드 산출을 몇 배로 늘리면 **리뷰 큐가 쌓이거나 미검토 코드가 나간다.** 규제 조직은 둘 다 수용할 수 없다.
+
+> **소프트웨어 밖에서도 같은 병목 (2026-11-27).** [[2026-11-23-working-with-ai]]는 고객사 58곳 인터뷰에서 같은 이동을 조직 전체 규모로 관찰한다. 가장 자주 언급된 병목은 **AI 출력의 리뷰**였다. 양이 희소한 사람의 주의를 압도한다. 그다음은 코딩 속도를 영업·의사결정 같은 다른 기능이 못 따라가는 것이었다. 고객 회의론과 규제는 드물게 언급됐다. 측정이 아니라 응답 분포지만, 이 플레이북에 없던 현장 근거다. → [[ai-in-organizations]]
 
 따라서 AI-native SDLC의 목표는 "속도"가 아니라 **"감사 가능성과 승인 게이트를 유지한 채 얻는 속도"**다. 사람의 책임은 남고, 다만 그 주의가 어디에 놓이는지가 바뀐다. ([[2026-08-21-the-ai-native-sdlc-playbook]])
 
@@ -102,6 +104,8 @@ Claude는 리뷰를 **주기도 하고 받기도 한다.** 모든 PR이 동일�
 - **리뷰 findings가 `CLAUDE.md`로 되먹여진다.** 같은 실수가 두 번째로 플래그되면 그 리뷰의 일부로 교정이 `CLAUDE.md`에 들어가고, 리뷰가 `CLAUDE.md`를 읽으므로 다음 PR부터 잡힌다.
 - 월 1회 tech lead가 findings를 평가해 튜닝하고 nit 양을 조절한다.
 
+> ℹ️ **반대 방향의 현장 사례 (2026-11-27).** [[2026-11-23-working-with-ai]]의 한 회사는 **공식 코드 리뷰를 아예 없애고** 개발자가 Claude 옆에 앉아 함께 코드를 평가하게 했다. 다른 회사들은 리뷰를 자동화하거나 리뷰 시간을 늘렸다. 모순으로 등록하지 않는다. 이 플레이북은 감사 가능성이 필수인 규제 조직을 독자로 두고, 그 사례는 한 회사의 관찰이다. 또 그 회사도 리뷰를 없앤 게 아니라 **비동기 게이트를 동기 페어링으로** 바꿨다. 다만 페어링은 PR 스레드 같은 기록을 남기지 않는다. 이 플레이북의 기준으로는 audit trail이 빠진다. → [[ai-in-organizations]] §3
+
 **hook은 승인 게이트다.** Build 단계의 hook이 사람 없이 allow/block 했다면, Deploy의 hook은 **ask** 한다 — 특정 인물이 승인할 때까지 동작을 멈춘다. 팀 hook은 git의 `.claude/settings.json`에, 협상 불가 hook은 개별 엔지니어가 끌 수 없는 managed settings에 둔다. 차단은 스스로를 설명해야 한다 — 이유와 승인 경로가 Claude 출력에 나타나야 한다.
 
 **CI/CD 통합**의 지배 원칙: *에이전트는 production gate까지 행동할 수 있고 그것을 넘을 수 없다.* 읽기 전용 판단 작업(실패한 빌드 분류, flaky 테스트 요약, 체인지로그 초안)부터 시작해, 쓰기 작업은 기존 게이트 뒤에 추가한다. 배포는 MCP로 노출해 deploy·status·rollback이 환경별로 스코프된 **도구**가 되게 한다 — 자격증명을 쥔 셸 스크립트가 아니라 allowlist. 자율성은 환경별로 티어링한다(development는 자유, production은 release manager 승인). **rollback은 파이프라인에서 가장 많이 리허설된 경로여야 한다** — Stage 6이 이것을 호출하므로 미리 증명되어 있어야 한다.
@@ -162,8 +166,9 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 
 ## Open Questions
 
-- 이 플레이북에는 **정량 데이터가 없다.** "몇 주 → 몇 시간" 같은 기대치는 있으나 고객 사례 수치는 없다. 실제 도입 조직의 leading/lagging indicator 실측은 어디서 볼 수 있나?
+- 이 플레이북에는 **정량 데이터가 없다.** "몇 주 → 몇 시간" 같은 기대치는 있으나 고객 사례 수치는 없다. 실제 도입 조직의 leading/lagging indicator 실측은 어디서 볼 수 있나? *(2026-11-27: [[2026-11-23-working-with-ai]]가 58개 조직의 인터뷰 자료를 준다. 병목의 종류는 확인되지만 가치는 자기 보고이고 지표 실측은 여전히 없다.)*
 - product owner가 spec을 "리뷰하되 쓰지 않는다"면, 리뷰 품질을 유지하는 역량은 어떻게 길러지나? 쓰지 않으면서 읽는 눈이 유지될까?
+  > **같은 질문에 대한 현장 처방 (2026-11-27).** [[2026-11-23-working-with-ai]]의 한 로펌은 신입이 첫 초안을 쓰지 않게 되자 정확히 이 질문을 던졌다. *"how does an associate know if that's a good draft or a bad draft?"* 답은 **AI가 쓴 초안을 신입과 선임이 짝을 지어 함께 고치는** workflow였다. 쓰지 않는 사람의 읽는 눈을 선임과의 공동 편집으로 기른다. 효과는 측정되지 않았고 법률 문서의 사례라, PO의 spec 리뷰에 옮겨지는지는 열려 있다. → [[ai-in-organizations]]
 - "리뷰가 따라가는 동안에만 세션을 늘린다"는 실용적이지만, 리뷰 능력 자체를 측정하는 지표는 제시되지 않는다.
 - eval suite의 유지 비용 — "모델이 좋아지면 변별력 잃은 케이스를 교체"해야 한다면 suite 자체가 지속적 부담 아닌가?
 - **comprehension debt에 대한 경계가 없다 (2026-11-25).** [[2026-06-07-loop-engineering]]은 루프가 내가 쓰지 않은 코드를 빨리 내보낼수록 *존재하는 것과 내가 아는 것의 간격*이 벌어지고, 줄이는 방법은 루프가 만든 걸 읽는 것밖에 없다고 쓴다. 이 플레이북의 처방은 아티팩트 체인이 **감사 가능하다**는 데서 멈춘다. 감사 가능하다는 것과 **사람이 실제로 읽는다**는 것은 다른 명제다. Stage 6처럼 사람이 호출 경로에서 빠지는 단계일수록 이 간격은 커진다. → [[loop-engineering]]
@@ -190,6 +195,7 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - [[agent-evaluation]] — Stage 4 연속 eval의 일반 원리
 - [[subagent]] — Stage 3의 subagent·병렬 세션이 속한 개념
 - [[loop-engineering]] — 같은 루프 구조의 개인 개발자 판본. Stage 6의 automations·state 대응, 병렬 세션의 위임 경계, comprehension debt
+- [[ai-in-organizations]] — 이 토픽의 한 칸 바깥. 소프트웨어 조직 밖에서 관찰된 같은 병목 이동, 역할 확대와 재배치, 리뷰를 없애고 페어링으로 바꾼 회사
 - [[agent-recipe]] — Stage 6의 "사건마다 eval 추가"가 누적된 결과물. 루프가 남기는 판단을 버전 관리하는 단위
 
 ## Sources
@@ -200,3 +206,4 @@ play들은 의존성 그래프를 갖는다. 각 play가 "Prerequisites"로 자�
 - [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). Stage 6의 루프 대응, comprehension debt (2026-11-25)
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (2026-08-14). 병렬 세션 수와 위임 경계 (2026-11-25)
 - [[2026-09-30-loop-is-the-product]] — Roland Gavrilescu (Introspection). 두 번째 루프와 recipe (2026-11-25)
+- [[2026-11-23-working-with-ai]] — Wilmers·Massenkoff·McCrory (Anthropic Institute, 2026-11-23). 조직 규모의 병목 관찰, 초안 페어링 처방 (2026-11-27)
