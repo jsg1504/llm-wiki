@@ -2,8 +2,8 @@
 title: Loop Engineering (루프 엔지니어링)
 type: concept
 created: 2026-09-21
-updated: 2026-11-26
-sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion]
+updated: 2026-11-27
+sources: [2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2022-10-06-react, 2024-12-19-building-effective-agents]
 aliases: [inner loop, outer loop, 두 번째 루프]
 tags: [loop-engineering, agentic-workflows, agent-harness, automations, cadence, external-state, verification, comprehension-debt]
 status: draft
@@ -22,6 +22,8 @@ status: draft
 ### 위치: harness 층위의 세 번째 자리
 
 이 위키는 이미 harness를 두 방향에서 다뤘다. 루프는 그 위에 얹힌다 — 소스 저자 본인의 표현으로 *"Loop engineering sits one floor above the harness."*
+
+> **"루프"라는 말의 두 층 (2026-11-27).** 이 페이지의 루프는 실행과 실행 **사이**를 잇는다. 그와 별개로 에이전트 하나가 실행 **안**에서 도는 루프가 있다. thought → action → observation을 반복하는 [[agent-loop]]이다 ([[2022-10-06-react]]). 2024년 Anthropic 글은 agent를 아예 *"루프 안에서 환경 피드백을 받아 도구를 쓰는 LLM"* 으로 정의한다 ([[2024-12-19-building-effective-agents]]). 두 루프는 같은 실패 신호를 공유한다. 아래 "멈춰야 할 신호"의 *같은 명령이 결과 변화 없이 반복되는 것*은 ReAct가 2022년에 기록한 반복 실패와 같은 모양이다. 층위별 루프 비교표는 [[agent-loop]]에 있다.
 
 ```
 loop              ← 언제·얼마나 자주 돌 것인가 + 실행 사이에 무엇이 남는가
@@ -309,6 +311,7 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[ai-native-sdlc]] — 커밋된 아티팩트가 다음 단계를 트리거하는 루프. comprehension debt 경계가 빠져 있는 곳
 - [[multi-agent-systems]] — 루프가 주기적으로 지불하게 되는 토큰 비용의 근거
 - [[anthropic]] — 이 위키 최초의 비-Anthropic 소스가 들어온 지점. 두 번째 소스가 벤더 원문을 실어 나르는 경로이기도 하다
+- [[agent-loop]] — 실행 *안*의 루프. 이 페이지는 실행 *사이*의 루프다. 반복 실패 신호를 공유한다
 
 ## Sources
 
@@ -320,3 +323,5 @@ LLM이 정하는 것          각 subagent 안의 실제 판단
 - [[2026-08-20-a-harness-for-every-task-dynamic-workflows]] — Thariq Shihipar, Sid Bidasaria (Anthropic / Claude Blog, 2026-08-20). 층위 대비와 loop-until-done·판정자 분리의 대조군
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). harness 층위 다이어그램의 출처
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (ICLR 2026 Oral). 두 번째 루프의 signal 품질에 대한 첫 수치. taste 모순은 판정하지 못함 (2026-11-25)
+- [[2022-10-06-react]] — Yao 외 (ICLR 2023). "루프라는 말의 두 층" 노트만 이 소스에서 왔다 (2026-11-27)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic, 2024-12-19). 같은 노트의 agent 정의만 이 소스에서 왔다 (2026-11-27)

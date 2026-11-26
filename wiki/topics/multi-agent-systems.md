@@ -2,8 +2,8 @@
 title: 멀티에이전트 시스템
 type: topic
 created: 2026-09-11
-updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models, 2024-12-19-building-effective-agents]
 tags: [multi-agent, agentic-workflows, token-economics, architecture]
 status: draft
 ---
@@ -21,6 +21,8 @@ status: draft
 3. **검증** — 비결정적 시스템을 어떻게 평가하는가 → [[agent-evaluation]]
 4. **인프라** — 실제로 여럿을 돌릴 때 무엇이 병목인가 → 아래 "스케일의 인프라 비용" 절, [[meta-harness]]
 5. **시간** — 한 실행 안에서 누가 조정하는가가 아니라, **그 실행을 누가 언제 시작시키고 실행 사이에 무엇이 남는가** → [[loop-engineering]] (2026-11-25)
+
+이 다섯 축은 모두 **에이전트 하나**를 전제한다. 그 바닥(augmented LLM, workflow vs agent, 루프, 도구)은 [[agent-fundamentals]]에 있다 (2026-11-27).
 
 ## Key Points
 
@@ -80,6 +82,8 @@ status: draft
 - 가치 대비 비용이 안 맞는 단순 작업
 
 리서치가 잘 맞는 이유는 애초에 경로를 미리 정할 수 없는 문제이기 때문이다. 발견에 따라 방향을 바꿔야 하므로 선형 파이프라인으로는 처리가 안 된다.
+
+**판정의 앞 단계 (2026-11-27).** 이 기준은 "멀티에이전트냐 단일 에이전트냐"를 가른다. 그보다 앞서 "에이전트가 필요한가"를 묻는 것이 [[2024-12-19-building-effective-agents]]의 원칙이다. *"가장 단순한 해법부터 찾고, 필요할 때만 복잡도를 올려라."* 많은 경우 retrieval과 in-context 예시로 다듬은 단일 호출로 충분하다고 한다. 15배 토큰의 판단은 그 사다리의 맨 위 칸이다. 같은 글은 agent가 맞는 조건으로 *단계 수를 예측할 수 없고 경로를 하드코딩할 수 없는 열린 문제*를 든다. 위의 "리서치가 잘 맞는 이유"와 같은 기준이다. → [[agent-fundamentals]] §4
 
 ### 프롬프트는 규칙이 아니라 협업 프레임워크다
 
@@ -184,6 +188,7 @@ status: draft
 - [[context-and-memory]] — 이웃 topic. 단일 에이전트가 길어질 때의 처방을 compaction 네 갈래와 memory로 넓힌다.
 - [[recursive-language-model]] — 단일 에이전트의 context rot을 잰 소스. 위임을 말이 아니라 코드로 내는 반대편 설계.
 - [[loop-engineering]] — 다섯 번째 축(시간). 사람이 조종하는 병렬의 운용 사례와 위임 경계. Contradiction 가설 ①의 추가 증거.
+- [[agent-fundamentals]] — 이 topic이 전제하는 에이전트 하나의 바닥. "가장 단순한 해법부터"가 15배 판단의 앞 단계다
 
 ## Sources
 
@@ -195,3 +200,4 @@ status: draft
 - [[2026-06-07-loop-engineering]] — Addy Osmani (2026-06-07). 시간 축 (2026-11-25)
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (2026-08-14). 사람이 조종하는 병렬의 운용 사례, 위임 경계 (2026-11-25)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). context rot 측정, 코드로 하는 위임 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). "판정의 앞 단계" 노트와 Overview의 바닥 링크만 이 소스에서 왔다 (2026-11-27)

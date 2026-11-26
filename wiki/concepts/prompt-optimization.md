@@ -3,8 +3,8 @@ title: Prompt Optimization (프롬프트 최적화)
 aliases: [prompt-optimizer, reflective-prompt-evolution, GEPA]
 type: concept
 created: 2026-11-25
-updated: 2026-11-26
-sources: [2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2025-12-31-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2025-12-31-recursive-language-models, 2025-06-13-multi-agent-research-system, 2024-12-19-building-effective-agents]
 tags: [prompt-optimization, gepa, dspy, mipro, textgrad, reflection, compound-ai-systems, evolutionary-search, pareto]
 status: draft
 ---
@@ -125,6 +125,10 @@ Qwen3 8B로 최적화한 prompt를 **GPT-4.1 Mini에 그대로** 쓰면 +9.00%�
 
 GEPA는 trace에서 배운 것을 **창 밖의 지시문**으로 남긴다. 같은 시기 RLM 연구는 scaffold의 행동을 SFT로 **가중치에** 넣었다 ([[2025-12-31-recursive-language-models]]). 둘을 한 축에 놓은 정리는 [[context-and-memory]]에 있다. *(대비는 이 위키의 정리다.)*
 
+### 도구 설명도 최적화 대상이다 (2026-11-27)
+
+최적화 대상은 지시문만이 아니다. [[2025-06-13-multi-agent-research-system]]에서 결함 있는 MCP 도구를 에이전트가 수십 번 써 본 뒤 **도구 설명을 다시 쓰게** 하자, 이후 에이전트의 task 완료 시간이 40% 줄었다. trace를 보고 텍스트를 고친다는 점에서 이 페이지의 반성 루프와 같은 일이다. 다만 한 번의 재작성이고, 후보 탐색도 Pareto 선택도 없다. [[2024-12-19-building-effective-agents]]는 같은 대상을 사람이 고치는 일로 다룬다. *"tool 정의에도 전체 prompt만큼 prompt engineering을 들여라."* GEPA 같은 체계적 탐색을 도구 설명에 적용한 소스는 아직 없다. → [[tool-use]] *(대응은 이 위키의 해석이다.)*
+
 ### taste 모순과의 관계
 
 [[loop-engineering]]의 Contradiction(*taste는 루프에 맞는가*)을 판정하지는 못한다. GEPA의 모든 실험은 **정답이 있는 과제**(exact match, F1, pass rate)다. taste처럼 채점 함수 자체가 논쟁거리인 영역은 다루지 않는다. 다만 하나는 말해 준다. **채점 함수와 텍스트 피드백이 있으면 증류는 적은 시도로 자동화된다.** 남는 질문은 여전히 "taste를 채점 함수로 쓸 수 있는가"이다. 사람이 쓴 채점 근거를 feedback_text로 넣을 수 있다는 설계는 Gavrilescu 쪽(사람은 eval을 보정한다)과 같은 방향이다.
@@ -147,9 +151,12 @@ GEPA는 trace에서 배운 것을 **창 밖의 지시문**으로 남긴다. 같�
 - [[agent-memory]] — 반성의 결과를 지시문이 아니라 episodic memory에 두는 쪽(Reflexion)
 - [[context-and-memory]] — 밖에 쌓기 vs 가중치에 넣기 축. 이 페이지는 밖에 쌓는 쪽
 - [[recursive-language-model]] — 모델 간에 전이되지 않은 시스템 프롬프트 사례. 과제 규칙과 운용 규칙의 구분
+- [[tool-use]] — 도구 설명이라는 또 하나의 최적화 대상. prompt·가중치·인터페이스 세 층위
 
 ## Sources
 
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — Agrawal 외 16인 (UC Berkeley·Stanford·Databricks·MIT 등, ICLR 2026 Oral). 이 페이지 전체의 출처
 - [[2023-03-20-reflexion]] — Shinn 외 5인 (Northeastern·MIT·Princeton, arXiv 2303.11366). 계보의 Reflexion 항목과 §1의 직접 비교 노트 (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). "밖에 쌓기 vs 가중치에 넣기" 대비의 반대편 (2026-11-26)
+- [[2025-06-13-multi-agent-research-system]] — Anthropic Engineering (2025-06-13). 도구 설명 재작성 40% 단축만 이 소스에서 왔다 (2026-11-27)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic, 2024-12-19). tool 정의의 prompt engineering만 이 소스에서 왔다 (2026-11-27)

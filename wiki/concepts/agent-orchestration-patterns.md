@@ -2,8 +2,8 @@
 title: 에이전트 오케스트레이션 패턴
 type: concept
 created: 2026-09-12
-updated: 2026-11-26
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models]
+updated: 2026-11-27
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2025-12-31-recursive-language-models, 2024-12-19-building-effective-agents]
 tags: [orchestration, multi-agent, agent-design, patterns, evaluation, dynamic-workflows]
 status: draft
 ---
@@ -93,6 +93,25 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 
 **설계 순서는 대체로 하나다:** 무엇을 병렬화할지(fan-out 단위) 정하고 → 누가 검증할지(분리된 검증자) 정하고 → 언제 멈출지(정지 조건 또는 barrier) 정한다.
 
+## 2024년 다섯 workflow와의 대응 (2026-11-27)
+
+이 카탈로그보다 1년 반 앞서 [[2024-12-19-building-effective-agents]]가 다섯 workflow를 정리했다. 같은 회사의 두 목록을 나란히 놓으면 무엇이 이어지고 무엇이 새로 생겼는지 보인다. *(대응은 이 위키의 해석이다. 2026년 소스는 2024년 목록을 언급하지 않는다.)*
+
+| 2024 workflow | 2026 패턴 | 차이 |
+|---|---|---|
+| **Prompt chaining** — 단계를 순서대로, 중간에 gate | **대응 없음** | 여섯 패턴은 모두 병렬·경쟁·반복 구조다. 순차 사슬은 이 카탈로그에 없다. 세션 단위의 순차 사슬은 [[artifact-chain]]이 다룬다 |
+| **Routing** | #1 classify-and-act | 거의 같다. 예시까지 같다 — 쉬운 질문은 작은 모델로(2024: Haiku/Sonnet, 2026: Sonnet/Opus). 2026년은 분류 전에 **복잡도를 조사하는 비용**을 따진다 |
+| **Parallelization — sectioning** | #2 fan-out-and-synthesize | 같다. 2026년은 barrier와 컨텍스트 교차오염을 명시한다 |
+| **Parallelization — voting** | #4 generate-and-filter, #3의 검증자 패널 | 2024년은 같은 과제를 여러 번 돌려 **집계**한다. 2026년은 생성과 필터를 **분리**하고 적대적으로 검증한다 |
+| **Orchestrator-workers** | #2의 LLM 주도 구현 = [[orchestrator-worker]] | 2024년은 이것을 *workflow*로 분류한다. 2026년 카탈로그에서는 barrier를 프로그램이 쥔다 |
+| **Evaluator-optimizer** | #3 adversarial verification + #6 loop until done | 2024년은 생성자와 평가자가 한 루프를 돈다. 2026년은 판정자 분리의 이유로 **self-preferential bias**를 명시한다 |
+| — | #5 tournament | 2024년 목록에 없다. pairwise 비교로 절대 점수의 불안정을 피하는 패턴은 2026년에 처음 나온다 |
+
+**두 가지가 바뀌었다.**
+
+1. **누가 이 구조를 쓰는가.** 2024년에는 개발자가 코드로 짠다. 2026년에는 Claude가 과제마다 harness로 쓴다([[dynamic-workflows]]). 2024년 정의의 *"미리 정한 코드 경로"* 가 에이전트의 산출물이 됐다. → [[agent-fundamentals]] §1
+2. **편향을 이름으로 부른다.** 2024년 evaluator-optimizer의 적합 조건은 "LLM이 쓸 만한 피드백을 줄 수 있는가"였다. 2026년은 같은 모델이 자기 결과를 편애한다는 실패를 먼저 막는다.
+
 ## 무엇이 이 카탈로그에 없는가
 
 - **에이전트끼리 직접 협상하는 패턴이 없다.** 여섯 개 전부 부모(또는 프로그램)를 거친다. [[subagent]]에 기록된 *"subagent끼리 협력할 수 없다"*는 제약이 여기서도 유지된다.
@@ -111,6 +130,8 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[multi-agent-systems]] — 이 패턴들을 쓸 경제적 조건
 - [[loop-engineering]] — 이 패턴들을 *주기적으로* 돌리는 한 층 위. cadence와 외부 state를 더한다
 - [[recursive-language-model]] — fan-out 단위를 입력 조각 하나의 LM 호출로 낮춘 극단
+- [[agent-fundamentals]] — workflow vs agent 구분. 이 카탈로그는 workflow 층이다
+- [[agent-loop]] — #6 loop-until-done을 에이전트 하나 안으로 내리면 agent loop다
 
 ## Sources
 
@@ -119,3 +140,4 @@ spawn된 에이전트마다 **별도의 에이전트를 띄워 그 출력을 루
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). `/goal`의 loop-until-done 구현, 카탈로그에 없는 cadence
 - [[2026-08-14-practical-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-08-14). #6의 실무 판정 기준과 evaluator 성격의 정정
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). fan-out의 극단 노트 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). 다섯 workflow 대응표 (2026-11-27)

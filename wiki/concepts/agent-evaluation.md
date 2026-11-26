@@ -2,8 +2,8 @@
 title: 에이전트 평가 (Agent Evaluation)
 type: concept
 created: 2026-09-11
-updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep, 2026-03-03-reproducing-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2023-10-12-memgpt, 2025-01-20-zep, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react]
 tags: [evaluation, llm-as-judge, testing, observability, agent-design]
 status: draft
 ---
@@ -85,11 +85,15 @@ status: draft
 
 **eval 자체를 워크플로로 돌릴 수도 있다** — worktree에서 에이전트를 띄워 산출물을 만들고, 비교 에이전트가 루브릭으로 채점한다. 예: 내가 만든 skill을 특정 기준으로 평가·개선. → [[dynamic-workflows]]
 
+> **분리의 이른 판본: evaluator-optimizer (2026-11-27).** [[2024-12-19-building-effective-agents]]는 한 호출이 생성하고 다른 호출이 평가·피드백하는 루프를 workflow 하나로 정리했다. 맞는 신호는 둘이다. ① 사람이 피드백을 말해 주면 응답이 **실제로** 나아지는가. ② LLM이 그런 피드백을 줄 수 있는가. 같은 글은 guardrail도 본 응답과 **다른 호출**이 맡는 편이 낫다고 쓴다. 분리의 이유로 든 것은 *"각 고려사항을 별도 호출이 맡으면 주의가 집중된다"* 였고, self-preferential bias는 아직 말하지 않았다. 2026년 소스는 분리의 이유를 편향으로 바꿔 부른다. *(대비는 이 위키의 정리다.)*
+
 ### 3. 사람 평가가 자동화의 사각지대를 잡는다
 
 사람이 직접 써보면 eval이 놓치는 것들이 나온다 — 특이한 쿼리에서의 환각, 시스템 실패, 그리고 **미묘한 출처 선택 편향**. 실제로 Research 초기 에이전트가 권위 있지만 검색 순위가 낮은 학술 PDF·개인 블로그 대신 **SEO 최적화된 콘텐츠팜**을 일관되게 고르는 것을 사람 테스터가 발견했다. 프롬프트에 source quality 휴리스틱을 추가해 해결했다.
 
 > 자동 평가가 아무리 잘 돌아도 수동 테스트는 여전히 필수다.
+
+**궤적을 읽고 실패를 분류한다 (2026-11-27).** [[2022-10-06-react]]는 HotpotQA에서 ReAct와 CoT 궤적을 성공·실패 각 50개씩, 모두 200개 뽑아 사람이 실패 유형을 붙였다. 점수(EM)로는 ReAct가 CoT보다 조금 낮을 뿐이었다(27.4 vs 29.4). 라벨을 붙이자 두 방법이 **전혀 다른 방식으로 실패한다**는 게 드러났다. CoT 실패의 56%는 hallucination이었고, ReAct는 0%였다. 대신 ReAct 실패의 47%는 reasoning error였다(CoT 16%). 이 교환은 점수 하나로는 보이지 않는다. 그리고 이 분석이 두 방법을 섞는 처방으로 바로 이어졌다. 성공률은 무엇이 나은지를, 실패 분류는 **왜 그리고 어떻게 고칠지**를 알려 준다. → [[agent-loop]]
 
 ### 3b. 사람은 eval을 만들지 않고 보정한다 (2026-09-30)
 
@@ -158,6 +162,8 @@ status: draft
 - [[loop-engineering]] — 판정자 분리가 정지 조건에까지 적용되는 자리. 감독 없이 도는 루프에서 이 원칙의 값이 가장 크다.
 - [[prompt-optimization]] — eval 출력을 판정이 아니라 개선 재료로 쓰는 방법. §7의 feedback_text와 adversarial 회귀 suite
 - [[agent-memory]] — Reflexion이 판정 결과를 반성문으로 바꿔 쌓는 episodic memory. LongMemEval로 memory를 재는 법
+- [[agent-loop]] — 매 단계 ground truth가 판정자 분리를 루프 한 단계 단위로 적용한 것이다. ReAct 실패 분류의 대상
+- [[agent-fundamentals]] — 단순성 원칙("결과가 나아질 때만 복잡도를 올린다")을 지키는 수단이 측정이다
 - [[context-and-memory]] — memory·long-context 클러스터의 측정과 재현을 모은 topic. 남이 다시 잰 주장 2건이 §6의 두 노트(DMR이 낡은 사례, 형식과 능력을 섞은 채점)와 겹친다
 
 ## Sources
@@ -174,3 +180,5 @@ status: draft
 - [[2023-10-12-memgpt]] — Packer 외 6인 (arXiv 2310.08560). §6 노트의 대조 사례(검증 없는 관대한 판정자), DMR 원 출처 (2026-11-26)
 - [[2025-01-20-zep]] — Rasmussen 외 4인 (Zep AI, arXiv 2501.13956). §6의 "벤치마크가 낡는 실제 사례"(DMR 재측정)만 이 소스에서 왔다 (2026-11-26)
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). §6의 "형식과 능력을 섞은 채점" 노트만 이 소스에서 왔다 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). §2b의 evaluator-optimizer 노트만 이 소스에서 왔다 (2026-11-27)
+- [[2022-10-06-react]] — Yao 외 (Princeton·Google, ICLR 2023). §3의 궤적 실패 분류만 이 소스에서 왔다 (2026-11-27)

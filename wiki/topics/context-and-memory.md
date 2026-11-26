@@ -2,8 +2,8 @@
 title: Context와 Memory
 type: topic
 created: 2026-11-26
-updated: 2026-11-26
-sources: [2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2026-04-08-scaling-managed-agents, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2025-07-25-gepa-reflective-prompt-evolution, 2026-05-25-how-we-contain-claude]
+updated: 2026-11-27
+sources: [2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2026-04-08-scaling-managed-agents, 2025-06-13-multi-agent-research-system, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-06-07-loop-engineering, 2025-07-25-gepa-reflective-prompt-evolution, 2026-05-25-how-we-contain-claude, 2023-02-09-toolformer, 2022-10-06-react]
 aliases: [context management, context engineering, long-context, 장기 기억, compaction]
 tags: [context-window, agent-memory, compaction, long-context, context-rot, context-engineering, recursive-language-model]
 status: draft
@@ -88,6 +88,7 @@ Zep은 바뀐 사실을 지우지 않고 유효 기간을 닫는다(무효화). 
 창 밖에 두는 것의 반대편에 **학습**이 있다.
 
 - **밖에 쌓는다.** GEPA는 trace를 반성해 prompt를 고친다. 결과 지시문은 약한 모델에서 강한 모델로 전이됐다 ([[prompt-optimization]]).
+- **가중치에 넣는 더 이른 사례.** [[2023-02-09-toolformer]](2023)는 tool use를 같은 방향으로 옮겼다. 모델이 API 호출 후보를 만들고, 뒤 토큰 loss를 줄인 호출만 남겨 fine-tuning했다. 같은 능력을 prompt 예시로 두는 쪽이 [[2022-10-06-react]]다. 이 축을 도구에 적용한 세 층위(prompt·가중치·인터페이스)는 [[tool-use]]에 있다.
 - **가중치에 넣는다.** RLM 궤적 1,000개 남짓을 SFT하자 Qwen3-8B가 RLM으로서 +28% 올랐다. scaffold의 행동이 모델 안으로 들어간다 ([[2025-12-31-recursive-language-models]]).
 
 [[meta-harness]]는 둘을 "무엇이 오래 사는가"의 두 답으로 놓는다. 인터페이스를 고정하는 쪽과 학습된 행동을 남기는 쪽이다. *(추론)*
@@ -133,6 +134,8 @@ Zep은 바뀐 사실을 지우지 않고 유효 기간을 닫는다(무효화). 
 - [[multi-agent-systems]] — 단일 에이전트가 길어질 때의 실패와 독립 context window의 경제성
 - [[prompt-injection]], [[agent-containment]] — 쓰기 경로와 코드 실행의 위험
 - [[agent-evaluation]] — memory를 재는 벤치마크, 판정자 검증
+- [[agent-fundamentals]] — 이 topic이 전제하는 에이전트 하나의 바닥. augmented LLM의 memory가 이 topic의 출발점이다
+- [[tool-use]] — "밖에 쌓기 vs 가중치에 넣기"를 도구에 적용한 세 층위
 
 ## Sources
 
@@ -149,3 +152,5 @@ Zep은 바뀐 사실을 지우지 않고 유효 기간을 닫는다(무효화). 
 - [[2026-06-07-loop-engineering]] — 외부 state
 - [[2025-07-25-gepa-reflective-prompt-evolution]] — prompt 증류와 모델 간 전이
 - [[2026-05-25-how-we-contain-claude]] — 지속 파일의 injection
+- [[2023-02-09-toolformer]] — Schick 외 (Meta AI, 2023). "밖에 쌓기 vs 가중치에 넣기"의 이른 사례만 이 소스에서 왔다 (2026-11-27)
+- [[2022-10-06-react]] — Yao 외 (ICLR 2023). 같은 절의 prompt 쪽 대비만 이 소스에서 왔다 (2026-11-27)

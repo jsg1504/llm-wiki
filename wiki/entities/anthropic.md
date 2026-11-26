@@ -2,15 +2,15 @@
 title: Anthropic
 type: entity
 created: 2026-09-11
-updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents, 2022-10-06-react, 2023-02-09-toolformer]
 tags: [organization, ai-lab, claude, anthropic]
 status: draft
 ---
 
 # Anthropic
 
-> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **16개 중 5개**가 Anthropic 발행이다. 비-Anthropic 11개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
+> Claude 모델군을 만드는 AI 연구·제품 조직. 이 위키의 소스 **19개 중 6개**가 Anthropic 발행이다. 비-Anthropic 13개 중 하나는 벤더 원문을 실어 나른다. 그래서 이 페이지는 **이 위키의 관점 편향을 추적하는 지점**이기도 하다.
 
 ## Overview
 
@@ -30,7 +30,7 @@ status: draft
 | **Claude Opus 4 / Sonnet 4** | 멀티에이전트 조합(Opus lead + Sonnet subagents)에서 단일 Opus 4 대비 90.2% 우위. Sonnet 3.7→4 업그레이드가 토큰 예산 2배보다 이득이 컸다. |
 | **Research 기능** | 웹·Google Workspace·integration을 가로질러 검색하는 소비자 기능. [[orchestrator-worker]] 구조의 실제 구현체. |
 | **[[claude-code]]** | [[2026-08-21-the-ai-native-sdlc-playbook]]의 축이 되는 에이전틱 코딩 도구. |
-| **MCP** | 외부 도구 접근 프로토콜. 도구 설명 품질 편차가 에이전트를 잘못된 경로로 보낸다는 문제 제기의 맥락에서 등장. [[managed-agents]]에서는 자격증명을 vault 뒤에 두는 프록시 경로로도 쓰인다. |
+| **MCP** | 외부 도구 접근 프로토콜. 도구 설명 품질 편차가 에이전트를 잘못된 경로로 보낸다는 문제 제기의 맥락에서 등장. [[managed-agents]]에서는 자격증명을 vault 뒤에 두는 프록시 경로로도 쓰인다. 2024년 글은 augmented LLM의 구현 방법으로 소개한다. → [[tool-use]] |
 | **[[managed-agents]]** | Claude Platform의 호스팅 에이전트 서비스. [[meta-harness]] 사상의 유일한 구현 사례. |
 | **Claude Sonnet 4.5 / Opus 4.5** | "context anxiety"와 그 소멸의 사례로 등장. harness 가정이 모델 세대를 넘어 노후화한다는 증거. |
 | **Claude Opus 4.7** | Gray Swan Agent Red Teaming 수치의 대상. 단발 공격 성공률 ~0.1%, 100회 적응적 공격 후 5~6%. |
@@ -121,6 +121,12 @@ status: draft
 > - **못 메우는 것 — 규모와 Claude.** 조건당 20문항, 1회 실행이다. 실험 모델은 DeepSeek v3.2와 Kimi K2로, Claude는 없다.
 > - **세는 법:** 소스 16개 중 Anthropic 발행 5개, 비-Anthropic 11개. 비-Anthropic 중 스스로 측정한 소스는 여덟이다. 그중 Zep은 벤더 자사 측정, 이 소스는 남의 방법의 재현이다.
 
+> **바닥을 까는 세 소스 — 둘은 경쟁 연구소 (2026-11-27).** 에이전트 기초를 채우려고 세 소스를 함께 넣었다. [[2024-12-19-building-effective-agents]](Anthropic, 2024-12), [[2022-10-06-react]](Princeton·Google Brain, ICLR 2023), [[2023-02-09-toolformer]](Meta AI, 2023-02).
+>
+> - **메우는 것 — 다른 연구소의 원전.** ReAct와 Toolformer는 Anthropic을 발행처로도 인용 경로로도 거치지 않는다. 이 위키 처음으로 **Google과 Meta**, 즉 다른 프런티어 모델 연구소에서 나온 소스다. 지금까지 학술 소스는 대학, 일부 기업 연구소(GEPA의 Databricks, LongMemEval의 Tencent AI Lab), 스타트업 벤더(Zep)에서 나왔다. 다만 둘 다 Claude가 나오기 전의 모델(PaLM, GPT-3, GPT-J)로 쟀다. Claude에 대한 데이터는 아니다.
+> - **못 메우는 것 — 정의는 여전히 Anthropic 글.** [[agent-fundamentals]]의 workflow vs agent 구분, 다섯 workflow, ACI는 모두 [[2024-12-19-building-effective-agents]]에서 왔다. 그 글은 수치가 없는 실무 조언이고, 받은 판본은 2026년 개정판이다. 개정 주석은 자사 제품([[managed-agents]])을 가리킨다. 이 긴장은 [[meta-harness]]에 부분 판정 모순으로 기록했다.
+> - **세는 법:** 소스 19개 중 Anthropic 발행 6개, 비-Anthropic 13개. 비-Anthropic 중 스스로 측정한 소스는 열이다. 그중 Zep은 벤더 자사 측정, RLM 재현은 남의 방법의 재현이다.
+
 > **추가로 의식할 것 (2026-09-21):** [[2026-04-08-scaling-managed-agents]]의 중심 주장 — *harness의 가정은 모델이 좋아지면 썩는다* — 는 **"모델은 계속 좋아진다"를 전제**하며, 그 전제의 최대 이해관계자가 저자 조직이다. 반례(context reset)가 구체적이라 주장 자체는 튼튼하지만, **"따라서 모델 능력에 기대는 방어는 버려라"** 는 규범적 결론까지 같은 무게로 받아들일지는 별개 판단이다. 이 논증 구조는 [[agentic-governance]]의 자격증명 절과 [[meta-harness]] 전체를 관통한다.
 
 ## Related
@@ -142,6 +148,7 @@ status: draft
 - [[prompt-optimization]] — 최초의 학술·정량 독립 소스가 들어온 개념. 실험에 Claude가 없다.
 - [[agent-memory]] — 두 번째 학술·정량 독립 소스(MemGPT)가 들어온 개념. GEPA와 같은 연구 그룹 계열이다.
 - [[recursive-language-model]] — Claude Code(Opus 4.1)를 외부에서 잰 데이터가 들어온 개념. 측정자는 경쟁 scaffold의 저자다.
+- [[agent-fundamentals]] — workflow vs agent 정의가 Anthropic 글에서 왔다. 처음으로 Google·Meta 원전이 함께 들어온 topic.
 
 ## Sources
 
@@ -150,6 +157,7 @@ status: draft
 - [[2026-08-21-the-ai-native-sdlc-playbook]] — Claude Blog, Applied AI 팀 (2026-08-21).
 - [[2026-04-08-scaling-managed-agents]] — Anthropic Engineering 블로그, Lance Martin·Gabe Cemaj·Michael Cohen (2026-04-08).
 - [[2026-05-25-how-we-contain-claude]] — Anthropic Engineering 블로그, Max McGuinness·Mikaela Grace·Jiri De Jonghe·Jake Eaton·Abel Ribbink (2026-05-25). Jake Eaton은 앞 소스의 감사문에도 등장.
+- [[2024-12-19-building-effective-agents]] — Anthropic Engineering 블로그, Erik S.·Barry Zhang (2024-12-19). 2026-11-27 받은 개정판. 편향 노트: 정의를 제공하지만 수치가 없고, 개정 주석이 자사 제품을 가리킨다 (2026-11-27)
 
 **비-Anthropic 소스 (대조군):**
 
@@ -164,3 +172,5 @@ status: draft
 - [[2025-02-17-a-mem]] — Xu 외 5인 (Rutgers 등). 편향 노트: 외부 소스가 Claude(Haiku)를 잰 첫 데이터, 신뢰도 낮음 (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv preprint). 편향 노트: Claude Code(Opus 4.1)를 경쟁 scaffold 저자가 잰 외부 측정, GEPA와 Khattab 공저 (2026-11-26)
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv preprint). 편향 노트: 원 저자 밖의 첫 독립 재현, 표본 작음 (2026-11-26)
+- [[2022-10-06-react]] — Yao 외 6인 (Princeton·Google Brain, ICLR 2023). 편향 노트: 이 위키의 첫 Google 소스, Claude 이전 모델 (2026-11-27)
+- [[2023-02-09-toolformer]] — Schick 외 7인 (Meta AI, arXiv preprint). 편향 노트: 이 위키의 첫 Meta 소스, Claude 이전 모델 (2026-11-27)

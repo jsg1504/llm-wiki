@@ -2,8 +2,8 @@
 title: 모델 밖에 무엇을 쌓는가 — 모델이 좋아져도 썩지 않는 로컬 자산
 type: synthesis
 created: 2026-11-26
-updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem]
+updated: 2026-11-27
+sources: [2026-04-08-scaling-managed-agents, 2025-07-25-gepa-reflective-prompt-evolution, 2026-09-30-loop-is-the-product, 2026-06-07-loop-engineering, 2026-08-14-practical-loop-engineering, 2026-08-21-the-ai-native-sdlc-playbook, 2026-05-25-how-we-contain-claude, 2025-06-13-multi-agent-research-system, 2023-10-12-memgpt, 2023-03-20-reflexion, 2024-10-14-longmemeval, 2025-01-20-zep, 2025-02-17-a-mem, 2023-02-09-toolformer, 2022-10-06-react, 2024-12-19-building-effective-agents]
 question: "LLM 모델은 점점 좋아지고 agent는 점점 발전하고 있어. 이 agent의 성능을 계속 발전적으로 좋게 만들기 위해 모델이 아닌 로컬에도 쌓을 것이 있다면 어떤게 있을까?"
 aliases: [로컬에 쌓을 것, durable local assets, 능력 가정과 과제 규칙]
 tags: [agent-recipe, system-distillation, meta-harness, agent-evaluation, external-state, synthesis]
@@ -27,6 +27,8 @@ status: draft
 > **썩는 구조와 올라타는 구조 (2026-11-26).** 지금까지의 썩는 사례(context reset)는 모델의 **부족분을 메우는** 구조였다. [[2023-03-20-reflexion]]의 반성 루프는 반대로 모델의 **강점에 올라타는** 구조다. starchat-beta에서는 개선이 0이었고(0.26 → 0.26), 저자들은 자기 수정을 *"더 강하고 큰 모델의 emergent quality"* 로 본다. 그래서 *"LLM 능력이 좋아질수록 이 패러다임은 더 좋아질 것"* 이라고 전망한다.
 >
 > **전망과 관측을 나란히 둔다.** 이 전망은 측정이 아니다. 같은 "모델에게 맡기는" 설계인 MemGPT에서는 더 새로운 GPT-4 Turbo가 GPT-4보다 나빴다(위 노트). 모델의 강점에 올라타는 구조라도 **그 강점이 다음 모델에서 유지된다는 것 자체가 가정**이다. 따라서 올라타는 구조도 썩는 구조처럼 모델을 바꿀 때 eval로 재검증한다. 다른 점은 기대하는 방향뿐이다. 썩는 구조는 "이제 빼도 되는가"를 묻고, 올라타는 구조는 "여전히 이득인가"를 묻는다. *(추론)*
+
+> **도구를 주는 것도 능력 가정이다 (2026-11-27).** [[2023-02-09-toolformer]]에서 도구가 도움이 되기 시작한 것은 약 775M 파라미터부터였다. 그보다 작은 모델에게 도구를 주는 harness는 쓸모없는 가정이다. 같은 능력을 어디에 두느냐도 이 기준으로 갈린다. prompt에 둔 few-shot 예시([[2022-10-06-react]])는 모델이 바뀌면 다시 골라야 하는 능력 가정에 가깝다. 도구의 인자 설계("경로는 항상 절대 경로로", [[2024-12-19-building-effective-agents]])는 과제 규칙에 가깝다. 세 층위의 수명 비교는 [[tool-use]]에 있다. *(추론)*
 
 ## 무엇을 쌓는가: 수명 순서
 
@@ -114,6 +116,7 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[inner-outer-loop-verification]] — 바깥쪽 loop가 판단 기준을 검증하는 방식
 - [[prompt-injection]] — 쌓인 state를 노리는 memory poisoning
 - [[agent-memory]] — memory 내용과 memory 정책의 수명 차이. 능력 가정이 새 모델에서 해가 된 사례
+- [[tool-use]] — 같은 능력을 prompt·가중치·인터페이스 중 어디에 두는가. 이 페이지의 판별 기준을 도구에 적용한 것
 
 ## Sources
 
@@ -130,3 +133,6 @@ harness 규칙을 쌓을 때는 **어떤 모델의 어떤 약점을 막으려는
 - [[2024-10-14-longmemeval]] — 원문 + 사실로 저장하기, 난이도를 늘릴 수 있는 eval, 판정자 대조 (2026-11-26)
 - [[2025-01-20-zep]] — 무효화하되 지우지 않는 갱신(bi-temporal) (2026-11-26)
 - [[2025-02-17-a-mem]] — 덮어쓰는 갱신의 반대 사례 (2026-11-26)
+- [[2023-02-09-toolformer]] — Schick 외 (Meta AI, 2023). "도구를 주는 것도 능력 가정이다" 노트의 규모 문턱 (2026-11-27)
+- [[2022-10-06-react]] — Yao 외 (ICLR 2023). 같은 노트의 prompt 층 사례만 이 소스에서 왔다 (2026-11-27)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic, 2024-12-19). 같은 노트의 인터페이스 층 사례만 이 소스에서 왔다 (2026-11-27)

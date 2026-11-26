@@ -2,7 +2,7 @@
 title: Glossary
 type: meta
 created: 2026-04-28
-updated: 2026-11-26
+updated: 2026-11-27
 status: draft
 ---
 
@@ -52,6 +52,14 @@ status: draft
 - **system distillation / agent recipe** — 루프가 낸 교훈(실패 패턴, 반복 행동, 사용자 불만)을 judge·eval·skill·prompt·harness 설정으로 증류하는 **과정**이 system distillation이고, 그 결과를 git에 버전 관리한 **묶음**이 agent recipe다. 모델이나 제공자에 묶이지 않는다. → [[agent-recipe]]
 - **valued work per watt** — 에이전트 제품의 최적화 점수로 제안된 구호. 작업이 가치 있는가, 그 경제성이 맞는가의 두 단계. 측정 방법은 정의되지 않았다. → [[2026-09-30-loop-is-the-product]]
 - **inner loop / outer loop** — 두 뜻이 있다. (1) 루프 엔지니어링: inner loop는 태스크를 수행하며 결과물을 내는 worker 루프이고, outer loop는 그 산출물을 signal로 되먹여 eval·skill·prompt를 고치는 루프다. 위키는 이것을 첫 번째/두 번째 루프로 기록한다. "outer loop"라는 말은 소스에 없고 위키가 대응시킨 것이다. → [[loop-engineering]], [[inner-outer-loop-verification]] (2) 소프트웨어 개발: inner loop는 개발자의 edit-build-test 순환, outer loop는 CI·리뷰·배포다. → [[agentic-governance]]
+- **agentic system / workflow / agent** — [[2024-12-19-building-effective-agents]]의 구분. 둘 다 agentic system이다. **workflow**는 LLM과 도구가 미리 정한 코드 경로로 조율되고, **agent**는 LLM이 자기 과정과 도구 사용을 동적으로 지휘한다. 이 위키는 이분법보다 "제어 흐름의 어느 부분을 누가 쥐는가"의 연속선으로 읽는다. → [[agent-fundamentals]]
+- **augmented LLM** — retrieval, tools, memory로 강화된 LLM. agentic system의 바닥 단위다. → [[agent-fundamentals]]
+- **agent loop** — 한 실행 안에서 도는 thought → action → observation 루프. thought는 환경을 바꾸지 않고 context만 갱신한다. 실행 *사이*를 설계하는 [[loop-engineering]]과 구분한다. → [[agent-loop]]
+- **ReAct** — 추론(thought)과 행동(action)을 번갈아 내게 하는 prompting 방식. 행동 공간에 언어를 더한다(Â = A ∪ L). agent loop의 원전이다. → [[2022-10-06-react]]
+- **Toolformer** — 모델이 API 호출 후보를 스스로 만들고, 뒤 토큰 loss를 줄인 호출만 남겨 fine-tuning하는 방법. tool use를 가중치에 넣는 쪽의 이른 사례다. → [[2023-02-09-toolformer]], [[tool-use]]
+- **ACI** (agent-computer interface) — 에이전트가 쓰는 도구의 정의·인자·형식. *"HCI에 들이는 만큼 ACI에 들여라."* → [[tool-use]]
+- **poka-yoke** — 실수하기 어렵게 만드는 설계. 도구 맥락에서는 모델이 틀리기 어렵게 인자를 바꾸는 것(예: 상대 경로 대신 항상 절대 경로). → [[tool-use]]
+- **evaluator-optimizer** — 한 호출이 생성하고 다른 호출이 평가·피드백하는 반복 workflow. 판정자 분리의 이른 판본이다. → [[agent-evaluation]]
 
 ## 보안 용어
 

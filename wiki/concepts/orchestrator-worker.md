@@ -2,8 +2,8 @@
 title: Orchestrator-Worker 패턴
 type: concept
 created: 2026-09-11
-updated: 2026-11-26
-sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2025-12-31-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-06-13-multi-agent-research-system, 2026-08-21-the-ai-native-sdlc-playbook, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-04-08-scaling-managed-agents, 2026-05-25-how-we-contain-claude, 2025-12-31-recursive-language-models, 2024-12-19-building-effective-agents]
 tags: [multi-agent, architecture, orchestration, context-window, agent-design]
 status: draft
 ---
@@ -43,6 +43,12 @@ User query
          ▼
     최종 답변 + 인용
 ```
+
+### 첫 정의 — workflow로 분류됐다 (2026-11-27)
+
+Anthropic이 이 구조를 처음 이름 붙인 곳은 [[2024-12-19-building-effective-agents]]다. Research 시스템 글보다 반년 앞선다. 정의는 이렇다. *"중앙 LLM이 과제를 동적으로 쪼개 worker LLM에 위임하고 결과를 종합한다."* 맞는 경우는 **필요한 하위 과제를 미리 알 수 없을 때**다. 예시는 매번 여러 파일을 고치는 코딩 제품과 여러 출처를 모으는 검색 과제다. parallelization과 모양은 같지만 하위 과제가 미리 정해지지 않는다는 점이 다르다.
+
+그 글은 이 구조를 **workflow**(미리 정한 코드 경로)로 분류한다. 그런데 하위 과제를 orchestrator가 정한다는 설명은 같은 글의 **agent** 정의(LLM이 자기 과정을 동적으로 지휘)에 더 가깝다. 이 페이지는 2025년 소스를 따라 이 구조를 multi-agent로 다룬다. 이 긴장은 workflow/agent를 이분법이 아니라 연속선으로 읽어야 하는 근거 중 하나다. → [[agent-fundamentals]] §1 *(분류에 대한 판단은 이 위키의 것이다.)*
 
 ## Key Points
 
@@ -145,6 +151,7 @@ lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** cont
 - [[recursive-language-model]] — 위임을 말이 아니라 코드로 내는 반대편. 이 패턴의 표현력 비판
 - [[context-and-memory]] — lead의 Memory 저장과 핸드오프가 속한 compaction 지도
 - [[agent-memory]] — 계획을 Memory에 저장하는 발상의 장기 판본
+- [[agent-fundamentals]] — workflow vs agent 구분. 이 구조가 그 경계에 선다
 
 ## Sources
 
@@ -153,3 +160,4 @@ lead는 접근법을 사고한 직후 **계획을 Memory에 저장한다.** cont
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 세션 로그와 brain 간 hand 전달 (2026-11-26)
 - [[2026-05-25-how-we-contain-claude]] — Max McGuinness 외 4인 (Anthropic Engineering, 2026-05-25). multi-agent trust escalation (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 말로 하는 위임 비판, Claude Code 외부 측정 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). Anthropic의 첫 정의와 workflow 분류 (2026-11-27)

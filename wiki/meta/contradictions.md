@@ -2,7 +2,7 @@
 title: Contradictions
 type: meta
 created: 2026-11-26
-updated: 2026-11-26
+updated: 2026-11-27
 sources: []
 tags: [meta, contradictions]
 status: draft
@@ -17,6 +17,7 @@ status: draft
 | 2026-09-11 | 코딩은 멀티에이전트에 맞는가 | [[multi-agent-systems]] Contradiction 절, [[ai-native-sdlc]] | **부분 판정** (2026-09-12) — 적합성 ✅ 우회됨, 경제성 ✅ 모순 없음, 잔여 질문 있음 |
 | 2026-09-30 | taste는 루프에 맞는가 (Osmani vs Gavrilescu) | [[loop-engineering]] "루프가 안 맞는 일" 절 | **미해결** |
 | 2026-11-26 | 단순한 과제와 강한 모델에서도 RLM은 손해가 작은가 ([[2025-12-31-recursive-language-models]] vs [[2026-03-03-reproducing-recursive-language-models]]) | [[recursive-language-model]] "외부 재현" 절 | **미해결 (판정 보류)** — 모델·표본·길이가 달라 같은 조건의 측정이 필요 |
+| 2026-11-27 | 에이전트를 직접 짜라(2024)와 호스팅 harness 위에서 짜라(2026)는 충돌하는가 ([[2024-12-19-building-effective-agents]] 본문 vs 같은 페이지 개정 주석·[[2026-04-08-scaling-managed-agents]]) | [[meta-harness]] "framework 경고와 호스팅 harness" 절, [[agent-fundamentals]] §5 | **부분 판정** (2026-11-27) — 층위가 달라 정면 모순 아님(prompt를 가리는 추상화 vs 인프라 경계). 권고의 무게 이동은 실재, 같은 벤더. 잔여 질문: 호스팅 harness가 prompt를 투명하게 보여 주는가 |
 
 ## 등록 규칙
 

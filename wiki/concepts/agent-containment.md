@@ -2,8 +2,8 @@
 title: Agent Containment (에이전트 격리)
 type: concept
 created: 2026-09-21
-updated: 2026-11-26
-sources: [2026-05-25-how-we-contain-claude, 2026-04-08-scaling-managed-agents, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
+updated: 2026-11-27
+sources: [2026-05-25-how-we-contain-claude, 2026-04-08-scaling-managed-agents, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2022-10-06-react, 2024-12-19-building-effective-agents]
 tags: [containment, sandbox, blast-radius, agent-security, egress, isolation, anthropic]
 status: draft
 ---
@@ -83,6 +83,8 @@ blast radius를 제한하는 길은 크게 둘이다.
 > *"The deterministic boundary is what gets hit when everything probabilistic misses."*
 
 **층은 서로를 대체하지 않고 보완한다.** 환경 방어를 쓸 수 없는 곳에서는 모델 층이 부담을 떠안아야 하고(Claude Code auto mode가 정확히 그 용도), 국소적으로 환경·모델이 악성 도구 출력을 막는 동시에 **체인 위쪽에서 도구의 권한과 접근을 제한**하는 방어를 더할 수 있다.
+
+> **행동 공간을 줄여 상한을 정한다 — 2022년의 판본 (2026-11-27).** 같은 원리의 이른 형태가 [[2022-10-06-react]]의 윤리 절에 있다. 외부 환경과 연결된 LLM은 해로운 행동을 할 수 있으므로, 저자들은 실험의 **행동 공간 자체에서** 실제 구매와 Wikipedia 편집을 뺐다. 모델이 그런 행동을 하지 않으리라 믿는 대신 할 수 없게 만든 것이다. 2024년 [[2024-12-19-building-effective-agents]]도 agent의 누적 오류를 이유로 *"sandbox에서 충분히 테스트하고 guardrail을 두라"* 고 쓴다. 도구 목록이 곧 blast radius의 상한이라는 관점은 [[tool-use]]에 있다. *(대응은 이 위키의 해석이다.)*
 
 ### 세 격리 패턴 — 기준은 "사용자가 감독할 수 있는가"
 
@@ -232,6 +234,7 @@ Cowork의 egress allowlist가 `api.anthropic.com`을 정상 통과시켰고(제�
 - [[multi-agent-systems]] — 에이전트를 여럿 굴릴 때 blast radius가 곱해지는 문제
 - [[recursive-language-model]] — 모델이 쓴 코드를 REPL에서 실행하는 scaffold. 격리가 비어 있는 사례
 - [[context-and-memory]] — 창 밖을 코드로 다룰 때의 위험이 놓인 topic
+- [[tool-use]] — 도구 목록이 행동 공간이고, 행동 공간이 blast radius의 상한이다
 
 ## Sources
 
@@ -239,3 +242,5 @@ Cowork의 egress allowlist가 `api.anthropic.com`을 정상 통과시켰고(제�
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 자격증명 격리와 호스팅 환경의 대응 사례
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). 모델이 쓴 코드를 실행하는 scaffold, guardrail 부재 (2026-11-26)
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 재현 환경에 격리 언급 없음 (2026-11-26)
+- [[2022-10-06-react]] — Yao 외 (ICLR 2023). "행동 공간을 줄여 상한을 정한다" 노트만 이 소스에서 왔다 (2026-11-27)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic, 2024-12-19). 같은 노트의 sandbox 테스트 권고만 이 소스에서 왔다 (2026-11-27)

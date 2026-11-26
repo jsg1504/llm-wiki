@@ -2,8 +2,8 @@
 title: Recursive Language Model (RLM)
 type: concept
 created: 2026-11-26
-updated: 2026-11-26
-sources: [2025-12-31-recursive-language-models, 2026-04-08-scaling-managed-agents, 2026-03-03-reproducing-recursive-language-models]
+updated: 2026-11-27
+sources: [2025-12-31-recursive-language-models, 2026-04-08-scaling-managed-agents, 2026-03-03-reproducing-recursive-language-models, 2022-10-06-react, 2023-02-09-toolformer]
 aliases: [RLM, recursive language models, context offloading, prompt as environment, symbolic recursion]
 tags: [recursive-language-model, reproduction, long-context, context-rot, compaction, repl, inference-time-scaling, subagent, context-engineering]
 status: draft
@@ -92,9 +92,13 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 - 최종 답과 생각을 `FINAL()` 태그로 가르는 방식이 불안정하다.
 - 첫 분해 시도가 성능을 좌우하고, in-context 예시에 민감하다.
 
+> **scaffold가 손해인 이른 사례 (2026-11-27).** [[2022-10-06-react]](2022)에서도 루프는 공짜 이득이 아니었다. HotpotQA에서 ReAct는 추론만 하는 CoT보다 낮았고(27.4 vs 29.4), 실패 중 reasoning error가 47%로 CoT(16%)의 세 배였다. 가장 좋은 건 상황에 따라 루프를 켜고 끄는 조합이었다. 아래 재현 절에서 단순 과제와 강한 모델이 RLM으로 손해를 본 것과 같은 모양이다. scaffold의 이득은 과제와 모델의 함수다. → [[agent-loop]] *(대응은 이 위키의 해석이다.)*
+
 ### 그리고 학습으로 넣을 수 있다
 
 저자들의 가설은 이렇다. leaf sub-call은 평범한 LLM 요청이라 **root 역할만** 배우면 된다. 큰 모델의 RLM 궤적 1,000개 남짓을 SFT하자 Qwen3-8B가 중앙값 +28%, 3배 이상 빨라졌다. 학습 과제는 평가 과제와 무관했다. RL로는 64k에서 1M token으로 길이 일반화가 나타났다 ([[2025-12-31-recursive-language-models]]).
+
+선례가 있다. [[2023-02-09-toolformer]]는 2023년에 tool use를 같은 방식으로 가중치에 넣었다. 모델이 만든 호출 중 유용한 것만 골라 fine-tuning했다. 다만 Toolformer는 호출을 입력당 1회로 묶어 연쇄도 재귀도 배우지 못했다. RLM 학습은 root가 하위 호출을 **여러 번, 코드로** 내는 행동을 넣는다. *(대응은 이 위키의 해석이다.)* → [[tool-use]]
 
 이 위키의 기존 논지와 반대 방향이다. [[meta-harness]]는 *harness에 넣은 가정은 모델이 좋아지면 썩는다*고 보고, 인터페이스를 고정하고 harness를 갈아 끼우라고 처방한다. RLM은 scaffold의 행동을 **가중치로 옮기고** 바깥 인터페이스(문자열 → 문자열)는 그대로 둔다. 둘은 모순이 아니다. 둘 다 "무엇이 오래 사는가"에 답하는데, meta-harness는 인터페이스를, RLM은 학습된 행동을 꼽는다. *(추론)*
 
@@ -145,9 +149,13 @@ Table 1의 depth 비교가 둘을 가른다 ([[2025-12-31-recursive-language-mod
 - [[claude-code]] — 외부에서 잰 baseline. offloading의 효과와 한계
 - [[agent-containment]] — 모델이 쓴 코드를 실행하는 구조의 격리 문제
 - [[contradictions]] — 위 ⚠️ Contradiction이 등록된 목록
+- [[agent-loop]] — 이 scaffold가 대체하는 기본 루프. ReAct의 실패 교환이 재현 결과와 같은 모양이다
+- [[tool-use]] — scaffold를 가중치로 옮기는 방향의 선례(Toolformer)
 
 ## Sources
 
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL), arXiv 2512.24601 v3. 이 페이지 전체의 1차 출처
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). 이 논문을 "창 밖 객체" 선행 연구로 인용한 지점
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 외부 재현, depth=2, ⚠️ Contradiction의 한쪽 (2026-11-26)
+- [[2022-10-06-react]] — Yao 외 (ICLR 2023). "scaffold가 손해인 이른 사례" 노트만 이 소스에서 왔다 (2026-11-27)
+- [[2023-02-09-toolformer]] — Schick 외 (Meta AI, 2023). 학습 절의 선례만 이 소스에서 왔다 (2026-11-27)

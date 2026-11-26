@@ -2,8 +2,8 @@
 title: Dynamic Workflows (동적 harness)
 type: concept
 created: 2026-09-12
-updated: 2026-11-26
-sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2025-12-31-recursive-language-models]
+updated: 2026-11-27
+sources: [2026-08-20-a-harness-for-every-task-dynamic-workflows, 2025-06-13-multi-agent-research-system, 2026-04-08-scaling-managed-agents, 2026-06-07-loop-engineering, 2025-12-31-recursive-language-models, 2024-12-19-building-effective-agents]
 tags: [dynamic-workflows, agentic-harness, orchestration, multi-agent, context-window, token-economics]
 status: draft
 ---
@@ -55,6 +55,8 @@ generic해짐                          맞춤형(tailor-made)
 | **dynamic workflow** | **결정론적 프로그램** | **프로그램 변수 (컨텍스트 밖)** |
 
 LLM이 담당하는 것은 *harness를 한 번 쓰는 일*이고, 실행 중의 조정은 코드가 한다. 이 분리가 아래 세 실패 모드에 대한 방어의 원리다.
+
+> **2024년 이분법이 한 시스템 안에 겹친다 (2026-11-27).** [[2024-12-19-building-effective-agents]]는 agentic system을 둘로 나눴다. **workflow**는 미리 정한 코드 경로를 따르고, **agent**는 LLM이 자기 과정을 동적으로 지휘한다. 그리고 예측 가능성이 필요하면 workflow를, 유연성이 필요하면 agent를 고르라고 했다. dynamic workflow는 둘을 고르지 않는다. 실행 중에는 코드가 제어 흐름을 쥐니 workflow의 예측 가능성을 얻는다. 그 코드를 모델이 과제마다 쓰니 agent의 유연성도 얻는다. 선택이 **시점으로 나뉜** 셈이다. 작성 시점에는 agent, 실행 시점에는 workflow다. → [[agent-fundamentals]] *(해석은 이 위키의 것이다.)*
 
 > **같은 원리, 한 단계 아래 (2026-11-26).** [[recursive-language-model]]은 조정 상태뿐 아니라 **입력 자체**를 프로그램 변수에 둔다. 모델은 REPL에서 코드를 쓰고, 루프 안에서 자기를 재귀 호출하며, 중간값을 변수에 쌓는다 ([[2025-12-31-recursive-language-models]]). 차이는 코드를 쓰는 횟수다. dynamic workflow는 harness를 한 번 쓰고 실행하지만, RLM은 턴마다 실행 결과를 보고 코드를 다시 쓴다. 그래서 아래 "한계" 절의 *실행 중 전략을 바꾸지 못한다*는 대가를 RLM은 치르지 않는다. 대신 모든 턴이 모델의 코딩 능력에 묶인다. 한 번에 프로그램을 생성하는 방식(DisCIPL)을 저자들은 *"cannot recover from generation mistakes"* 라고 비판한다. *(대응은 이 위키의 해석이다.)*
 
@@ -161,6 +163,7 @@ dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에�
 - [[loop-engineering]] — 한 칸 위 층위. 이 워크플로를 *언제* 돌리고 결과를 어디에 남길 것인가
 - [[context-and-memory]] — compaction 처방 네 갈래의 지도. 이 페이지는 (b) 격리
 - [[recursive-language-model]] — 입력까지 프로그램 변수에 두고, 코드를 한 번이 아니라 턴마다 다시 쓰는 같은 원리
+- [[agent-fundamentals]] — workflow vs agent 구분. 이 개념은 작성 시점에 agent, 실행 시점에 workflow다
 
 ## Sources
 
@@ -169,3 +172,4 @@ dynamic workflow는 **한 번의 실행 안에서** 조정을 LLM의 판단에�
 - [[2026-04-08-scaling-managed-agents]] — Lance Martin 외 2인 (Anthropic Engineering, 2026-04-08). "반대 방향의 처방" 절
 - [[2026-06-07-loop-engineering]] — Addy Osmani (addyosmani.com, 2026-06-07). "한 칸 위 — 루프" 절
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). "같은 원리, 한 단계 아래" 노트 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). workflow vs agent 이분법이 겹치는 노트만 이 소스에서 왔다 (2026-11-27)

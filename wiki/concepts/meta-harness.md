@@ -2,8 +2,8 @@
 title: Meta-harness (harness보다 오래 사는 인터페이스)
 type: concept
 created: 2026-09-21
-updated: 2026-11-26
-sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models]
+updated: 2026-11-27
+sources: [2026-04-08-scaling-managed-agents, 2026-08-20-a-harness-for-every-task-dynamic-workflows, 2026-05-25-how-we-contain-claude, 2026-06-07-loop-engineering, 2026-09-30-loop-is-the-product, 2025-07-25-gepa-reflective-prompt-evolution, 2023-10-12-memgpt, 2024-10-14-longmemeval, 2025-12-31-recursive-language-models, 2026-03-03-reproducing-recursive-language-models, 2024-12-19-building-effective-agents]
 tags: [meta-harness, agentic-harness, interface-design, session-log, context-engineering, sandbox, security, anthropic]
 status: draft
 ---
@@ -221,6 +221,24 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 
 이 층위 구분은 [[subagent]]가 기록한 **조정 주체의 네 층위**(사람 / lead agent / 프로그램 / …)와 직교한다. 그쪽은 *누가 조정하는가*를, 이쪽은 *무엇이 얼마나 오래 사는가*를 나눈다.
 
+## framework 경고와 호스팅 harness (2026-11-27)
+
+> ⚠️ **Contradiction (2026-11-27): 에이전트를 직접 짜라는 권고와 호스팅 harness 위에서 짜라는 권고는 충돌하는가.** [[2024-12-19-building-effective-agents]](2024)는 *"LLM API를 직접 쓰는 것부터 시작하라"* 고 한다. framework는 *"prompt와 응답을 가리는 추상화 층"* 이라 디버깅을 어렵게 하고 필요 없는 복잡도를 부추긴다는 이유다. 같은 페이지의 2026년 편집 주석은 *"이 생태계는 2024년 12월 이후 크게 바뀌었다. 현재 접근은 Managed Agents를 보라"* 고 한다. [[2026-04-08-scaling-managed-agents]]는 스스로를 그 글을 잇는 계열에 둔다.
+
+**판정: 부분 판정 — 층위가 달라 정면 모순은 아니다. 권고의 무게 이동은 실재한다.**
+
+| | 2024 경고의 대상 | Managed Agents가 맡는 것 |
+|---|---|---|
+| 무엇 | prompt 조립, tool 파싱, 호출 사슬 | session(이벤트 로그), sandbox, 자격증명, provisioning |
+| 왜 문제/이점 | 모델이 실제로 무엇을 보는지 가린다 | 남의 워크로드를 오래·안전하게 돌리는 인프라 |
+| 이 페이지의 축 | harness **내용물** | harness **주변의 경계선** |
+
+1. **층위가 다르다.** 2024년 글이 경고한 것은 *모델이 무엇을 보는지 가리는* 추상화다. 이 페이지의 meta-harness는 harness의 내용물에 의견을 갖지 않고 **경계선(session/harness/sandbox)만** 고정한다. 원리상 prompt를 가릴 이유가 없다.
+2. **두 글의 핵심 가정은 같다.** 2024년 글은 *"밑에서 무슨 일이 일어나는지에 대한 잘못된 가정이 고객 오류의 흔한 원인"* 이라고 쓴다. 2026년 글은 *"harness는 Claude가 혼자 못 하는 것에 대한 가정을 담고, 그 가정은 썩는다"* 고 쓴다. 둘 다 **보이지 않는 가정**을 위험으로 본다.
+3. **그래도 남는 것.** 권고의 무게가 "직접 짜라"에서 "우리 harness 위에서 짜라"로 옮겨 간 건 사실이다. 두 글 모두 같은 벤더가 썼고, 뒤의 것은 자사 제품을 설명한다. Managed Agents가 실제로 prompt를 가리는지 투명한지는 이 위키의 소스로 확인할 수 없다. 이 판정은 설계 논증에 기댄다. → [[anthropic]] 관점 편향
+
+**남는 질문.** 호스팅 harness를 쓰는 팀은 모델이 실제로 받는 prompt와 tool 정의를 볼 수 있는가? 2024년 글의 투명성 원칙(*"계획 단계를 명시적으로 보여 주라"*)을 호스팅 harness가 지키는지 보여 줄 소스가 필요하다. → [[contradictions]], [[agent-fundamentals]] §5
+
 ## 한계와 읽을 때의 주의
 
 - **유비의 성공 조건은 증명되지 않았다.** OS 유비의 설득력은 `process`/`file`이 실제로 오래 살아남았다는 **사후적** 사실에서 온다. session/harness/sandbox가 그만큼 잘 고른 추상인지는 이 글이 증명할 수 없다. meta-harness 설계도 결국 **"이 세 경계는 안 썩는다"는 가정**을 하나 더 만든 것이고, 그 가정도 같은 종류의 노후화에 노출된다.
@@ -246,6 +264,8 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[agent-memory]] — 창 밖 저장소를 **모델**이 관리하는 반대편 설계(MemGPT). context 한계 경고가 기능이었던 사례
 - [[context-and-memory]] — compaction 처방 (a)~(d)와 memory를 묶은 상위 topic. 누가 가져오나의 네 주체
 - [[recursive-language-model]] — compaction 처방 (d). Managed Agents가 인용한 "창 밖 객체" 선행 연구. scaffold를 가중치로 옮기는 반대 방향
+- [[agent-fundamentals]] — 2024년 framework 경고와 단순성 원칙. 부분 판정 모순의 다른 쪽
+- [[tool-use]] — tool 배선은 harness의 일부다. 도구 사용의 규모 문턱은 "도구를 준다"도 능력 가정임을 보여 준다
 
 ## Sources
 
@@ -259,3 +279,4 @@ loop                ← 기동과 연속성 (주기 + 실행 사이에 남는 st
 - [[2024-10-14-longmemeval]] — Wu 외 (UCLA·Tencent AI Lab·UCSD, ICLR 2025). 처방 (a)만 쓴 제품(ChatGPT memory)의 실측 노트만 이 소스에서 왔다 (2026-11-26)
 - [[2025-12-31-recursive-language-models]] — Zhang, Kraska, Khattab (MIT CSAIL, arXiv 2512.24601). compaction 처방 (d), scaffold를 가중치로 옮기는 반대 방향 (2026-11-26)
 - [[2026-03-03-reproducing-recursive-language-models]] — Daren Wang (CUHK, arXiv 2603.02615). 강한 모델에서 scaffold가 짐이 된 Kimi K2 사례만 이 소스에서 왔다 (2026-11-26)
+- [[2024-12-19-building-effective-agents]] — Erik S., Barry Zhang (Anthropic Engineering, 2024-12-19). "framework 경고와 호스팅 harness" 절의 부분 판정 모순 (2026-11-27)
